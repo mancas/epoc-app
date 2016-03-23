@@ -1,0 +1,352 @@
+$primary: #00acb4;
+$grey: #4a4a4a;
+$white: #fff;
+$light_grey: #c1c1c1;
+$error: #c62828;
+$disabled: rgba(79, 79, 79, .26);
+$disabled_text: rgba(0, 0, 0, .38);
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-family: 'Roboto Regular', sans-serif;
+  color: $grey;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.ep-right {
+  float: right;
+}
+
+.ep-left {
+  float: left;
+}
+
+.hidden {
+  display: none;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+
+  .app {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Slideshow */
+.slideshow {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slideshow > .slide {
+  background: $white;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  transform: translateX(100%);
+  transition: transform .3s ease .3s;
+}
+
+.slideshow > .slide.current {
+  transform: translateX(0);
+}
+
+.slideshow > .slide.done {
+  transform: translateX(-100%);
+}
+
+.slideshow > .slide > .slide-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.slideshow {
+  > .slide {
+    > .slide-content {
+      > .slide-icon {
+        background-color: $primary;
+        width: 104px;
+        height: 104px;
+        display: block;
+        margin: 0 auto 38px;
+        border: solid 2px $white;
+        border-radius: 50%;
+        position: relative;
+
+        &:after {
+          content: "?";
+          display: block;
+          width: 106px;
+          height: 106px;
+          margin: auto;
+          border: solid 4px $primary;
+          border-radius: 50%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 45px;
+          font-family: "Roboto Light", sans-serif;
+          font-weight: bold;
+          line-height: 112px;
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+.slideshow > .slide > .slide-content > h1 {
+  font-size: 20px;
+  margin: 0 0 20px;
+}
+
+.slideshow > .slide > .slide-content > p {
+  font-size: 14px;
+  margin: 0 0 30px 0;
+}
+
+.slideshow > .slide > .slide-content > .input-group {
+  margin: 0 14px;
+}
+
+/* Slideshow choices */
+.slideshow {
+  .choices {
+    max-width: 200px;
+    overflow: hidden;
+    text-align: center;
+    margin: auto;
+
+    .choice-button {
+      display: inline-block;
+
+      &:nth-child(even) {
+        margin-left: 30px;
+      }
+
+      &:nth-child(1) {
+        .ep-btn {
+          margin: 0;
+        }
+      }
+
+      &:nth-child(2) {
+        .ep-btn {
+          margin: 0;
+        }
+      }
+
+      .material-button {
+        min-width: 60px;
+      }
+    }
+  }
+}
+
+.slide-content > button:last-of-type {
+  margin-left: 30px;
+}
+
+.slide-content > button:first-of-type {
+  margin-left: 0;
+}
+
+/* Angular material override */
+.slideshow .hint {
+  /* Position the hint */
+  position: absolute;
+  left: 2px;
+  right: auto;
+  bottom: 7px;
+  /* Copy styles from ng-messages */
+  font-size: 12px;
+  line-height: 14px;
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+  /* Set our own color */
+  color: $grey;
+}
+
+/** RIPPLE EFFECT **/
+.ripple-effect {
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0);
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ripple-effect.animate {
+  animation: ripple 0.65s cubic-bezier(0.55, 0, 0.55, 0.2);
+}
+
+@keyframes ripple {
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+/* Material styles */
+.form-control {
+  border-radius: 0;
+  border: 0;
+  border-bottom: solid 0.1rem $light_grey;
+  box-shadow: none;
+  height: 34px;
+  position: relative;
+  outline: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  font-size: 14px;
+
+  &:active, &:focus {
+    box-shadow: none;
+  }
+}
+
+.material-input-wrapper {
+  position: relative;
+  display: block;
+  margin: 0 14px;
+
+  &:after {
+    position: absolute;
+    left: 0;
+    /* Keep in sync with input height */
+    top: 31px;
+    right: 0;
+    content: '';
+    z-index: 12;
+    width: 0%;
+    height: 0.2rem;
+    background-color: $primary;
+    transition: width 300ms ease 0s;
+  }
+
+  label {
+    pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    padding-left: 3px;
+    padding-right: 0;
+    z-index: 1;
+    -webkit-transform: translate3d(0,28px,0) scale(1);
+    transform: translate3d(0,28px,0) scale(1);
+    transition: -webkit-transform cubic-bezier(.25,.8,.25,1) .25s;
+    transition: transform cubic-bezier(.25,.8,.25,1) .25s;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    text-align: left;
+  }
+
+  > .material-char-counter {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 12px;
+  }
+}
+
+.material-input-wrapper.focused {
+  label {
+    transform: translate3d(0,6px,0) scale(.75);
+  }
+
+  &:after {
+    width: 100%;
+  }
+}
+
+.material-input-wrapper.has-value {
+  label {
+    transform: translate3d(0,6px,0) scale(.75)
+  }
+}
+
+.material-input-wrapper.is-invalid.touched {
+  color: $error;
+
+  .form-control {
+    border-color: $error;
+  }
+
+  &:after {
+    background-color: $error;
+  }
+}
+
+/* Buttons */
+.material-button {
+  text-transform: uppercase;
+  color: $white;
+  background-color: $primary;
+  margin: 35px 0 0;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  border-radius: 3px;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  outline: 0;
+  border: 0;
+  display: inline-block;
+  padding: 0 6px;
+  line-height: 36px;
+  min-height: 36px;
+  white-space: nowrap;
+  min-width: 108px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow .4s cubic-bezier(.25,.8,.25,1),background-color .4s cubic-bezier(.25,.8,.25,1);
+  font-family: 'Roboto Medium', sans-serif;
+}
+
+.material-button.btn-dark {
+  background-color: $grey;
+}
+
+.material-button.selected {
+  background-color: $primary;
+}
+
+.material-button[disabled] {
+  background: $disabled;
+  color: $disabled_text;
+  box-shadow: none;
+}
+
+.btn-full-width {
+  width: 100%;
+}

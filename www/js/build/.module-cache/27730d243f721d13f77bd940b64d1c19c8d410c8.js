@@ -1,0 +1,158 @@
+var ep = ep || {};
+
+ep.materialViews = (function() {
+  var RippleButton = React.createClass({displayName: "RippleButton",
+    propTypes: {
+      label: React.PropTypes.string.isRequired
+    },
+
+    rippleElement: null,
+    diagonal: null,
+
+    componentDidMount: function() {
+      this.rippleElement = this.getDOMNode().querySelector(".ripple-effect");
+      this.getDOMNode().addEventListener("touchstart", this.onTouchStart);
+    },
+
+    onTouchStart: function(event) {
+      var elementBoundingClientRect = this.getDOMNode().getBoundingClientRect();
+      // Stop the previous animation in case of a
+      // quick double click
+      this.rippleElement.classList.remove('animate');
+
+      // If it's the first time the user click the button,
+      // width and height parameters must be set
+      if (!this.rippleElement.clientHeight ||
+        !this.rippleElement.clientWidth) {
+        this.diagonal =
+          Math.max(elementBoundingClientRect.height,
+            elementBoundingClientRect.width);
+
+        this.rippleElement.style.height = this.diagonal + 'px';
+        this.rippleElement.style.width = this.diagonal + 'px';
+      }
+
+      x = event.touches[0].clientX -
+        elementBoundingClientRect.left - this.diagonal/2;
+      y = event.touches[0].clientY -
+        elementBoundingClientRect.top - this.diagonal/2;
+
+      this.rippleElement.style.top = y + 'px';
+      this.rippleElement.style.left = x + 'px';
+
+      this.rippleElement.classList.add('animate');
+    },
+
+    render: function() {
+      return (
+        React.createElement("button", {className: "material-button"}, 
+          React.createElement("span", {className: "ripple-effect"}), 
+          this.props.label
+        )
+      );
+    }
+  });
+
+  var Input = React.createClass({displayName: "Input",
+    propTypes: {
+      isValid: React.PropTypes.func,
+      label: React.PropTypes.string.isRequired,
+      maxLength: React.PropTypes.number,
+      required: React.PropTypes.bool
+    },
+
+    getInitialState: function () {
+      return {
+        invalid: false,
+        touched: false,
+        focused: false,
+        hasValue: false
+      }
+    },
+
+    componentDidMount: function() {
+      var input = this.getDOMNode().querySelector("input");
+      input.addEventListener("input", this.renderCharCount);
+      input.addEventListener("keyup", this.renderCharCount);
+      input.addEventListener("focus", this.onFocus);
+      input.addEventListener("blur", this.onBlur);
+      this.renderCharCount();
+      this.checkInput();
+    },
+
+    componentWillUnmount: function() {
+      var input = this.getDOMNode().querySelector("input");
+      input.removeEventListener("input", this.renderCharCount);
+      input.removeEventListener("keyup", this.renderCharCount);
+      input.removeEventListener("focus", this.onBlur);
+      input.removeEventListener("blur", this.onBlur);
+    },
+
+    onFocus: function() {
+      this.setState({
+        touched: true,
+        focused: true
+      });
+    },
+
+    onBlur: function() {
+      this.setState({
+        focused: false
+      });
+    },
+
+    renderCharCount: function() {
+      var input = this.getDOMNode().querySelector("input");
+      var charCounterElement = this.getDOMNode().querySelector(".material-char-counter");
+      if (charCounterElement) {
+        charCounterElement.textContent = String(input.value || '').length + '/' + this.props.maxLength;
+        this.checkInput();
+      }
+    },
+
+    renderMaxLengthView: function() {
+      return (
+        React.createElement("div", {className: "material-char-counter"})
+      );
+    },
+
+    checkInput: function () {
+      var input = this.getDOMNode().querySelector("input");
+      if (input.required && !input.value.length) {
+        this.setState({
+          invalid: true,
+          hasValue: false
+        });
+      } else {
+        this.setState({
+          invalid: false,
+          hasValue: true
+        });
+      }
+
+      this.props.isValid && this.props.isValid(this.state.invalid);
+    },
+
+    render: function() {
+      var classes = classNames({
+        "material-input-wrapper": true,
+        "touched": this.state.touched,
+        "is-invalid": this.state.invalid,
+        "focused": this.state.focused
+      });
+      return (
+        React.createElement("div", {className: classes}, 
+          React.createElement("label", null, this.props.label), 
+          React.createElement("input", {className: "form-control", required: this.props.required ? true : false, name: "{this.props.inputName}", maxLength: this.props.maxLength}), 
+          this.props.maxLength ? this.renderMaxLengthView() : null
+        )
+      );
+    }
+  });
+
+
+  return {
+    Input: Input,
+    RippleButton: RippleButton
+  };
+})();
