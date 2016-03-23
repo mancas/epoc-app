@@ -7,9 +7,6 @@ define([
   function(materialViews, SlideshowView, Actions, Dispatcher, UserStore) {
     "use strict";
 
-    // var Link = ReactRouter.Link;
-    var Route = ReactRouter.Route;
-    var Router = ReactRouter.Router;
     var dispatcher;
     var userStore;
 
@@ -44,18 +41,61 @@ define([
       }
     });
 
+    var InterfaceComponent = React.createClass({displayName: "InterfaceComponent",
+      componentWillMount : function() {
+        this.callback = (function() {
+          this.forceUpdate();
+        }).bind(this);
+
+        this.props.router.on("route", this.callback);
+      },
+      componentWillUnmount : function() {
+        this.props.router.off("route", this.callback);
+      },
+      render : function() {
+        switch (this.props.router.current) {
+          case "foo":
+            return (
+              React.createElement("div", {className: "app"}, 
+                React.createElement(SlideshowView, {
+                  dispatcher: dispatcher}), 
+
+                React.createElement("div", {className: "page"}, 
+                  this.props.children
+                )
+              )
+            )
+          default:
+            return null;
+        }
+      }
+    });
+
     function init() {
       dispatcher = new Dispatcher();
       userStore = new UserStore(dispatcher);
 
-      React.render((
-        React.createElement(Router, null, 
-          React.createElement(Route, {component: App, path: "/"}, 
-            React.createElement(Route, {component: AboutPage, path: "about"}), 
-            React.createElement(Route, {component: AboutPage, path: "*"})
-          )
-        )
-      ), document.querySelector("#container"));
+      var Router = Backbone.Router.extend({
+        routes : {
+          "" : "foo",
+          "bar" : "bar"
+        },
+        foo : function() {
+          this.current = "foo";
+        },
+        bar : function() {
+          this.current = "bar";
+        }
+      });
+
+      var router = new Router();
+
+      React.render(
+        React.createElement(InterfaceComponent, {router: router}),
+        document.querySelector("#container")
+      );
+
+      Backbone.history.start();
     }
 
     return {

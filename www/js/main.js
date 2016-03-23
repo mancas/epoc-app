@@ -4,7 +4,9 @@ require.config({
     "react": "../vendor/react.min",
     "reactRouter": "../vendor/ReactRouter.min",
     "classnames": "../vendor/classNames",
-    "_": "../vendor/underscore.min"
+    "_": "../vendor/underscore.min",
+    "jquery": "../vendor/jquery.min",
+    "Backbone": "../vendor/backbone.min"
   },
 
   shim: {
@@ -23,8 +25,16 @@ require.config({
       deps: [],
       exports: "_"
     },
+    "jquery": {
+      deps: [],
+      exports: "$"
+    },
+    "Backbone": {
+      deps: ["jquery"],
+      exports: "Backbone"
+    },
     "appShim": {
-      deps: ["react", "reactRouter", "classnames", "_"],
+      deps: ["react", "jquery", "Backbone", "classnames", "_"],
       exports: "AppShim"
     }
   }
