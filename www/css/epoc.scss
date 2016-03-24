@@ -168,6 +168,33 @@ html, body {
   margin-left: 0;
 }
 
+/* Pagination */
+.pagination {
+  display: block;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 30px;
+
+  .bullet {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: $light_grey;
+    border-radius: 50%;
+    margin-left: 10px;
+    transition: background .3s cubic-bezier(0.55, 0, 0.55, 0.2) .3s;
+  }
+
+  .bullet:first-child {
+    margin-left: 0;
+  }
+
+  .bullet.active {
+    background: $primary;
+  }
+}
+
 /* Angular material override */
 .slideshow .hint {
   /* Position the hint */

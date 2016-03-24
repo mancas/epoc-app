@@ -116,6 +116,26 @@ html, body {
 .slide-content > button:first-of-type {
   margin-left: 0; }
 
+/* Pagination */
+.pagination {
+  display: block;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 30px; }
+  .pagination .bullet {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #c1c1c1;
+    border-radius: 50%;
+    margin-left: 10px;
+    transition: background 0.3s cubic-bezier(0.55, 0, 0.55, 0.2) 0.3s; }
+  .pagination .bullet:first-child {
+    margin-left: 0; }
+  .pagination .bullet.active {
+    background: #00acb4; }
+
 /* Angular material override */
 .slideshow .hint {
   /* Position the hint */

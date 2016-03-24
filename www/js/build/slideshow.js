@@ -36,8 +36,11 @@ define([
                   nextSlide: this.next, 
                   slide: slideNode})
               );
-            }, this)
+            }, this), 
           
+          React.createElement(PaginationView, {
+            currentPage: this.state.currentSlide, 
+            pages: slideshowData.slides.length})
         )
       );
     }
@@ -152,6 +155,48 @@ define([
               }, this)
             
           )
+        )
+      );
+    }
+  });
+
+  var PaginationView = React.createClass({displayName: "PaginationView",
+    propTypes: {
+      currentPage: React.PropTypes.number.isRequired,
+      pages: React.PropTypes.number.isRequired
+    },
+
+    shouldComponentUpdate: function(newProps) {
+      var activeBullet = this.getDOMNode().querySelector(".active");
+      activeBullet.classList.remove("active");
+      var newActiveBullet = this.refs["page-" + newProps.currentPage];
+      if (!newActiveBullet) {
+        throw new Error("No more pages!");
+      }
+      newActiveBullet.getDOMNode().classList.add("active");
+
+      // Avoid trigger render method unnecessarily
+      return false;
+    },
+
+    _renderPages: function() {
+      var bullets = [];
+      for (var i = 0; i < this.props.pages; i++) {
+        var cssClasses = classNames({
+          "bullet": true,
+          "active": this.props.currentPage === i
+        });
+        var ref = "page-" + i;
+        bullets.push(React.createElement("span", {className: cssClasses, key: i, ref: ref}));
+      }
+
+      return bullets;
+    },
+
+    render: function() {
+      return (
+        React.createElement("div", {className: "pagination"}, 
+          this._renderPages()
         )
       );
     }
