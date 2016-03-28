@@ -42,24 +42,6 @@ define([], function() {
         }
       },
       {
-        type: "decision",
-        title: "{{USERNAME}}, ¿tu médico te ha diagnosticado EPOC?",
-        buttons: [
-          {
-            label: "Yes",
-            dataModel: true
-          },
-          {
-            label: "No",
-            dataModel: false,
-            className: "btn-dark"
-          }
-        ],
-        question: {
-          fieldName: "hasEPOC"
-        }
-      },
-      {
         type: "choice",
         title: "Elige el grado de EPOC que te hayan diagnosticado",
         buttons: [
@@ -87,7 +69,27 @@ define([], function() {
               extraCSSClass: "btn-dark"
             }
           ],
-          fieldName: "gradeEPOC"
+          fieldName: "gradeEPOC",
+          required: true
+        }
+      },
+      {
+        type: "input",
+        title: "{{USERNAME}}, ¿cuándo fuiste a tu última revisión médica?",
+        buttons: [
+          {
+            label: "Continuar",
+            className: "ep-right"
+          }
+        ],
+        question: {
+          field: {
+            label: "Última revisión médica",
+            fieldName: "lastRevision",
+            type: "date",
+            required: true
+          },
+          validationRules: ["lastRevision"]
         }
       },
       {
@@ -120,7 +122,8 @@ define([], function() {
         question: {
           field: {
             label: "Tu peso",
-            fieldName: "userWeight"
+            fieldName: "userWeight",
+            required: true
           },
           validationRules: ["userWeight"]
         }
@@ -137,8 +140,9 @@ define([], function() {
         ],
         question: {
           field: {
-            label: "Tu estatura",
-            fieldName: "userHeight"
+            label: "Tu estatura (en cm)",
+            fieldName: "userHeight",
+            required: true
           },
           validationRules: ["userHeight"]
         }
@@ -155,12 +159,23 @@ define([], function() {
         question: {
           field: {
             label: "Tu fecha de nacimiento",
-            fieldName: "userBirth"
+            fieldName: "userBirth",
+            type: "date",
+            required: true
           },
           validationRules: ["userBirth"]
         }
       }
-    ]
+    ],
+    model: {
+      userName: "",
+      gradeEPOC: "",
+      lastRevision: "",
+      isSmoker: "",
+      userWeight: "",
+      userHeight: "",
+      userBirth: ""
+    }
   };
 });
 

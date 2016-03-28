@@ -2,8 +2,9 @@ define([
   "build/materialViews",
   "build/epocViews",
   "slideshowData",
-  "utils/dispatcher"
-], function(materialViews, epocViews, slideshowData, Dispatcher) {
+  "utils/dispatcher",
+  "utils/dateTime"
+], function(materialViews, epocViews, slideshowData, Dispatcher, DateTimeHelper) {
   "use strict";
 
   var SlideshowView = React.createClass({displayName: "SlideshowView",
@@ -28,19 +29,22 @@ define([
         React.createElement("div", {className: "slideshow"}, 
           
             slideshowData.slides.map(function(slideNode, index) {
+              var ref = "slide-" + index;
               return (
                 React.createElement(Slide, {
                   currentSlide: this.state.currentSlide, 
                   index: index, 
                   key: index, 
                   nextSlide: this.next, 
+                  ref: ref, 
                   slide: slideNode})
               );
             }, this), 
           
           React.createElement(PaginationView, {
             currentPage: this.state.currentSlide, 
-            pages: slideshowData.slides.length})
+            pages: slideshowData.slides.length, 
+            ref: "pagination"})
         )
       );
     }
@@ -56,19 +60,27 @@ define([
 
     getInitialState: function() {
       return {
-        visited: false,
-        isValid: true
+        isValid: true,
+        showCalendar: false
       };
     },
 
-    componentWillReceiveProps: function() {
-      if (this.state.visited) {
-        return;
+    shouldComponentUpdate: function(newProps, newState) {
+      if (this.props.index === this.props.currentSlide &&
+        newProps.currentSlide === this.props.index + 1) {
+        this.getDOMNode().classList.add("done");
+        this.getDOMNode().classList.remove("current");
+      } else if (newProps.currentSlide === this.props.index) {
+        this.getDOMNode().classList.add("current");
       }
 
-      this.setState({
-        visited: this.props.currentSlide === this.props.index
-      });
+      // Render if isValid state has changed
+      if (this.state.isValid !== newState.isValid ||
+        this.state.showCalendar !== newState.showCalendar) {
+          return true;
+      }
+
+      return false;
     },
 
     isValid: function(isValid) {
@@ -86,13 +98,34 @@ define([
       }
     },
 
+    _openCalendar: function() {
+      this.setState({
+        showCalendar: true
+      });
+    },
+
+    _closeCalendar: function() {
+      this.setState({
+        showCalendar: false
+      });
+    },
+
+    _onCalendarAcceptAction: function(date) {
+      this.refs.slideInput.setInputValue(DateTimeHelper.format(date, { long: true }));
+      this._closeCalendar();
+    },
+
     renderInputSlide: function() {
+      var onFocus = this.props.slide.question.field.type === "date" ?
+        this._openCalendar : null;
       return (
         React.createElement(materialViews.Input, {
+          ref: "slideInput", 
           inputName: this.props.slide.question.field.fieldName, 
           isValid: this.isValid, 
           label: this.props.slide.question.field.label, 
           maxLength: this.props.slide.question.field.maxLength, 
+          onFocus: onFocus, 
           required: this.props.slide.question.field.required})
       );
     },
@@ -108,6 +141,15 @@ define([
         React.createElement(epocViews.ChoicesView, {
           choiceName: this.props.slide.question.fieldName, 
           choices: this.props.slide.question.choices})
+      );
+    },
+
+    renderCalendar: function() {
+      return (
+        React.createElement(materialViews.CalendarView, {
+          handleAcceptAction: this._onCalendarAcceptAction, 
+          handleCancelAction: this._closeCalendar, 
+          showCalendar: this.state.showCalendar})
       );
     },
 
@@ -130,8 +172,7 @@ define([
 
       var cssClasses = {
         "slide": true,
-        "current": this.props.currentSlide === this.props.index,
-        "done": this.state.visited
+        "current": this.props.currentSlide === this.props.index
       };
 
       return (
@@ -154,7 +195,8 @@ define([
                 );
               }, this)
             
-          )
+          ), 
+          this.renderCalendar()
         )
       );
     }
