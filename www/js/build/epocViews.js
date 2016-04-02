@@ -65,7 +65,7 @@ define(["build/materialViews", "utils/utilities"], function(materialViews, utils
     render: function() {
       return (
         React.createElement("div", {className: "choice-button"}, 
-          React.createElement("input", {className: "hidden", name: this.props.choiceName, type: "radio"}), 
+          React.createElement("input", {className: "hidden", name: this.props.choiceName, value: this.props.label, type: "radio"}), 
           React.createElement(materialViews.RippleButton, {
             extraCSSClass: this.props.extraCSSClass, 
             handleClick: this.props.handleClick, 

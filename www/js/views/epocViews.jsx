@@ -65,7 +65,7 @@ define(["build/materialViews", "utils/utilities"], function(materialViews, utils
     render: function() {
       return (
         <div className="choice-button">
-          <input className="hidden" name={this.props.choiceName} type="radio" />
+          <input className="hidden" name={this.props.choiceName} value={this.props.label} type="radio" />
           <materialViews.RippleButton
             extraCSSClass={this.props.extraCSSClass}
             handleClick={this.props.handleClick}

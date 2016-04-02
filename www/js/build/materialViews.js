@@ -8,7 +8,11 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       extraCSSClass: React.PropTypes.string,
       fullWidth: React.PropTypes.bool,
       handleClick: React.PropTypes.func,
-      label: React.PropTypes.string.isRequired
+      label: React.PropTypes.string.isRequired,
+      model: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ])
     },
 
     rippleElement: null,
@@ -49,6 +53,10 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       this.rippleElement.classList.add('animate');
     },
 
+    handleClick: function(event) {
+      this.props.handleClick && this.props.handleClick(event, this.props.model);
+    },
+
     render: function() {
       var cssClasses = {
         "material-button": true,
@@ -60,7 +68,11 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       }
 
       return (
-        React.createElement("button", {className: classNames(cssClasses), onClick: this.props.handleClick, disabled: this.props.disabled}, 
+        React.createElement("button", {
+          className: classNames(cssClasses), 
+          onClick: this.handleClick, 
+          disabled: this.props.disabled, 
+          "data-model": this.props.model}, 
           React.createElement("span", {className: "ripple-effect"}), 
           this.props.children, 
           this.props.label
@@ -76,7 +88,15 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       label: React.PropTypes.string.isRequired,
       maxLength: React.PropTypes.number,
       onFocus: React.PropTypes.func,
-      required: React.PropTypes.bool
+      required: React.PropTypes.bool,
+      type: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+      return {
+        required: false,
+        type: "text"
+      };
     },
 
     getInitialState: function () {
@@ -176,7 +196,11 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       return (
         React.createElement("div", {className: classes}, 
           React.createElement("label", null, this.props.label), 
-          React.createElement("input", {className: "form-control", required: this.props.required ? true : false, name: "{this.props.inputName}", maxLength: this.props.maxLength}), 
+          React.createElement("input", {className: "form-control", 
+                 maxLength: this.props.maxLength, 
+                 name: this.props.inputName, 
+                 required: this.props.required ? true : false, 
+                 type: this.props.type === "date" ? "text" : this.props.type}), 
           this.props.maxLength ? this.renderMaxLengthView() : null
         )
       );
@@ -620,9 +644,38 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
     }
   });
 
+  var LoaderView = React.createClass({displayName: "LoaderView",
+    propTypes: {
+      extraCSSClass: React.PropTypes.string,
+      height: React.PropTypes.number,
+      width: React.PropTypes.number
+    },
+
+    getDefaultProps: function() {
+      return {
+        height: 40,
+        width: 40
+      }
+    },
+
+    render: function() {
+      return (
+        React.createElement("svg", {
+          className: "material-circular-loader", 
+          height: this.props.height, 
+          version: "1.1", 
+          xmlns: "http://www.w3.org/2000/svg", 
+          width: this.props.width}, 
+          React.createElement("circle", {cx: "20", cy: "20", r: "15"})
+        )
+      );
+    }
+  });
+
   return {
     CalendarView: CalendarView,
     Input: Input,
+    LoaderView: LoaderView,
     RippleButton: RippleButton
   };
 });

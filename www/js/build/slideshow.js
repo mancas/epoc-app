@@ -3,8 +3,9 @@ define([
   "build/epocViews",
   "slideshowData",
   "utils/dispatcher",
-  "utils/dateTime"
-], function(materialViews, epocViews, slideshowData, Dispatcher, DateTimeHelper) {
+  "utils/dateTime",
+  "utils/stringsHelper"
+], function(materialViews, epocViews, slideshowData, Dispatcher, DateTimeHelper, StringsHelper) {
   "use strict";
 
   var SlideshowView = React.createClass({displayName: "SlideshowView",
@@ -12,15 +13,31 @@ define([
       dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
     },
 
-    next: function() {
-      this.setState({
+    next: function(modelKey, value) {
+      var newState = {
         currentSlide: this.state.currentSlide + 1
-      });
+      };
+
+      if (typeof this.state.model[modelKey] !== "undefined" &&
+        typeof value !== "undefined") {
+        var cloneModel = {};
+        for (var key in this.state.model) {
+          if (key === modelKey) {
+            cloneModel[key] = value;
+          } else {
+            cloneModel[key] = this.state.model[key];
+          }
+        }
+
+        newState.model = cloneModel;
+      }
+      this.setState(newState);
     },
 
     getInitialState: function() {
       return {
-        currentSlide: 0
+        currentSlide: 7,
+        model: slideshowData.model
       };
     },
 
@@ -35,6 +52,7 @@ define([
                   currentSlide: this.state.currentSlide, 
                   index: index, 
                   key: index, 
+                  model: this.state.model, 
                   nextSlide: this.next, 
                   ref: ref, 
                   slide: slideNode})
@@ -54,6 +72,7 @@ define([
     propTypes: {
       index: React.PropTypes.number.isRequired,
       currentSlide: React.PropTypes.number.isRequired,
+      model: React.PropTypes.object.isRequired,
       nextSlide: React.PropTypes.func.isRequired,
       slide: React.PropTypes.object.isRequired
     },
@@ -70,6 +89,7 @@ define([
         newProps.currentSlide === this.props.index + 1) {
         this.getDOMNode().classList.add("done");
         this.getDOMNode().classList.remove("current");
+        return false;
       } else if (newProps.currentSlide === this.props.index) {
         this.getDOMNode().classList.add("current");
       }
@@ -80,7 +100,13 @@ define([
           return true;
       }
 
-      return false;
+      // Render if model has changed and any of the strings has dependency
+      // on the model
+      return this.props.model !== newProps.model && this._hasDependency();
+    },
+
+    _hasDependency: function() {
+      return _.findKey(this.props.slide, "modelRequired");
     },
 
     isValid: function(isValid) {
@@ -104,15 +130,63 @@ define([
       });
     },
 
-    _closeCalendar: function() {
+    _closeCalendar: function(date) {
       this.setState({
+        selectedDate: date,
         showCalendar: false
       });
     },
 
     _onCalendarAcceptAction: function(date) {
       this.refs.slideInput.setInputValue(DateTimeHelper.format(date, { long: true }));
-      this._closeCalendar();
+      this._closeCalendar(date);
+    },
+
+    _prepareString: function(string) {
+      var result = "";
+      if (typeof string === "object") {
+        var params = string.params || [];
+        if (string.modelRequired) {
+          var key = string.modelRequired;
+          var modelParam = {};
+          modelParam[key] = this.props.model[key];
+          params.push(modelParam);
+        }
+
+        result = StringsHelper.getString(string.id, params);
+      }
+
+      return result;
+    },
+
+    handleButtonClick: function(event, modelValue) {
+      var modelName = this.props.slide.question && this.props.slide.question.modelName || undefined;
+
+      switch (this.props.slide.type) {
+        case "input":
+          if (this.props.slide.question.field.type === "date") {
+            modelValue = this.state.selectedDate;
+          } else {
+            var input = this.getDOMNode().querySelector("input[name=\"" + modelName + "\"");
+            if (!input) {
+              throw new Error("Input not defined for model key: " + modelName);
+            }
+
+            modelValue = input.value;
+          }
+          break;
+        case "choice":
+          var selectedChoice =
+            this.getDOMNode().querySelector("input[name=\"" + modelName + "\"][type=\"radio\"]:checked");
+          if (!selectedChoice) {
+            throw new Error("Choice not defined for model key: " + modelName);
+          }
+
+          modelValue = selectedChoice.value;
+          break;
+      }
+
+      this.props.nextSlide(modelName, modelValue);
     },
 
     renderInputSlide: function() {
@@ -121,12 +195,13 @@ define([
       return (
         React.createElement(materialViews.Input, {
           ref: "slideInput", 
-          inputName: this.props.slide.question.field.fieldName, 
+          inputName: this.props.slide.question.modelName, 
           isValid: this.isValid, 
           label: this.props.slide.question.field.label, 
           maxLength: this.props.slide.question.field.maxLength, 
           onFocus: onFocus, 
-          required: this.props.slide.question.field.required})
+          required: this.props.slide.question.field.required, 
+          type: this.props.slide.question.field.type})
       );
     },
 
@@ -139,7 +214,7 @@ define([
     renderChoiceSlide: function() {
       return (
         React.createElement(epocViews.ChoicesView, {
-          choiceName: this.props.slide.question.fieldName, 
+          choiceName: this.props.slide.question.modelName, 
           choices: this.props.slide.question.choices})
       );
     },
@@ -166,6 +241,10 @@ define([
         case "choice":
           slideContent = this.renderChoiceSlide();
           break;
+        case "loader":
+          slideContent = (
+            React.createElement(materialViews.LoaderView, null)
+          );
         default:
           break;
       }
@@ -179,8 +258,8 @@ define([
         React.createElement("section", {className: classNames(cssClasses), id: id}, 
           React.createElement("div", {className: "slide-content"}, 
             React.createElement("span", {className: "slide-icon"}), 
-            React.createElement("h1", null, this.props.slide.title), 
-            React.createElement("p", null, this.props.slide.text), 
+            React.createElement("h1", null, this._prepareString(this.props.slide.title)), 
+            React.createElement("p", null, this._prepareString(this.props.slide.text)), 
             slideContent, 
             
               this.props.slide.buttons.map(function(button, index) {
@@ -189,9 +268,10 @@ define([
                     disabled: !this.state.isValid, 
                     extraCSSClass: button.className, 
                     fullWidth: button.fullWidth, 
-                    handleClick: this.props.nextSlide, 
+                    handleClick: this.handleButtonClick, 
                     key: index, 
-                    label: button.label})
+                    label: this._prepareString(button.label), 
+                    model: button.modelValue})
                 );
               }, this)
             
@@ -213,7 +293,7 @@ define([
       activeBullet.classList.remove("active");
       var newActiveBullet = this.refs["page-" + newProps.currentPage];
       if (!newActiveBullet) {
-        throw new Error("No more pages!");
+        return false;
       }
       newActiveBullet.getDOMNode().classList.add("active");
 

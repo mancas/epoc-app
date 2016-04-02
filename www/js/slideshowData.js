@@ -5,48 +5,62 @@ define([], function() {
     slides: [
       {
         type: "information",
-        title: "Bienvenido a {{APPNAME}}",
-        label2: {
-          id: "WELCOME_MSG",
-          param: {
-            name: "APPNAME",
-            value: "userName"
-          }
+        title: {
+          id: "slide.welcome_message_title",
+          params: [
+            {
+              appName: {
+                id: "appName"
+              }
+            }
+          ]
         },
-        text: "Para poder ayudarte en tu día a día y mejorar tu calidad vida, vamos a realizarte algunas preguntas. ¿Estás preparado?",
+        text: {
+          id: "slide.welcome_message_text"
+        },
         buttons: [
           {
-            label: "Empezar",
+            label: {
+              id: "slide.start_button_label"
+            },
             fullWidth: true
           }
         ]
       },
       {
         type: "input",
-        title: "¿Cómo te llamas?",
+        title: {
+          id: "slide.user_name_title"
+        },
         buttons: [
           {
-            label: "Continuar",
+            label: {
+              id: "slide.next_slide_label"
+            },
             className: "ep-right"
           }
         ],
         question: {
           field: {
             label: "Tu nombre",
-            fieldName: "userName",
             maxLength: 30,
             required: true,
             hint: "El nombre es necesario."
           },
+          modelName: "userName",
           validationRules: ["userName"]
         }
       },
       {
         type: "choice",
-        title: "Elige el grado de EPOC que te hayan diagnosticado",
+        title: {
+          id: "slide.user_epoc_grade_title"
+        },
         buttons: [
           {
-            label: "Continuar",
+            label: {
+              id: "slide.next_slide_label"
+            },
             className: "ep-right"
           }
         ],
@@ -69,102 +83,142 @@ define([], function() {
               extraCSSClass: "btn-dark"
             }
           ],
-          fieldName: "gradeEPOC",
+          modelName: "gradeEPOC",
           required: true
         }
       },
       {
         type: "input",
-        title: "{{USERNAME}}, ¿cuándo fuiste a tu última revisión médica?",
+        title: {
+          id: "slide.user_last_revision_title",
+          modelRequired: "userName"
+        },
         buttons: [
           {
-            label: "Continuar",
+            label: {
+              id: "slide.next_slide_label"
+            },
             className: "ep-right"
           }
         ],
         question: {
           field: {
             label: "Última revisión médica",
-            fieldName: "lastRevision",
             type: "date",
             required: true
           },
+          modelName: "lastRevision",
           validationRules: ["lastRevision"]
         }
       },
       {
         type: "decision",
-        title: "{{USERNAME}}, ¿eres fumador?",
+        title: {
+          id: "slide.user_is_smoker_title"
+        },
         buttons: [
           {
-            label: "Yes",
-            className: "btn-dark"
+            label: {
+              id: "slide.decision_yes_label"
+            },
+            className: "btn-dark",
+            modelValue: 1
           },
           {
-            label: "No",
-            className: "btn-dark"
+            label: {
+              id: "slide.decision_no_label"
+            },
+            className: "btn-dark",
+            modelValue: 0
           }
         ],
         question: {
-          fieldName: "isSmoker"
+          modelName: "isSmoker"
         }
       },
       {
         type: "input",
-        title: "Datos personales",
-        text: "Necesitamos tu peso y estatura para llevar un control de tu evolución y poder recomendarte pautas para vivir mejor.",
+        title: {
+          id: "slide.user_personal_data_title"
+        },
+        text: {
+          id: "slide.user_personal_data_text"
+        },
         buttons: [
           {
-            label: "Continuar",
+            label: {
+              id: "slide.next_slide_label"
+            },
             className: "ep-right"
           }
         ],
         question: {
           field: {
             label: "Tu peso",
-            fieldName: "userWeight",
+            type: "number",
             required: true
           },
+          modelName: "userWeight",
           validationRules: ["userWeight"]
         }
       },
       {
         type: "input",
-        title: "Datos personales",
-        text: "¿Cuánto mides?",
+        title: {
+          id: "slide.user_personal_data_title"
+        },
+        text: {
+          id: "slide.user_height_text"
+        },
         buttons: [
           {
-            label: "Continuar",
+            label: {
+              id: "slide.next_slide_label"
+            },
             className: "ep-right"
           }
         ],
         question: {
           field: {
             label: "Tu estatura (en cm)",
-            fieldName: "userHeight",
+            type: "number",
             required: true
           },
+          modelName: "userHeight",
           validationRules: ["userHeight"]
         }
       },
       {
         type: "input",
-        title: "Datos personales",
-        text: "¡Ya estamos acabando! Sólo nos falta tu fecha de nacimiento.",
+        title: {
+          id: "slide.user_personal_data_title"
+        },
+        text: {
+          id: "slide.user_birth_text"
+        },
         buttons: [
           {
-            label: "Terminar"
+            label: {
+              id: "slide.finish_button_label"
+            }
           }
         ],
         question: {
           field: {
             label: "Tu fecha de nacimiento",
-            fieldName: "userBirth",
             type: "date",
             required: true
           },
+          modelName: "userBirth",
           validationRules: ["userBirth"]
         }
+      },
+      {
+        type: "loader",
+        title: {
+          id: "slide.preparing_app_title"
+        },
+        buttons: []
       }
     ],
     model: {

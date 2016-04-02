@@ -27,6 +27,7 @@ define([], function() {
         return;
       }
 
+      this._working = true;
       var action = this._queue.shift();
       var type = action.name;
 
