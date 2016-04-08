@@ -47,3 +47,5 @@ fabric.properties
 www/js/build/
 
 platforms/
+
+.idea/
