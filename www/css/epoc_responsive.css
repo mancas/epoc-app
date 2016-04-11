@@ -1,0 +1,17 @@
+@media (max-width: 320px) {
+  .material-calendar-wrapper .material-calendar {
+    width: 280px; }
+    .material-calendar-wrapper .material-calendar .calendar-content .calendar-days-header {
+      padding: 0 14px; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-days-header li {
+        width: 36px; }
+    .material-calendar-wrapper .material-calendar .calendar-content .calendar-days {
+      padding: 14px; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .calendar-day {
+        width: 36px;
+        height: 36px;
+        line-height: 36px; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .empty-day {
+        height: 0; } }
+
+/*# sourceMappingURL=epoc_responsive.css.map */

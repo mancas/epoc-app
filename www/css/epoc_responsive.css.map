@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,yBAA0B;EAEtB,6CAAmB;IACjB,KAAK,EAAE,KAAK;IAGV,qFAAsB;MACpB,OAAO,EAAE,MAAM;MAEf,wFAAG;QACD,KAAK,EAAE,IAAI;IAIf,8EAAe;MACb,OAAO,EAAE,IAAI;MAEb,4FAAc;QACZ,KAAK,EAAE,IAAI;QACX,MAAM,EAAE,IAAI;QACZ,WAAW,EAAE,IAAI;MAGnB,yFAAW;QACT,MAAM,EAAE,CAAC",
+"sources": ["epoc_responsive.scss"],
+"names": [],
+"file": "epoc_responsive.css"
+}

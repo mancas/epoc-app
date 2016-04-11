@@ -1,0 +1,554 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-family: 'Roboto Regular', sans-serif;
+  color: #4a4a4a; }
+
+* {
+  box-sizing: border-box; }
+
+.ep-right {
+  float: right; }
+
+.ep-left {
+  float: left; }
+
+.hidden {
+  display: none !important; }
+
+#container {
+  width: 100%;
+  height: 100%; }
+  #container .app {
+    width: 100%;
+    height: 100%; }
+
+/* Slideshow */
+.slideshow {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden; }
+
+.slideshow > .slide {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  transform: translateX(100%);
+  transition: transform .3s ease .3s; }
+
+.slideshow > .slide.current {
+  transform: translateX(0); }
+
+.slideshow > .slide.done {
+  transform: translateX(-100%); }
+
+.slideshow > .slide > .slide-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  padding: 0 16px; }
+
+.slideshow > .slide > .slide-content > .slide-icon {
+  background-color: #00acb4;
+  width: 104px;
+  height: 104px;
+  display: block;
+  margin: 0 auto 38px;
+  border: solid 2px #fff;
+  border-radius: 50%;
+  position: relative; }
+  .slideshow > .slide > .slide-content > .slide-icon:after {
+    content: "?";
+    display: block;
+    width: 106px;
+    height: 106px;
+    margin: auto;
+    border: solid 4px #00acb4;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 45px;
+    font-family: "Roboto Light", sans-serif;
+    font-weight: bold;
+    line-height: 112px;
+    color: #fff; }
+
+.slideshow > .slide > .slide-content > h1 {
+  font-size: 20px;
+  margin: 0 0 20px; }
+
+.slideshow > .slide > .slide-content > p {
+  font-size: 14px;
+  margin: 0 0 30px 0; }
+
+.slideshow > .slide > .slide-content > .input-group {
+  margin: 0 14px; }
+
+/* Slideshow choices */
+.slideshow .choices {
+  max-width: 200px;
+  overflow: hidden;
+  text-align: center;
+  margin: auto; }
+  .slideshow .choices .choice-button {
+    display: inline-block; }
+    .slideshow .choices .choice-button:nth-child(even) {
+      margin-left: 30px; }
+    .slideshow .choices .choice-button:nth-child(1) .ep-btn {
+      margin: 0; }
+    .slideshow .choices .choice-button:nth-child(2) .ep-btn {
+      margin: 0; }
+    .slideshow .choices .choice-button .material-button {
+      min-width: 60px; }
+
+.slide-content > button:last-of-type {
+  margin-left: 30px; }
+
+.slide-content > button:first-of-type {
+  margin-left: 0; }
+
+/* Pagination */
+.pagination {
+  display: block;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: 30px; }
+  .pagination .bullet {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #c1c1c1;
+    border-radius: 50%;
+    margin-left: 10px;
+    transition: background 0.3s cubic-bezier(0.55, 0, 0.55, 0.2) 0.3s; }
+  .pagination .bullet:first-child {
+    margin-left: 0; }
+  .pagination .bullet.active {
+    background: #00acb4; }
+
+@media (max-height: 400px) {
+  .pagination {
+    display: none; } }
+/** RIPPLE EFFECT **/
+.ripple-effect {
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0);
+  background-color: rgba(255, 255, 255, 0.5); }
+
+.ripple-effect.animate {
+  animation: ripple 0.65s cubic-bezier(0.55, 0, 0.55, 0.2); }
+
+@keyframes ripple {
+  100% {
+    opacity: 0;
+    transform: scale(2.5); } }
+/* Material styles */
+.form-control {
+  border-radius: 0;
+  border: 0;
+  border-bottom: solid 0.1rem #c1c1c1;
+  box-shadow: none;
+  height: 34px;
+  position: relative;
+  outline: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  font-size: 14px; }
+  .form-control:active, .form-control:focus {
+    box-shadow: none; }
+
+/* Workaround for date inputs */
+div.form-control {
+  text-align: left;
+  line-height: 34px; }
+
+.material-input-wrapper {
+  position: relative;
+  display: block;
+  margin: 0 14px; }
+  .material-input-wrapper:after {
+    position: absolute;
+    left: 0;
+    /* Keep in sync with input height */
+    top: 31px;
+    right: 0;
+    content: '';
+    z-index: 12;
+    width: 0%;
+    height: 0.2rem;
+    background-color: #00acb4;
+    transition: width 300ms ease 0s; }
+  .material-input-wrapper label {
+    pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    padding-left: 3px;
+    padding-right: 0;
+    z-index: 1;
+    -webkit-transform: translate3d(0, 28px, 0) scale(1);
+    transform: translate3d(0, 28px, 0) scale(1);
+    transition: -webkit-transform cubic-bezier(0.25, 0.8, 0.25, 1) 0.25s;
+    transition: transform cubic-bezier(0.25, 0.8, 0.25, 1) 0.25s;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    text-align: left; }
+  .material-input-wrapper > .material-char-counter {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 12px; }
+
+.material-input-wrapper.focused label {
+  transform: translate3d(0, 6px, 0) scale(0.75); }
+.material-input-wrapper.focused:after {
+  width: 100%; }
+
+.material-input-wrapper.has-value label {
+  transform: translate3d(0, 6px, 0) scale(0.75); }
+
+.material-input-wrapper.is-invalid.touched {
+  color: #c62828; }
+  .material-input-wrapper.is-invalid.touched .form-control {
+    border-color: #c62828; }
+  .material-input-wrapper.is-invalid.touched:after {
+    background-color: #c62828; }
+
+/* Buttons */
+.material-button {
+  text-transform: uppercase;
+  color: #fff;
+  background-color: #00acb4;
+  margin: 35px 0 0;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  border-radius: 3px;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  outline: 0;
+  border: 0;
+  display: inline-block;
+  padding: 0 6px;
+  line-height: 36px;
+  min-height: 36px;
+  white-space: nowrap;
+  min-width: 108px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-family: 'Roboto Medium', sans-serif; }
+  .material-button img {
+    vertical-align: middle; }
+
+.material-button.btn-dark {
+  background-color: #4a4a4a; }
+
+.material-button.selected {
+  background-color: #00acb4; }
+
+.material-button[disabled] {
+  background: rgba(79, 79, 79, 0.26);
+  color: rgba(0, 0, 0, 0.38);
+  box-shadow: none; }
+
+.btn-full-width {
+  width: 100%; }
+
+.material-button.borderless {
+  background-color: inherit;
+  color: #00acb4;
+  font-weight: normal;
+  box-shadow: none;
+  font-family: "Roboto Regular", sans-serif; }
+  .material-button.borderless .ripple-effect {
+    background-color: rgba(0, 0, 0, 0.2); }
+
+/* Material Design: Calendar */
+.material-calendar-wrapper {
+  width: 100%;
+  height: 100%; }
+  .material-calendar-wrapper .overlay {
+    background: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
+  .material-calendar-wrapper .material-calendar {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    transition: all .4s ease;
+    width: 320px;
+    opacity: 0; }
+    .material-calendar-wrapper .material-calendar .material-calendar-header {
+      padding: 10px 20px;
+      background: #00acb4;
+      color: #fff; }
+      .material-calendar-wrapper .material-calendar .material-calendar-header span {
+        display: block;
+        opacity: .7; }
+      .material-calendar-wrapper .material-calendar .material-calendar-header .active {
+        opacity: 1; }
+      .material-calendar-wrapper .material-calendar .material-calendar-header .calendar-year {
+        font-size: 16px;
+        margin-bottom: 10px; }
+      .material-calendar-wrapper .material-calendar .material-calendar-header .calendar-date {
+        font-size: 36px; }
+    .material-calendar-wrapper .material-calendar .calendar-content {
+      background: #fff;
+      position: relative; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation {
+        padding: 12px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        /* 24px icons + 24px padding */
+        height: 48px;
+        line-height: 24px; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation .navigation-left {
+          float: left; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation .navigation-right {
+          float: right; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation [class*="navigation-"] {
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          position: relative; }
+          .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation [class*="navigation-"]:before {
+            content: "";
+            background: #c1c1c1;
+            border-radius: 50%;
+            position: absolute;
+            display: block;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            transform: scale(0); }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation span[class*="chevron-"] {
+          width: 24px;
+          height: 24px;
+          display: inline-block; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation [class*="navigation-"].animate:before {
+          animation: calendar 0.6s ease; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation .chevron-left {
+          background: url("../img/material/chevron_left.svg") center center no-repeat; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-navigation .chevron-right {
+          background: url("../img/material/chevron_right.svg") center center no-repeat; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-days-header {
+        list-style: none;
+        padding: 0 20px;
+        line-height: 12px;
+        opacity: 0.5;
+        height: 12px;
+        font-weight: 500;
+        margin: 0;
+        text-align: center; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-days-header li {
+          display: inline-block;
+          width: 40px;
+          font-weight: bold;
+          font-size: 12px;
+          text-align: center; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-days {
+        padding: 20px; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .calendar-day {
+          width: 40px;
+          height: 40px;
+          display: inline-block;
+          text-align: center;
+          line-height: 40px;
+          font-size: 12px;
+          border-radius: 50%;
+          transition: background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.4s ease; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .empty-day {
+          height: 0; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .current-day {
+          font-weight: bold;
+          color: #00acb4; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-days .selected-day {
+          background-color: #00acb4;
+          color: #fff; }
+      .material-calendar-wrapper .material-calendar .calendar-content .calendar-years {
+        padding: 8px 14px;
+        overflow: scroll;
+        background: #fff;
+        max-height: 280px; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-years .calendar-year {
+          width: 48px;
+          height: 48px;
+          margin: 8px auto;
+          font-size: 14px;
+          line-height: 48px;
+          text-align: center;
+          border-radius: 50%;
+          transition: background-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.4s ease; }
+        .material-calendar-wrapper .material-calendar .calendar-content .calendar-years .selected-year {
+          background-color: #00acb4;
+          color: #fff; }
+    .material-calendar-wrapper .material-calendar .calendar-buttons {
+      background: #fff;
+      padding: 0 14px 5px;
+      text-align: right; }
+      .material-calendar-wrapper .material-calendar .calendar-buttons button {
+        margin: 0;
+        min-width: 88px; }
+
+.material-calendar-wrapper.material-calendar-display .material-calendar {
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1; }
+
+@keyframes calendar {
+  100% {
+    opacity: 0;
+    transform: scale(1.5); } }
+/* Material Loader */
+.pulses-loader {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: auto; }
+  .pulses-loader div {
+    width: 100%;
+    height: 100%;
+    background-color: #00acb4;
+    border-radius: 50%;
+    opacity: .6;
+    -webkit-animation: epoc-loader 2s infinite ease-in-out;
+    animation: epoc-loader 2s infinite ease-in-out;
+    position: absolute; }
+  .pulses-loader .second {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s; }
+
+@-webkit-keyframes epoc-loader {
+  0%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0); }
+  50% {
+    -webkit-transform: scale(1);
+    transform: scale(1); } }
+@keyframes epoc-loader {
+  0%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0); }
+  50% {
+    -webkit-transform: scale(1);
+    transform: scale(1); } }
+/* Material app bar */
+.material-app-bar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #00acb4;
+  color: #fff;
+  display: block; }
+  .material-app-bar-container .material-app-bar {
+    height: 56px;
+    padding: 16px; }
+    .material-app-bar-container .material-app-bar h1 {
+      margin: 0;
+      font-family: "Roboto Regular", sans-serif;
+      font-size: 20px;
+      font-weight: normal;
+      display: inline-block; }
+  .material-app-bar-container .material-tabs-container {
+    height: 48px; }
+    .material-app-bar-container .material-tabs-container .material-tab {
+      height: 100%;
+      margin: 0;
+      box-shadow: none;
+      font-size: 14px;
+      font-family: "Roboto Regular", sans-serif;
+      color: rgba(255, 255, 255, 0.7);
+      min-width: initial; }
+    .material-app-bar-container .material-tabs-container .material-tab.selected {
+      color: #fff; }
+    .material-app-bar-container .material-tabs-container .material-tabs-indicator {
+      height: 2px;
+      background: #fff;
+      position: absolute;
+      bottom: 0;
+      transition: left 1s cubic-bezier(0.23, 1, 0.32, 1); }
+
+.material-app-bar-container.zDepth1 {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.12); }
+
+.material-app-bar-container.zDepth2 {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.16), 0 3px 10px rgba(0, 0, 0, 0.23); }
+
+.material-app-bar-container.zDepth3 {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.19), 0 6px 10px rgba(0, 0, 0, 0.23); }
+
+.material-app-bar-container.zDepth4 {
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.25), 0 10px 28px rgba(0, 0, 0, 0.22); }
+
+.material-app-bar-container.zDepth5 {
+  box-shadow: 0 19px 60px rgba(0, 0, 0, 0.3), 0 15px 20px rgba(0, 0, 0, 0.22); }
+
+/* Tabs content */
+.material-tabs-content {
+  height: 100%;
+  padding: 120px 16px 16px;
+  position: relative; }
+  .material-tabs-content .tab-content {
+    height: 100%;
+    position: relative; }
+
+/* Cards */
+.material-card {
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.24);
+  border-radius: 3px; }
+  .material-card .card-info-wrapper {
+    padding: 20px 16px 0; }
+    .material-card .card-info-wrapper .card-title {
+      font-size: 14px;
+      font-weight: bold;
+      font-family: 'Roboto Medium', sans-serif;
+      margin: 0 0 14px; }
+    .material-card .card-info-wrapper p {
+      font-size: 13px;
+      font-family: "Roboto Regular", sans-serif;
+      margin: 0 0 16px;
+      color: #757575; }
+  .material-card .card-buttons {
+    border-top: solid 1px rgba(0, 0, 0, 0.12);
+    padding: 7px 10px; }
+    .material-card .card-buttons .material-button {
+      margin: 0 20px 0 0;
+      min-width: initial; }
+
+/*# sourceMappingURL=epoc.css.map */

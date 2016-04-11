@@ -1,0 +1,31 @@
+@media (max-width: 320px) {
+  .material-calendar-wrapper {
+    .material-calendar {
+      width: 280px;
+
+      .calendar-content {
+        .calendar-days-header {
+          padding: 0 14px;
+
+          li {
+            width: 36px;
+          }
+        }
+
+        .calendar-days {
+          padding: 14px;
+
+          .calendar-day {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+          }
+
+          .empty-day {
+            height: 0;
+          }
+        }
+      }
+    }
+  }
+}
