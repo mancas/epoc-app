@@ -2,6 +2,10 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
   "use strict";
 
   var RippleButton = React.createClass({
+    statics: {
+      ANIMATION_DELAY: 750
+    },
+
     propTypes: {
       children: React.PropTypes.node,
       disabled: React.PropTypes.bool,
@@ -26,42 +30,43 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       };
     },
 
-    rippleElement: null,
-    diagonal: null,
-
     componentDidMount: function() {
-      this.rippleElement = this.getDOMNode().querySelector(".ripple-effect");
       this.getDOMNode().addEventListener("touchstart", this.onTouchStart);
     },
 
     onTouchStart: function(event) {
       var elementBoundingClientRect = this.getDOMNode().getBoundingClientRect();
+      var rippleElement = this.getDOMNode().querySelector(".ripple-effect");
+      var diagonal;
       var x, y;
       // Stop the previous animation in case of a
       // quick double click
-      this.rippleElement.classList.remove('animate');
+      rippleElement.classList.remove('animate');
 
       // If it's the first time the user click the button,
       // width and height parameters must be set
-      if (!this.rippleElement.clientHeight ||
-        !this.rippleElement.clientWidth) {
-        this.diagonal =
+      if (!rippleElement.clientHeight ||
+        !rippleElement.clientWidth) {
+        diagonal =
           Math.max(elementBoundingClientRect.height,
             elementBoundingClientRect.width);
 
-        this.rippleElement.style.height = this.diagonal + 'px';
-        this.rippleElement.style.width = this.diagonal + 'px';
+        rippleElement.style.height = diagonal + 'px';
+        rippleElement.style.width = diagonal + 'px';
       }
 
       x = event.touches[0].clientX -
-        elementBoundingClientRect.left - this.diagonal/2;
+        elementBoundingClientRect.left - diagonal/2;
       y = event.touches[0].clientY -
-        elementBoundingClientRect.top - this.diagonal/2;
+        elementBoundingClientRect.top - diagonal/2;
 
-      this.rippleElement.style.top = y + 'px';
-      this.rippleElement.style.left = x + 'px';
+      rippleElement.style.top = y + 'px';
+      rippleElement.style.left = x + 'px';
 
-      this.rippleElement.classList.add('animate');
+      rippleElement.classList.add('animate');
+      setTimeout(function() {
+        rippleElement.classList.remove('animate');
+      }, this.constructor.ANIMATION_DELAY);
     },
 
     handleClick: function(event) {
@@ -668,6 +673,7 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
   var AppBarView = React.createClass({
     propTypes: {
       children: React.PropTypes.node,
+      currentRoute: React.PropTypes.string.isRequired,
       title: React.PropTypes.string.isRequired,
       style: React.PropTypes.object,
       zIndex: React.PropTypes.oneOf([1, 2, 3, 4, 5])
@@ -679,9 +685,60 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       };
     },
 
+    componentWillMount: function() {
+      if (this.props.children && this.props.currentRoute === "index") {
+        window.addEventListener("scroll", this.onScroll);
+      }
+    },
+
+    componentWillUnMount: function() {
+      if (this.props.children && this.props.currentRoute === "index") {
+        window.removeEventListener("scroll", this.onScroll);
+      }
+    },
+
+    _getStyleProperty: function(property) {
+      var style = window.getComputedStyle(this.getDOMNode(), null);
+      return parseInt(style.getPropertyValue(property), 10);
+    },
+
+    onScroll: function(evt) {
+      console.info("scroll", evt);
+      this._currentScrollY = window.scrollY;
+      if (!this._lastScrollY) {
+        this._lastScrollY = window.scrollY;
+      }
+
+      if (!this.ticking) {
+        window.requestAnimationFrame(function() {
+          var incY = this._lastScrollY - this._currentScrollY;
+          var top = this._getStyleProperty("top") + incY;
+
+          if (this._lastScrollY > this._currentScrollY) {
+            top = top > 0 ? 0 : top;
+          } else {
+            top = top < -54 ? -54 : top;
+          }
+          this.getDOMNode().style.top = top + "px";
+          this._lastScrollY = this._currentScrollY;
+          this.ticking = false;
+        }.bind(this));
+      }
+      this.ticking = true;
+    },
+
+    goBack: function () {
+      window.history.back();
+    },
+
+    _shouldRenderBackButton: function() {
+      return this.props.currentRoute !== "index";
+    },
+
     render: function() {
       var containerClasses = {
-        "material-app-bar-container": true
+        "material-app-bar-container": true,
+        "back-icon-visible": this._shouldRenderBackButton()
       };
 
       containerClasses["zDepth" + this.props.zIndex] = true;
@@ -689,9 +746,17 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       return (
         <div className={classNames(containerClasses)}>
           <div className="material-app-bar">
+            {
+              this._shouldRenderBackButton() ?
+                <RippleButton
+                  extraCSSClasses={{ "borderless": true, "back-icon": true }}
+                  handleClick={this.goBack}>
+                  <img src="../../img/material/arrow_back_white.svg" />
+                </RippleButton> : null
+            }
             <h1>{this.props.title}</h1>
           </div>
-          {this.props.children}
+          { this.props.currentRoute === "index" ? this.props.children : null }
         </div>
       );
     }
@@ -811,12 +876,6 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       };
     },
 
-    getInitialState: function() {
-      return {
-        selectedTab: this.props.selectedTab
-      };
-    },
-
     getTabsContent: function() {
       const tabsContent = [];
       React.Children.forEach(this.props.children, function(tabContent) {
@@ -836,7 +895,7 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
             tabsContent.map(function(tabContent, index) {
               return React.cloneElement(tabContent, {
                 key: index,
-                selected: index === this.state.selectedTab,
+                selectedTab: this.props.selectedTab,
                 tabIndex: index
               });
             }, this)
@@ -849,20 +908,75 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
   var TabContentView = React.createClass({
     propTypes: {
       children: React.PropTypes.node.isRequired,
-      selected: React.PropTypes.bool,
+      selectedTab: React.PropTypes.number,
       tabIndex: React.PropTypes.number
     },
 
-    getDefaultProps: function() {
+    getInitialState: function() {
       return {
-        selected: false
+        toLeft: false,
+        toRight: false
       };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      var selected = this.props.selectedTab === this.props.tabIndex;
+      var willBeSelected = nextProps.selectedTab === nextProps.tabIndex;
+
+      if (nextProps.selectedTab === this.props.selectedTab) {
+        return;
+      }
+// TODO: simplify code below
+      if (selected) {
+        if (nextProps.selectedTab > this.props.selectedTab) {
+          this.setState({
+            toLeft: true,
+            toRight: false,
+            fromLeft: false,
+            fromRight: false
+          });
+        } else {
+          this.setState({
+            toLeft: false,
+            toRight: true,
+            fromLeft: false,
+            fromRight: false
+          });
+        }
+      } else if (willBeSelected) {
+        if (nextProps.selectedTab > this.props.selectedTab) {
+          this.setState({
+            toLeft: false,
+            toRight: false,
+            fromLeft: false,
+            fromRight: true
+          });
+        } else {
+          this.setState({
+            toLeft: false,
+            toRight: false,
+            fromLeft: true,
+            fromRight: false
+          });
+        }
+      } else {
+        this.setState({
+          toLeft: false,
+          toRight: false,
+          fromLeft: false,
+          fromRight: false
+        });
+      }
     },
 
     render: function() {
       var cssClasses = {
         "tab-content": true,
-        "selected": this.props.selected
+        "selected": this.props.selectedTab === this.props.tabIndex,
+        "to-right": this.state.toRight,
+        "to-left": this.state.toLeft,
+        "from-right": this.state.fromRight,
+        "from-left": this.state.fromLeft
       };
 
       return (
@@ -875,7 +989,7 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
 
   var CardView = React.createClass({
     propTypes: {
-
+      content: React.PropTypes.object.isRequired
     },
 
     render: function() {
@@ -900,10 +1014,85 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
     }
   });
 
+  var DropdownView = React.createClass({
+    statics: {
+      CONTENT_MARGIN: 20
+    },
+
+    propTypes: {
+      children: React.PropTypes.node.isRequired,
+      label: React.PropTypes.string.isRequired,
+      opened: React.PropTypes.bool
+    },
+
+    getDefaultProps: function() {
+      return {
+        opened: false
+      };
+    },
+
+    getInitialState: function() {
+      return {
+        opened: this.props.opened
+      };
+    },
+
+    toggleDropdow: function() {
+      this.setState({
+        opened: !this.state.opened
+      });
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      if (nextProps.children !== this.props.children) {
+        this._calculateContentHeight();
+      }
+    },
+
+    componentDidMount: function() {
+      this._calculateContentHeight();
+    },
+
+    _calculateContentHeight: function() {
+      var height = 0;
+      var container = this.getDOMNode().querySelector(".dropdown-content");
+      Array.prototype.forEach.call(container.children, function(children) {
+        height += children.clientHeight;
+      });
+
+      this.state.height = height + this.constructor.CONTENT_MARGIN;
+    },
+
+    render: function() {
+      var btnExtraClasses = {
+        "borderless": true,
+        "dropdown-btn": true,
+        "opened": this.state.opened
+      };
+
+      var styleContent = {
+        height: this.state.opened ? this.state.height + "px" : 0
+      };
+
+      return (
+        <div className="material-dropdown">
+          <RippleButton
+            extraCSSClasses={btnExtraClasses}
+            handleClick={this.toggleDropdow}
+            label={this.props.label} />
+          <div className="dropdown-content" style={styleContent}>
+            {this.props.children}
+          </div>
+        </div>
+      );
+    }
+  });
+
   return {
     AppBarView: AppBarView,
     CalendarView: CalendarView,
     CardView: CardView,
+    DropdownView: DropdownView,
     Input: Input,
     RippleButton: RippleButton,
     TabContentView: TabContentView,

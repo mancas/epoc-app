@@ -1,7 +1,7 @@
 require.config({
   baseUrl: "js/",
   paths: {
-    "react": "../vendor/react.min",
+    "react": "../vendor/react",
     "reactRouter": "../vendor/ReactRouter.min",
     "classnames": "../vendor/classNames",
     "_": "../vendor/underscore.min",

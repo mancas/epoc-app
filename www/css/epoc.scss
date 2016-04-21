@@ -2,12 +2,6 @@ $primary: #00acb4;
 $grey: #4a4a4a;
 $white: #fff;
 $light_grey: #c1c1c1;
-$error: #c62828;
-$disabled: rgba(79, 79, 79, .26);
-$disabled_text: rgba(0, 0, 0, .38);
-$not_selected_tab: rgba(255, 255, 255, 0.7);
-$card-gray: #757575;
-$card-separator: rgba(0, 0, 0, .12);
 
 html, body {
   height: 100%;
@@ -40,6 +34,57 @@ html, body {
   .app {
     width: 100%;
     height: 100%;
+
+    .app-content {
+      width: 100%;
+      height: 100%;
+      padding: 70px 0 0;
+
+      .section-info {
+        padding: 0 16px 16px;
+
+        h1 {
+          font-family: "Roboto Medium", sans-serif;
+          font-size: 16px;
+          margin-top: 30px;
+
+          &:first-of-type {
+            margin-top: 10px;
+          }
+        }
+
+        h2 {
+          font-family: "Roboto Bold", sans-serif;
+          margin-top: 30px;
+          color: $primary;
+          font-size: 16px;
+        }
+
+        p {
+          font-family: "Roboto Light", sans-serif;
+          font-size: 14px;
+        }
+
+        b {
+          font-family: "Roboto Bold", sans-serif;
+        }
+
+        .img-caption-group {
+          img {
+            max-width: 100%;
+            display: block;
+            margin: auto;
+          }
+
+          .caption {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            font-family: 'Roboto Medium', sans-serif;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -204,563 +249,30 @@ html, body {
   }
 }
 
-/** RIPPLE EFFECT **/
-.ripple-effect {
-  border-radius: 50%;
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: scale(0);
-  background-color: rgba(255, 255, 255, 0.5);
-}
+/* APP Sections */
+.app-sections {
+  .section-btn {
+    width: 33.33333333%;
+    display: block;
+    float: left;
+    text-align: center;
+    min-height: 118px;
+    border-radius: 0;
+    margin: 0 0 20px 0;
+    padding: 0;
+    min-width: initial;
+    white-space: initial;
+    line-height: 18px;
 
-.ripple-effect.animate {
-  animation: ripple 0.65s cubic-bezier(0.55, 0, 0.55, 0.2);
-}
-
-@keyframes ripple {
-  100% {
-    opacity: 0;
-    transform: scale(2.5);
-  }
-}
-
-/* Material styles */
-.form-control {
-  border-radius: 0;
-  border: 0;
-  border-bottom: solid 0.1rem $light_grey;
-  box-shadow: none;
-  height: 34px;
-  position: relative;
-  outline: none !important;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 100%;
-  font-size: 14px;
-
-  &:active, &:focus {
-    box-shadow: none;
-  }
-}
-
-/* Workaround for date inputs */
-div.form-control {
-  text-align: left;
-  line-height: 34px;
-}
-
-.material-input-wrapper {
-  position: relative;
-  display: block;
-  margin: 0 14px;
-
-  &:after {
-    position: absolute;
-    left: 0;
-    /* Keep in sync with input height */
-    top: 31px;
-    right: 0;
-    content: '';
-    z-index: 12;
-    width: 0%;
-    height: 0.2rem;
-    background-color: $primary;
-    transition: width 300ms ease 0s;
-  }
-
-  label {
-    pointer-events: none;
-    -webkit-font-smoothing: antialiased;
-    padding-left: 3px;
-    padding-right: 0;
-    z-index: 1;
-    -webkit-transform: translate3d(0,28px,0) scale(1);
-    transform: translate3d(0,28px,0) scale(1);
-    transition: -webkit-transform cubic-bezier(.25,.8,.25,1) .25s;
-    transition: transform cubic-bezier(.25,.8,.25,1) .25s;
-    -webkit-transform-origin: left top;
-    transform-origin: left top;
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    right: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    text-align: left;
-  }
-
-  > .material-char-counter {
-    margin: 6px 0 0;
-    text-align: right;
-    font-size: 12px;
-  }
-}
-
-.material-input-wrapper.focused {
-  label {
-    transform: translate3d(0,6px,0) scale(.75);
-  }
-
-  &:after {
-    width: 100%;
-  }
-}
-
-.material-input-wrapper.has-value {
-  label {
-    transform: translate3d(0,6px,0) scale(.75)
-  }
-}
-
-.material-input-wrapper.is-invalid.touched {
-  color: $error;
-
-  .form-control {
-    border-color: $error;
-  }
-
-  &:after {
-    background-color: $error;
-  }
-}
-
-/* Buttons */
-.material-button {
-  text-transform: uppercase;
-  color: $white;
-  background-color: $primary;
-  margin: 35px 0 0;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-  border-radius: 3px;
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  position: relative;
-  outline: 0;
-  border: 0;
-  display: inline-block;
-  padding: 0 6px;
-  line-height: 36px;
-  min-height: 36px;
-  white-space: nowrap;
-  min-width: 108px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer;
-  overflow: hidden;
-  transition: box-shadow .4s cubic-bezier(.25,.8,.25,1),background-color .4s cubic-bezier(.25,.8,.25,1);
-  font-family: 'Roboto Medium', sans-serif;
-
-  img {
-    vertical-align: middle;
-  }
-}
-
-.material-button.btn-dark {
-  background-color: $grey;
-}
-
-.material-button.selected {
-  background-color: $primary;
-}
-
-.material-button[disabled] {
-  background: $disabled;
-  color: $disabled_text;
-  box-shadow: none;
-}
-
-.btn-full-width {
-  width: 100%;
-}
-
-.material-button.borderless {
-  background-color: inherit;
-  color: $primary;
-  font-weight: normal;
-  box-shadow: none;
-  font-family: "Roboto Regular", sans-serif;
-
-  .ripple-effect {
-    background-color: rgba(0, 0, 0, .2);
-  }
-}
-
-/* Material Design: Calendar */
-.material-calendar-wrapper {
-  width: 100%;
-  height: 100%;
-
-  .overlay {
-    background: rgba(0, 0, 0, .4);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
-  .material-calendar {
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    transition: all .4s ease;
-    width: 320px;
-    opacity: 0;
-
-    .material-calendar-header {
-      padding: 10px 20px;
-      background: $primary;
-      color: $white;
-
-      span {
-        display: block;
-        opacity: .7;
-      }
-
-      .active {
-        opacity: 1;
-      }
-
-      .calendar-year {
-        font-size: 16px;
-        margin-bottom: 10px;
-      }
-
-      .calendar-date {
-        font-size: 36px;
-      }
+    img {
+      margin-bottom: 10px;
     }
 
-    .calendar-content {
-      background: $white;
-      position: relative;
-
-      .calendar-navigation {
-        padding: 12px;
-        font-size: 14px;
-        font-weight: bold;
-        text-align: center;
-        /* 24px icons + 24px padding */
-        height: 48px;
-        line-height: 24px;
-
-        .navigation-left {
-          float: left;
-        }
-
-        .navigation-right {
-          float: right;
-        }
-
-        [class*="navigation-"] {
-          border-radius: 50%;
-          width: 24px;
-          height: 24px;
-          position: relative;
-
-          &:before {
-            content: "";
-            background: $light_grey;
-            border-radius: 50%;
-            position: absolute;
-            display: block;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            transform: scale(0);
-          }
-        }
-
-        span[class*="chevron-"] {
-          width: 24px;
-          height: 24px;
-          display: inline-block;
-        }
-
-        [class*="navigation-"].animate {
-          &:before {
-            animation: calendar 0.6s ease;
-          }
-        }
-
-        .chevron-left {
-          background: url("../img/material/chevron_left.svg") center center no-repeat;
-        }
-
-        .chevron-right {
-          background: url("../img/material/chevron_right.svg") center center no-repeat;
-        }
-      }
-
-      .calendar-days-header {
-        list-style: none;
-        padding: 0 20px;
-        line-height: 12px;
-        opacity: 0.5;
-        height: 12px;
-        font-weight: 500;
-        margin: 0;
-        text-align: center;
-
-        li {
-          display: inline-block;
-          width: 40px;
-          font-weight: bold;
-          font-size: 12px;
-          text-align: center;
-        }
-      }
-
-      .calendar-days {
-        padding: 20px;
-
-        .calendar-day {
-          width: 40px;
-          height: 40px;
-          display: inline-block;
-          text-align: center;
-          line-height: 40px;
-          font-size: 12px;
-          border-radius: 50%;
-          transition: background-color .4s cubic-bezier(.25,.8,.25,1), color .4s ease;
-        }
-
-        .empty-day {
-          height: 0;
-        }
-
-        .current-day {
-          font-weight: bold;
-          color: $primary;
-        }
-
-        .selected-day {
-          background-color: $primary;
-          color: $white;
-        }
-      }
-
-      .calendar-years {
-        padding: 8px 14px;
-        overflow: scroll;
-        background: $white;
-        max-height: 280px;
-
-        .calendar-year {
-          width: 48px;
-          height: 48px;
-          margin: 8px auto;
-          font-size: 14px;
-          line-height: 48px;
-          text-align: center;
-          border-radius: 50%;
-          transition: background-color .4s cubic-bezier(.25,.8,.25,1), color .4s ease;
-        }
-
-        .selected-year {
-          background-color: $primary;
-          color: $white;
-        }
-      }
-    }
-
-    .calendar-buttons {
-      background: $white;
-      padding: 0 14px 5px;
-      text-align: right;
-
-      button {
-        margin: 0;
-        min-width: 88px;
-      }
-    }
-  }
-}
-
-.material-calendar-wrapper.material-calendar-display {
-  .material-calendar {
-    top: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-}
-
-@keyframes calendar {
-  100% {
-    opacity: 0;
-    transform: scale(1.5);
-  }
-}
-
-/* Material Loader */
-.pulses-loader {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  margin: auto;
-  div {
-    width: 100%;
-    height: 100%;
-    background-color: $primary;
-    border-radius: 50%;
-    opacity: .6;
-    -webkit-animation: epoc-loader 2s infinite ease-in-out;
-    animation: epoc-loader 2s infinite ease-in-out;
-    position: absolute;
-  }
-
-  .second {
-    -webkit-animation-delay: -1s;
-    animation-delay: -1s;
-  }
-}
-
-@-webkit-keyframes epoc-loader {
-  0%, 100% {
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  }
-  50% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-}
-
-@keyframes epoc-loader {
-  0%, 100% {
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  }
-  50% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-}
-
-/* Material app bar */
-.material-app-bar-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: $primary;
-  color: $white;
-  display: block;
-
-  .material-app-bar {
-    height: 56px;
-    padding: 16px;
-
-    h1 {
-      margin: 0;
-      font-family: "Roboto Regular", sans-serif;
-      font-size: 20px;
-      font-weight: normal;
-      display: inline-block;
-    }
-  }
-
-  .material-tabs-container {
-    height: 48px;
-
-    .material-tab {
-      height: 100%;
-      margin: 0;
-      box-shadow: none;
-      font-size: 14px;
-      font-family: "Roboto Regular", sans-serif;
-      color: $not_selected_tab;
-      min-width: initial;
-    }
-
-    .material-tab.selected {
-      color: $white;
-    }
-
-    .material-tabs-indicator {
-      height: 2px;
-      background: $white;
-      position: absolute;
-      bottom: 0;
-      transition: left 1s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-  }
-}
-
-.material-app-bar-container.zDepth1 {
-  box-shadow: 0 1px 6px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.12);
-}
-
-.material-app-bar-container.zDepth2 {
-  box-shadow: 0 3px 10px rgba(0,0,0,0.16), 0 3px 10px rgba(0,0,0,0.23);
-}
-
-.material-app-bar-container.zDepth3 {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.19), 0 6px 10px rgba(0,0,0,0.23);
-}
-
-.material-app-bar-container.zDepth4 {
-  box-shadow: 0 14px 45px rgba(0,0,0,0.25), 0 10px 28px rgba(0,0,0,0.22);
-}
-
-.material-app-bar-container.zDepth5 {
-  box-shadow: 0 19px 60px rgba(0,0,0,0.30), 0 15px 20px rgba(0,0,0,0.22);
-}
-
-/* Tabs content */
-.material-tabs-content {
-  height: 100%;
-  padding: 120px 16px 16px;
-  position: relative;
-
-  .tab-content {
-    height: 100%;
-    position: relative;
-  }
-}
-
-/* Cards */
-.material-card {
-  width: 100%;
-  background: $white;
-  box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.24);
-  border-radius: 3px;
-
-  .card-info-wrapper {
-    padding: 20px 16px 0;
-
-    .card-title {
-      font-size: 14px;
-      font-weight: bold;
-      font-family: 'Roboto Medium', sans-serif;
-      margin: 0 0 14px;
-    }
-
-    p {
+    span:not(.ripple-effect) {
+      display: block;
       font-size: 13px;
-      font-family: "Roboto Regular", sans-serif;
-      margin: 0 0 16px;
-      color: $card-gray;
-    }
-  }
-
-  .card-buttons {
-    border-top: solid 1px $card-separator;
-    padding: 7px 10px;
-    .material-button {
-      margin: 0 20px 0 0;
-      min-width: initial;
+      color: $grey;
+      text-transform: none;
     }
   }
 }

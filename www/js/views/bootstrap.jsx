@@ -17,11 +17,17 @@ define([
           this.forceUpdate();
         }).bind(this);
 
-        this.props.router.on("route", this.callback);
+        //this.props.router.on("route", this.callback);
       },
+
       componentWillUnmount : function() {
         this.props.router.off("route", this.callback);
       },
+
+      navigate: function (path) {
+        this.props.router.navigate(path, {trigger: true});
+      },
+
       render : function() {
         switch (this.props.router.current) {
           case "slideshow":
@@ -37,10 +43,16 @@ define([
             );
           case "index":
             return (
-              <appViews.AppControllerView />
+              <appViews.AppControllerView
+                navigate={this.navigate}
+                router={this.props.router} />
             );
           default:
-            return null;
+            return (
+              <appViews.AppControllerView
+                navigate={this.navigate}
+                router={this.props.router} />
+            );
         }
       }
     });
@@ -52,13 +64,24 @@ define([
       var Router = Backbone.Router.extend({
         routes : {
           "" : "index",
-          "slideshow" : "slideshow"
+          "slideshow" : "slideshow",
+          "what-is-epoc": "whatIsEpoc",
+          "exacerbations": "exacerbations"
         },
         index : function() {
           this.current = "index";
+          this.appBarTitle = "My app";
         },
         slideshow : function() {
           this.current = "slideshow";
+        },
+        whatIsEpoc: function () {
+          this.current = "epoc";
+          this.appBarTitle = "La EPOC";
+        },
+        exacerbations: function () {
+          this.current = "exacerbations";
+          this.appBarTitle = "Exacerbaciones";
         }
       });
 
