@@ -33,6 +33,7 @@ $card-separator: rgba(0, 0, 0, .12);
 
 /* Material styles */
 .form-control {
+  background: $white;
   border-radius: 0;
   border: 0;
   border-bottom: solid 0.1rem $light_grey;
@@ -750,5 +751,30 @@ div.form-control {
     p {
       margin-top: 0;
     }
+  }
+}
+
+/* Float action buttons */
+.material-fab {
+  width: 56px;
+  height: 56px;
+  background: $primary;
+  border-radius: 50%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0;
+  border: 0;
+  color: $white;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+
+  img {
+    display: block;
+    margin: auto;
+  }
+
+  &:active {
+    box-shadow: 0 2px 8px rgba(0,0,0,.8);
   }
 }

@@ -12,7 +12,7 @@ define([], function() {
             primaryKey: true
           },
           {
-            name: "name",
+            name: "userName",
             type: "text"
           },
           {

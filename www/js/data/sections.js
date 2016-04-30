@@ -31,6 +31,14 @@ define([], function() {
       name: "¿Estoy empeorando?",
       icon: "exacerbation",
       path: "#exacerbations"
+    },
+    {
+      name: "El tabaco",
+      icon: "cigarrette",
+      path: "#do-not-smoke",
+      isEnabled: {
+        "isSmoker": true
+      }
     }
   ];
 });

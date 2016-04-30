@@ -5,8 +5,12 @@ define([
   "utils/dispatcher",
   "utils/dateTime",
   "utils/stringsHelper",
-  "utils/databaseManager"
-], function(materialViews, epocViews, slideshowData, Dispatcher, DateTimeHelper, StringsHelper, dbManager) {
+  "utils/databaseManager",
+  "utils/actions",
+  "utils/utilities",
+  "_"
+], function(materialViews, epocViews, slideshowData, Dispatcher,
+            DateTimeHelper, StringsHelper, dbManager, actions, utils, _) {
   "use strict";
 
   var SlideshowView = React.createClass({
@@ -36,33 +40,26 @@ define([
     },
 
     componentWillUpdate: function(nextProps, nextState) {
-      console.info(nextState.currentSlide, slideshowData.slides.length - 1);
       // Last slide so let's start preparing the database
       if (nextState.currentSlide === slideshowData.slides.length - 1) {
-        var model = this._prepareModel(nextState.model);
+        var model = utils.prepareModel(nextState.model);
         dbManager.openDatabase(function(){
           dbManager.insert("User", model, function(result) {
             console.info("INSERT RESULT", result);
             dbManager.select("User", null, null, function(result) {
               console.info("SELECT result", result.rows.item(0));
             });
-          });
+            localStorage.setItem("introSeen", "true");
+            this.props.dispatcher.dispatch(new actions.UpdateUserData(model));
+          }.bind(this));
         }.bind(this), function(err) {
           console.error(err);
-        })
-      }
-    },
+        });
 
-    _prepareModel: function(model) {
-      return {
-        name: model.userName,
-        gradeEPOC: model.gradeEPOC,
-        lastRevision: model.lastRevision.toString(),
-        isSmoker: parseInt(model.isSmoker),
-        weight: parseInt(model.userWeight),
-        height: parseInt(model.userHeight),
-        birth: model.userBirth.toString()
-      };
+        // For testing purpose
+        localStorage.setItem("introSeen", "true");
+        this.props.dispatcher.dispatch(new actions.UpdateUserData(model));
+      }
     },
 
     getInitialState: function() {
@@ -134,11 +131,12 @@ define([
 
       // Render if model has changed and any of the strings has dependency
       // on the model
-      return this.props.model !== newProps.model && this._hasDependency();
+      return ((this.props.model !== newProps.model) && this._hasDependency());
     },
 
     _hasDependency: function() {
-      return _.findKey(this.props.slide, "modelRequired");
+      var key = _.findKey(this.props.slide, "modelRequired");
+      return key ? key : false;
     },
 
     isValid: function(isValid) {

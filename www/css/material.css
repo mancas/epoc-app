@@ -17,6 +17,7 @@
     transform: scale(2.5); } }
 /* Material styles */
 .form-control {
+  background: #fff;
   border-radius: 0;
   border: 0;
   border-bottom: solid 0.1rem #c1c1c1;
@@ -530,5 +531,25 @@ div.form-control {
   transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
   .material-dropdown .dropdown-content p {
     margin-top: 0; }
+
+/* Float action buttons */
+.material-fab {
+  width: 56px;
+  height: 56px;
+  background: #00acb4;
+  border-radius: 50%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0;
+  border: 0;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
+  .material-fab img {
+    display: block;
+    margin: auto; }
+  .material-fab:active {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
 
 /*# sourceMappingURL=material.css.map */

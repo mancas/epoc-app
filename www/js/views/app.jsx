@@ -4,12 +4,14 @@ define([
   "utils/actions",
   "utils/dispatcher",
   "stores/userStore",
+  "mixins/storeMixin",
   "data/sections"
-], function(materialViews, epocViews, Actions, Dispatcher, UserStore, AppSections) {
+], function(materialViews, epocViews, Actions, Dispatcher, UserStore, StoreMixin, AppSections) {
   "use strict";
 
   var AppControllerView = React.createClass({
     propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
       navigate: React.PropTypes.func.isRequired,
       router: React.PropTypes.object.isRequired
     },
@@ -46,7 +48,8 @@ define([
             onTabChange={this.onTabChange} />
           <div className="app-content" >
             <AppContentView
-              currentRoute={this.props.router.current || "index"}
+              dispatcher={this.props.dispatcher}
+              currentRoute={this.props.router.current}
               navigate={this.props.navigate}
               selectedTab={this.state.selectedTab} />
           </div>
@@ -86,6 +89,7 @@ define([
 
   var AppContentView = React.createClass({
     propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
       currentRoute: React.PropTypes.string.isRequired,
       navigate: React.PropTypes.func.isRequired,
       selectedTab: React.PropTypes.number.isRequired
@@ -104,18 +108,8 @@ define([
             <materialViews.CardView />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
-            <materialViews.CardView />
+            <epocViews.UserProfileView
+              dispatcher={this.props.dispatcher} />
           </materialViews.TabContentView>
         </materialViews.TabsContent>
       );
@@ -133,6 +127,10 @@ define([
           return (
             <epocViews.ExacerbationsView />
           );
+        case "smoker":
+          return (
+            <epocViews.ExacerbationsView />
+          );
         default:
           return null;
       }
@@ -143,6 +141,10 @@ define([
     propTypes: {
       handleClick: React.PropTypes.func,
       section: React.PropTypes.object.isRequired
+    },
+
+    shouldComponentUpdate: function () {
+      return false;
     },
 
     generateIconPath: function() {
@@ -171,8 +173,16 @@ define([
   });
 
   var AppSectionsView = React.createClass({
+    mixins: [
+      StoreMixin("userStore")
+    ],
+
     propTypes: {
       handleClick: React.PropTypes.func
+    },
+
+    getInitialState: function() {
+      return this.getStore().getStoreState();
     },
 
     render: function() {
@@ -180,6 +190,29 @@ define([
         <div className="app-sections">
           {
             AppSections.map(function(section, index) {
+              if (section.isEnabled) {
+                var allowRender = true;
+                for (var key in section.isEnabled) {
+                  switch (typeof section.isEnabled[key]) {
+                    case "boolean":
+                      if (section.isEnabled[key]) {
+                        allowRender = this.state[key] ? true : false;
+                      } else {
+                        allowRender = this.state[key] ? false : true;
+                      }
+                      break;
+                    default:
+                      if (this.state[key] !== section.isEnabled[key]) {
+                        allowRender = false;
+                      }
+                      break;
+                  }
+                }
+
+                if (!allowRender) {
+                  return null;
+                }
+              }
               return (
                 <SectionView
                   key={index}

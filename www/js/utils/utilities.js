@@ -14,7 +14,42 @@ define([], function() {
     return null;
   }
 
+  function prepareModel(model) {
+    return {
+      userName: model.userName,
+      gradeEPOC: model.gradeEPOC,
+      lastRevision: model.lastRevision.toString(),
+      isSmoker: parseInt(model.isSmoker),
+      weight: parseInt(model.weight),
+      height: parseInt(model.height),
+      birth: model.birth.toString()
+    };
+  }
+
+  function calculateIMC(weight, height) {
+    // cm to m
+    var mHeight = height/100;
+    var imc = (weight/(Math.pow(mHeight, 2))).toFixed(2);
+    var range;
+    if (imc < 18.5) {
+      range = "Bajo peso";
+    } else if (imc >= 18.5 && imc <= 24.99) {
+      range = "Rango normal";
+    } else if (imc >= 25 && imc <= 29.99) {
+      range = "Sobrepeso";
+    } else {
+      range = "Obesidad";
+    }
+
+    return {
+      imc: imc,
+      range: range
+    };
+  }
+
   return {
-    closest: getClosest
+    calculateIMC: calculateIMC,
+    closest: getClosest,
+    prepareModel: prepareModel
   };
 });

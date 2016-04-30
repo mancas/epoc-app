@@ -22,7 +22,12 @@ define(["db"], function(DataBaseSchema) {
     working: false,
 
     openDatabase: function (successCb, errorCb) {
-      /*window.sqlitePlugin.openDatabase({
+      /*if (this.db) {
+        successCb();
+        return;
+      }
+
+      window.sqlitePlugin.openDatabase({
         name: DBNAME,
         location: 0
       }, function(db) {
@@ -31,32 +36,6 @@ define(["db"], function(DataBaseSchema) {
         this.createTablesIfNeeded();
         successCb && successCb();
       }.bind(this), errorCb);*/
-    },
-
-    test: function() {
-      this.db.transaction(function(tx) {
-        tx.executeSql('DROP TABLE IF EXISTS user');
-        /*tx.executeSql('CREATE TABLE IF NOT EXISTS user (id integer primary key, name text, gradeEPOC text, lastRevision text, isSmoker integer, weight integer, height integer, birth text)');
-
-        tx.executeSql("INSERT INTO user (name, gradeEPOC, lastRevision, isSmoker, weight, height, birth) VALUES (?,?,?,?,?,?,?)", ["Manu", "A", "13 marzo", 0, 72, 182, "2 agosto"], function(tx, res) {
-          "INSERT INTO user (name, gradeEPOC, lastRevision, isSmoker, userWeight, userHeight, userBirth) VALUES (?,?,?,?,?,?,?)",
-            ["Manu", "A", "16 de marzo", 0, 72, 123, "15 de marzo"]
-          console.log("insertId: " + res.insertId + " -- probably 1");
-          console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
-
-          tx.executeSql("select count(id) as cnt from user;", [], function(tx, res) {
-            console.log("res.rows.length: " + res.rows.length + " -- should be 1");
-            console.log("res.rows.item(0).cnt: " + res.rows.item(0).cnt + " -- should be 1");
-          });
-
-          tx.executeSql("select * from user;", [], function(tx, res) {
-            console.log(res.rows.item(0));
-          });
-
-        }, function(e) {
-          console.log("ERROR: " + e.message);
-        });*/
-      });
     },
 
     close: function() {

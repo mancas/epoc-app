@@ -7,6 +7,29 @@ define([], function() {
     });
   }
 
+  /**
+   * Retrieves the type name of an object or constructor. Fallback to "unknown"
+   * when it fails.
+   *
+   * @param  {Object} obj
+   * @return {String}
+   */
+  function typeName(obj) {
+    if (obj === null) {
+      return "null";
+    }
+
+    if (typeof obj === "function") {
+      return obj.name || obj.toString().match(/^function\s?([^\s(]*)/)[1];
+    }
+
+    if (typeof obj.constructor === "function") {
+      return typeName(obj.constructor);
+    }
+
+    return "unknown";
+  }
+
   function checkSchema(schema, values) {
     var definedProperties = Object.keys(values).filter(function(name) {
       return typeof values[name] !== "undefined";
@@ -44,6 +67,7 @@ define([], function() {
   }
 
   function Action(name, schema, values) {
+    console.info(values);
     checkSchema(schema, values);
     checkSchemaTypes(schema, values);
 
@@ -60,6 +84,17 @@ define([], function() {
   };
 
   return {
-    Action: Action
+    Action: Action,
+
+    UpdateUserData: Action.define("updateUserData", {
+      // userName: String, Optional,
+      // gradeEPOC: String, Optional,
+      // lastRevision: String, Optional,
+      // isSmoker: Int Optional,
+      // weight: Int Optional,
+      // height: Int Optional,
+      // birth: String, Optional
+      // persist: Boolean, Optional
+    })
   };
 });

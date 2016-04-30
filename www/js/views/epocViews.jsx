@@ -1,4 +1,11 @@
-define(["build/materialViews", "utils/utilities"], function(materialViews, utils) {
+define([
+  "build/materialViews",
+  "utils/dispatcher",
+  "utils/actions",
+  "utils/utilities",
+  "utils/dateTime",
+  "mixins/storeMixin",
+  "_"], function(materialViews, Dispatcher, Actions, utils, DateTimeHelper, StoreMixin, _) {
   "use strict";
 
   var ChoicesView = React.createClass({
@@ -10,7 +17,6 @@ define(["build/materialViews", "utils/utilities"], function(materialViews, utils
 
     select: function(event) {
       var currentChoice = this.getDOMNode().querySelector(".choices .selected");
-      console.info(currentChoice);
 
       if (currentChoice) {
         currentChoice.classList.remove("selected");
@@ -193,11 +199,203 @@ define(["build/materialViews", "utils/utilities"], function(materialViews, utils
     }
   });
 
+  var UserProfileView = React.createClass({
+    mixins: [
+      StoreMixin("userStore")
+    ],
+
+    statics: {
+      REFS: [
+        "weight",
+        "height",
+        "isSmoker"
+      ]
+    },
+
+    propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
+    },
+
+    getInitialState: function () {
+      return _.extend(this.getStore().getStoreState(), {
+        editMode: false
+      });
+    },
+
+    toggleEditMode: function () {
+      this.setState({
+        editMode: !this.state.editMode
+      });
+
+      if (this.state.editMode) {
+        var newState = {};
+        // Time to update profile
+        this.constructor.REFS.forEach(function(ref) {
+          var editableField = this.refs[ref];
+          var newValue = editableField.getNewValue();
+          if (this.state[ref].toString() !== newValue.toString()) {
+            newState[ref] = parseInt(newValue);
+          }
+        }, this);
+
+        if (_.isEmpty(newState)) {
+          return;
+        }
+        // Save data into database
+        newState.persist = true;
+        this.props.dispatcher.dispatch(new Actions.UpdateUserData(newState));
+      }
+    },
+
+    render: function () {
+      var fabIcon = this.state.editMode ? "check.svg" : "pencil.svg";
+      var isSmokerIcon = "smoke.svg";
+      var notSmokerIcon = "smoke_free.svg";
+      var calculatedIMC = utils.calculateIMC(this.state.weight, this.state.height);
+
+      return (
+        <div className="user-profile">
+          <div className="user-name">
+            <span className="user-first-letter">
+              {
+                this.state.userName ? this.state.userName.charAt(0) : ""
+              }
+            </span>
+          </div>
+          <div className="user-information">
+            <materialViews.FloatActionButton
+              extraCSSClasses="edit-mode"
+              handleClick={this.toggleEditMode}>
+              <img src={"../../img/material/" + fabIcon} />
+            </materialViews.FloatActionButton>
+            <div className="profile-section">
+              <div className="icon-group">
+                <img className="icon" src="../../img/material/person.svg" />
+                <p className="text-row">Nombre</p>
+              </div>
+              <p className="text-row">{this.state.userName}</p>
+              <div className="icon-group no-icon">
+                <p className="text-row">Peso y estatura</p>
+              </div>
+              <EditableField
+                isEditModeActive={this.state.editMode}
+                label={this.state.weight.toString()}
+                type="input"
+                inputType="number"
+                units="kilos"
+                ref="weight" />
+              <EditableField
+                isEditModeActive={this.state.editMode}
+                label={this.state.height.toString()}
+                type="input"
+                inputType="number"
+                units="centímetros"
+                ref="height" />
+              <div className="icon-group">
+                <img className="icon" src="../../img/material/cake.svg" />
+                <p className="text-row">Cumpleaños</p>
+              </div>
+              <p className="text-row">{DateTimeHelper.format(new Date(this.state.birth), {long: true})}</p>
+              <div className="icon-group">
+                <img className="icon" src={"../../img/material/" + (this.state.isSmoker ? isSmokerIcon : notSmokerIcon)} />
+                <EditableField
+                  currentValue={this.state.isSmoker ? 1 : 0}
+                  isEditModeActive={this.state.editMode}
+                  label={this.state.isSmoker ? "Fumador" : "No fumador"}
+                  type="select"
+                  values={[{label: "Fumador", value: 1}, {label: "No fumador", value: 0}]}
+                  ref="isSmoker" />
+              </div>
+              <div className="icon-group no-icon">
+                <p className="text-row">IMC</p>
+              </div>
+              <p className="text-row">{calculatedIMC.imc + " - " + calculatedIMC.range}</p>
+              <div className="icon-group no-icon">
+                <p className="text-row">Grado de EPOC diagnosticado</p>
+              </div>
+              <p className="text-row">{this.state.gradeEPOC}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var EditableField = React.createClass({
+    propTypes: {
+      currentValue: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
+      isEditModeActive: React.PropTypes.bool.isRequired,
+      label: React.PropTypes.string.isRequired,
+      type: React.PropTypes.oneOf(["input", "select"]).isRequired,
+      inputType: React.PropTypes.string,
+      units: React.PropTypes.string,
+      values: React.PropTypes.array
+    },
+
+    getInitialState: function() {
+      return {
+        newValue: (this.props.type === "input" ? this.props.label : this.props.currentValue)
+      }
+    },
+
+    getNewValue: function() {
+      return this.state.newValue;
+    },
+
+    handleFieldChange: function(value) {
+      this.setState({
+        newValue: value
+      });
+    },
+
+    getLabel: function() {
+      if (this.props.type === "input") {
+        return this.state.newValue + " " + this.props.units;
+      } else {
+        var selectedOption = this.props.values.filter(function(option) {
+          console.info(option, this.state.newValue);
+          return option.value.toString() === this.state.newValue.toString();
+        }, this);
+
+        return selectedOption[0].label;
+      }
+    },
+
+    render: function() {
+      var cssClasses = {
+        "editable-field": true,
+        "editable": this.props.isEditModeActive
+      };
+      return (
+        <div className={classNames(cssClasses)}>
+          <p className="text-row">{this.getLabel()}</p>
+          {
+            this.props.type === "input" ?
+              <materialViews.Input
+                inputName={this.props.label}
+                onChange={this.handleFieldChange}
+                type={this.props.inputType}
+                value={this.props.label}/> :
+              <materialViews.SelectView
+                currentValue={this.props.currentValue.toString()}
+                onChange={this.handleFieldChange}
+                selectName={this.props.label}
+                values={this.props.values} />
+          }
+        </div>
+      );
+    }
+  });
+
   return {
     ChoiceButton: ChoiceButton,
     ChoicesView: ChoicesView,
     ExacerbationsView: ExacerbationsView,
     LoaderView: LoaderView,
+    UserProfileView: UserProfileView,
     WhatIsEpocView: WhatIsEpocView
   };
 });

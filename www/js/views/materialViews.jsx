@@ -1,4 +1,4 @@
-define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
+define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, utils, _) {
   "use strict";
 
   var RippleButton = React.createClass({
@@ -104,11 +104,16 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
     propTypes: {
       inputName: React.PropTypes.string.isRequired,
       isValid: React.PropTypes.func,
-      label: React.PropTypes.string.isRequired,
+      label: React.PropTypes.string,
       maxLength: React.PropTypes.number,
+      onChange: React.PropTypes.func,
       onFocus: React.PropTypes.func,
       required: React.PropTypes.bool,
-      type: React.PropTypes.string
+      type: React.PropTypes.string,
+      value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ])
     },
 
     getDefaultProps: function () {
@@ -123,7 +128,8 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
         invalid: false,
         touched: false,
         focused: false,
-        hasValue: false
+        hasValue: false,
+        value: this.props.value ? this.props.value : null
       }
     },
 
@@ -200,6 +206,18 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
       this.props.isValid && this.props.isValid(valid);
     },
 
+    onChange: function(event) {
+      if (!this.props.value) {
+        return;
+      }
+
+      this.setState({
+        value: event.target.value
+      });
+
+      this.props.onChange && this.props.onChange(event.target.value);
+    },
+
     render: function() {
       var classes = classNames({
         "material-input-wrapper": true,
@@ -221,13 +239,60 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
                      maxLength={this.props.maxLength}
                      name={this.props.inputName}
                      onBlur={this.onBlur}
+                     onChange={this.onChange}
                      onFocus={this.onFocus}
                      onInput={this.renderCharCount}
                      onKeyUp={this.renderCharCount}
                      required={this.props.required ? true : false}
-                     type={this.props.type === "date" ? "text" : this.props.type} />
+                     type={this.props.type === "date" ? "text" : this.props.type}
+                     value={this.state.value} />
           }
           {this.props.maxLength ? this.renderMaxLengthView() : null}
+        </div>
+      );
+    }
+  });
+
+  var SelectView = React.createClass({
+    propTypes: {
+      currentValue: React.PropTypes.string,
+      onChange: React.PropTypes.func,
+      selectName: React.PropTypes.string.isRequired,
+      values: React.PropTypes.array.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        value: this.props.currentValue || ""
+      };
+    },
+
+    onChange: function(event) {
+      this.setState({
+        value: event.target.value
+      });
+
+      this.props.onChange && this.props.onChange(event.target.value);
+    },
+
+    render: function() {
+      var classes = classNames({
+        "material-input-wrapper": true
+      });
+      return (
+        <div className={classes}>
+          <select className="form-control"
+            onChange={this.onChange}
+            name={this.props.selectName}
+            value={this.state.value}>
+            {
+              this.props.values.map(function(option, index) {
+                return (
+                  <option value={option.value} key={index}>{option.label}</option>
+                );
+              }, this)
+            }
+          </select>
         </div>
       );
     }
@@ -1088,13 +1153,46 @@ define(["utils/dateTime", "utils/utilities"], function(DateTimeHelper, utils) {
     }
   });
 
+  var FloatActionButton = React.createClass({
+    propTypes: {
+      children: React.PropTypes.node,
+      extraCSSClasses: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.object
+      ]),
+      handleClick: React.PropTypes.func
+    },
+
+    render: function() {
+      var cssClasses = {
+        "material-fab": true
+      };
+
+      if (this.props.extraCSSClasses) {
+        typeof this.props.extraCSSClasses === "object" ?
+          _.extend(cssClasses, this.props.extraCSSClasses) :
+          cssClasses[this.props.extraCSSClasses] = true;
+      }
+
+      return (
+        <button
+          className={classNames(cssClasses)}
+          onClick={this.props.handleClick}>
+          {this.props.children}
+        </button>
+      );
+    }
+  });
+
   return {
     AppBarView: AppBarView,
     CalendarView: CalendarView,
     CardView: CardView,
     DropdownView: DropdownView,
+    FloatActionButton: FloatActionButton,
     Input: Input,
     RippleButton: RippleButton,
+    SelectView: SelectView,
     TabContentView: TabContentView,
     TabsContent: TabsContent,
     TabView: TabView,
