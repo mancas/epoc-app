@@ -2,8 +2,6 @@ define([], function() {
   "use strict";
 
   var storePrototype = {
-    _storeListeners: {},
-
     _registerActions: function(actions) {
       // check that store methods are implemented
       Array.prototype.forEach.call(actions, function(handler) {
@@ -72,6 +70,7 @@ define([], function() {
   function createStore(storeProto) {
     var BaseStore = function(dispatcher, options) {
       options = options || {};
+      this._storeListeners = {};
 
       if (!dispatcher) {
         throw new Error("Missing required dispatcher");

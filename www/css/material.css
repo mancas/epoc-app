@@ -523,6 +523,15 @@ div.form-control {
       margin: 0 20px 0 0;
       min-width: initial; }
 
+.material-card.fade-out {
+  animation: fade-out 0.65s cubic-bezier(0.23, 1, 0.32, 1); }
+
+@-webkit-keyframes fade-out {
+  100% {
+    opacity: 0; } }
+@keyframes fade-out {
+  100% {
+    opacity: 0; } }
 /* Dropdown */
 .material-dropdown .dropdown-content {
   height: 0;

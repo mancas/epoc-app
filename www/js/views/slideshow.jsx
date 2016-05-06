@@ -42,24 +42,15 @@ define([
     componentWillUpdate: function(nextProps, nextState) {
       // Last slide so let's start preparing the database
       if (nextState.currentSlide === slideshowData.slides.length - 1) {
-        var model = utils.prepareModel(nextState.model);
-        dbManager.openDatabase(function(){
-          dbManager.insert("User", model, function(result) {
-            console.info("INSERT RESULT", result);
-            dbManager.select("User", null, null, function(result) {
-              console.info("SELECT result", result.rows.item(0));
-            });
-            localStorage.setItem("introSeen", "true");
-            this.props.dispatcher.dispatch(new actions.UpdateUserData(model));
-          }.bind(this));
-        }.bind(this), function(err) {
-          console.error(err);
-        });
-
-        // For testing purpose
-        localStorage.setItem("introSeen", "true");
-        this.props.dispatcher.dispatch(new actions.UpdateUserData(model));
+        this._setupApp(nextState.model);
       }
+    },
+
+    _setupApp: function (model) {
+      localStorage.setItem("introSeen", "true");
+      console.info(model);
+      this.props.dispatcher.dispatch(new actions.CreateUser(model));
+      this.props.dispatcher.dispatch(new actions.SetupApp(model));
     },
 
     getInitialState: function() {
@@ -70,7 +61,6 @@ define([
     },
 
     render: function() {
-      dbManager.openDatabase();
       return (
         <div className="slideshow">
           {
@@ -90,7 +80,7 @@ define([
           }
           <PaginationView
             currentPage={this.state.currentSlide}
-            pages={slideshowData.slides.length}
+            pages={slideshowData.slides.length - 1}
             ref="pagination"/>
         </div>
       );
@@ -328,7 +318,7 @@ define([
       activeBullet.classList.remove("active");
       var newActiveBullet = this.refs["page-" + newProps.currentPage];
       if (!newActiveBullet) {
-        return false;
+        return true;
       }
       newActiveBullet.getDOMNode().classList.add("active");
 
@@ -351,6 +341,10 @@ define([
     },
 
     render: function() {
+      if (this.props.currentPage > this.props.pages) {
+        return null;
+      }
+
       return (
         <div className="pagination">
           {this._renderPages()}

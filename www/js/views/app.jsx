@@ -5,8 +5,10 @@ define([
   "utils/dispatcher",
   "stores/userStore",
   "mixins/storeMixin",
-  "data/sections"
-], function(materialViews, epocViews, Actions, Dispatcher, UserStore, StoreMixin, AppSections) {
+  "utils/databaseManager",
+  "data/sections",
+  "_"
+], function(materialViews, epocViews, Actions, Dispatcher, UserStore, StoreMixin, dbManager, AppSections, _) {
   "use strict";
 
   var AppControllerView = React.createClass({
@@ -73,13 +75,13 @@ define([
           <materialViews.TabsView
             onChange={this.props.onTabChange}>
             <materialViews.TabView>
-              <img src="../../img/material/apps.svg" />
+              <img src="img/material/apps.svg" />
             </materialViews.TabView>
             <materialViews.TabView>
-              <img src="../../img/material/chart.svg" />
+              <img src="img/material/chart.svg" />
             </materialViews.TabView>
             <materialViews.TabView>
-              <img src="../../img/material/profile.svg" />
+              <img src="img/material/profile.svg" />
             </materialViews.TabView>
           </materialViews.TabsView>
         </materialViews.AppBarView>
@@ -100,12 +102,12 @@ define([
         <materialViews.TabsContent
           selectedTab={this.props.selectedTab}>
           <materialViews.TabContentView>
-            <materialViews.CardView />
+            <NotificationsView />
             <AppSectionsView
               handleClick={this.props.navigate} />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
-            <materialViews.CardView />
+            <p>Under construction</p>
           </materialViews.TabContentView>
           <materialViews.TabContentView>
             <epocViews.UserProfileView
@@ -131,6 +133,10 @@ define([
           return (
             <epocViews.ExacerbationsView />
           );
+        case "alarms":
+          return (
+            <epocViews.MyAlarmsView />
+          );
         default:
           return null;
       }
@@ -148,7 +154,7 @@ define([
     },
 
     generateIconPath: function() {
-      return "../../img/" + this.props.section.icon + ".svg";
+      return "img/" + this.props.section.icon + ".svg";
     },
 
     handleClick: function() {
@@ -221,6 +227,52 @@ define([
               );
             }, this)
           }
+        </div>
+      );
+    }
+  });
+
+  var NotificationsView = React.createClass({
+    mixins: [
+      StoreMixin("notificationStore")
+    ],
+
+    getInitialState: function() {
+      return _.extend(this.getStore().getStoreState(), {
+        currentNotification: 0
+      });
+    },
+
+    componentWillMount: function() {
+
+    },
+
+    onClick: function() {
+      var notification = this.refs.currentNotification.getDOMNode();
+      notification.addEventListener("animationend", function() {
+        console.info("animation end");
+        notification.classList.remove("fade-out");
+        this.setState({
+          currentNotification: this.state.currentNotification + 1
+        });
+      }.bind(this));
+
+      notification.classList.add("fade-out");
+    },
+
+    render: function(){
+      console.info(this.state);
+      if (!this.state.notifications || !this.state.notifications.length ||
+        this.currentNotification > this.state.notifications.length) {
+        return null;
+      }
+
+      return (
+        <div className="app-notifications">
+          <materialViews.CardView
+            data={this.state.notifications[this.state.currentNotification]}
+            onClick={this.onClick}
+            ref="currentNotification" />
         </div>
       );
     }

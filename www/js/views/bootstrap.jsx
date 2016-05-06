@@ -5,12 +5,13 @@ define([
   "utils/actions",
   "utils/dispatcher",
   "stores/userStore",
+  "stores/alarmStore",
+  "stores/notificationStore",
   "mixins/storeMixin"],
-  function(materialViews, appViews, SlideshowView, Actions, Dispatcher, UserStore, StoreMixin) {
+  function(materialViews, appViews, SlideshowView, Actions, Dispatcher, UserStore, AlarmStore, NotificationStore, StoreMixin) {
     "use strict";
 
     var dispatcher;
-    var userStore;
 
     var InterfaceComponent = React.createClass({
       propTypes: {
@@ -21,11 +22,16 @@ define([
         if (localStorage.getItem("introSeen") === null) {
           this.props.userStore.on("change", this.storeStateChange);
           this.navigate("#slideshow");
-          this.forceUpdate();
+        } else {
+          this.navigate("");
         }
+        this.forceUpdate();
       },
 
       storeStateChange: function() {
+        if (!this.props.userStore.getStoreState("appReady")) {
+          return;
+        }
         this.navigate("");
         this.forceUpdate();
         this.props.userStore.off("change", this.storeStateChange);
@@ -37,10 +43,10 @@ define([
 
       navigate: function (path) {
         this.props.router.navigate(path, {trigger: true});
+        window.scrollTo(0, 0);
       },
 
       render : function() {
-        console.info(this.props.router.current);
         switch (this.props.router.current) {
           case "slideshow":
             return (
@@ -50,15 +56,6 @@ define([
               </div>
             );
           default:
-            dispatcher.dispatch(new Actions.UpdateUserData({
-              "userName": "Manu",
-              "gradeEPOC": "A",
-              "lastRevision": "Thu Apr 28 2016 14:05:31 GMT+0200 (CEST)",
-              "isSmoker": 1,
-              "weight": 80,
-              "height": 182,
-              "birth": "Thu Apr 28 1991 14:05:31 GMT+0200 (CEST)"
-            }));
             return (
               <appViews.AppControllerView
                 dispatcher={dispatcher}
@@ -71,11 +68,15 @@ define([
 
     function init() {
       dispatcher = new Dispatcher();
-      userStore = new UserStore(dispatcher);
+      var userStore = new UserStore(dispatcher);
+      var alarmStore = new AlarmStore(dispatcher);
+      var notificationStore = new NotificationStore(dispatcher);
       // For testing purpose
       //localStorage.removeItem("introSeen");
-
+console.info(notificationStore);
       StoreMixin.register({
+        alarmStore: alarmStore,
+        notificationStore: notificationStore,
         userStore: userStore
       });
 
@@ -85,7 +86,8 @@ define([
           "slideshow" : "slideshow",
           "what-is-epoc": "whatIsEpoc",
           "exacerbations": "exacerbations",
-          "do-not-smoke": "smoker"
+          "do-not-smoke": "smoker",
+          "my-alarms": "alarms"
         },
         index : function() {
           this.current = "index";
@@ -106,6 +108,10 @@ define([
         smoker: function () {
           this.current = "smoker";
           this.appBarTitle = "El tabaco y la EPOC";
+        },
+        alarms: function() {
+          this.current = "alarms";
+          this.appBarTitle = "Mis alarmas";
         }
       });
 

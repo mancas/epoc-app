@@ -1,59 +1,150 @@
 define([
   "store",
   "utils/databaseManager",
-  "utils/utilities",
-], function(Store, dbManager, utils) {
+  "utils/dateTime",
+  "utils/actions",
+  "utils/utilities"
+], function(Store, dbManager, DateTimeHelper, actions, utils) {
   "use strict";
 
-  const USER_MODEL_KEYS = [
-    "userName",
-    "gradeEPOC",
-    "lastRevision",
-    "isSmoker",
-    "weight",
-    "height",
-    "birth"
-  ];
-
   var UserStore = Store.createStore({
-    getInitialStoreState: function() {
-      return {
-        test: true
-      };
-    },
-
     actions: [
+      "createUser",
+      "setupApp",
+      "appReady",
       "updateUserData"
     ],
 
-    updateUserData: function(actionData) {
-      var oldState = this.getStoreState();
-      var newState = {};
-      USER_MODEL_KEYS.forEach(function(key) {
-        if (actionData.hasOwnProperty(key) && oldState[key] !== actionData[key]) {
-          newState[key] = actionData[key];
-        } else {
-          newState[key] = oldState[key];
-        }
-      });
+    welcomeNotification: {
+      title: "Bienvenido!",
+      text: "Usando estas tarjetas te iremos informando de aquellas cosas que sean importantes para ti."
+    },
 
-      this.setStoreState(newState);
+    getInitialStoreState: function() {
+      return {
+        id: "",
+        userName: "",
+        gradeEPOC: "",
+        lastRevision: "",
+        isSmoker: "",
+        weight: "",
+        height: "",
+        birth: "",
+        appReady: false
+      };
+    },
+
+    initialize: function() {
+      var self = this;
+      dbManager.openDatabase(function(){
+        dbManager.select("User", null, null, function(result) {
+          console.info("SELECT result initilize", result.rows.item(0));
+          result.rows.item(0) && self.setStoreState(result.rows.item(0));
+        });
+      }, function(err) {
+        console.error(err);
+      });
+    },
+
+    createUser: function (actionData) {
+      var newState = this._updateUserState(actionData);
+      var self = this;
+
+      var model = utils.prepareModel(newState);
+      dbManager.openDatabase(function(){
+        dbManager.insert("User", model, function(result) {
+          console.info("INSERT result", result.rows.item(0));
+          self.setStoreState({
+            id: result.rows.insertId
+          });
+          /*dbManager.select("User", null, null, function(result) {
+            console.info("SELECT result create", result.rows.item(0));
+            // Need to update ID on the first time use
+            result.rows.item(0) && self.setStoreState({
+              id: result.rows.item(0).id
+            });
+          });*/
+        });
+      }, function(err) {
+        console.error(err);
+      });
+    },
+
+    updateUserData: function(actionData) {
+      var newState = this._updateUserState(actionData);
       if (actionData.persist) {
-        this._updateDB();
+        this._updateDB(newState);
       }
     },
 
-    _updateDB: function() {
-      var model = utils.prepareModel(this._storeState);
+    _updateUserState: function (actionData) {
+      var newState = {};
+
+      for (var key in actionData) {
+        if (key !== "name" &&
+          (this._storeState.hasOwnProperty(key) && this._storeState[key] !== actionData[key])) {
+          newState[key] = actionData[key];
+        }
+      }
+
+      this.setStoreState(newState);
+      return newState;
+    },
+
+    _updateDB: function(newState) {
+      var model = utils.prepareModel(newState);
+      var self = this;
       dbManager.openDatabase(function(){
-        dbManager.insert("User", model, function(result) {
-          console.info("INSERT RESULT", result);
+        var whereBuilder = dbManager.createWhereBuilder();
+        whereBuilder.and({id: self._storeState.id});
+
+        dbManager.update("User", model, whereBuilder.where, function(result) {
+          console.info("UPDATE RESULT", result);
           dbManager.select("User", null, null, function(result) {
             console.info("SELECT result", result.rows.item(0));
           });
         });
       }, function(err) {
         console.error(err);
+      });
+    },
+
+    setupApp: function(actionData) {
+      var revisionEvery = actionData.gradeEPOC === "A" || actionData.gradeEPOC === "B" ? 12 : 6;
+      var revisionAlarm = DateTimeHelper.addMonths(actionData.lastRevision, revisionEvery);
+      var diffInMs = Math.abs(revisionAlarm - actionData.lastRevision);
+      // To minutes
+      var diffInMins = Math.floor((diffInMs/1000)/60);
+
+      this.dispatcher.dispatch(new actions.ScheduleAlarm({
+        title: "Próxima revisión médica",
+        text: "Recuerda que debes acudir al médico para tu revisión",
+        at: revisionAlarm,
+        every: diffInMins
+      }));
+
+      // TODO add notifications: reminders and smoker
+      var notifications = [
+        this.welcomeNotification
+      ];
+      var calculatedBMI = utils.calculateBMI(parseInt(actionData.weight), parseInt(actionData.height));
+      notifications.push({
+        title: "Información sobre tu IMC",
+        text: calculatedBMI.message
+      });
+
+      notifications.forEach(function (notification) {
+        this.dispatcher.dispatch(new actions.AddNotification(notification));
+      }, this);
+
+      //setTimeout(function () {
+        this.dispatcher.dispatch(new actions.AppReady());
+      //}.bind(this), 5000);
+    },
+
+    appReady: function() {
+      this.setStoreState({
+        appReady: true
       });
     }
   });

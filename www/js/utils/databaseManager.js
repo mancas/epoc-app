@@ -22,8 +22,8 @@ define(["db"], function(DataBaseSchema) {
     working: false,
 
     openDatabase: function (successCb, errorCb) {
-      /*if (this.db) {
-        successCb();
+      if (this.db) {
+        successCb && successCb();
         return;
       }
 
@@ -32,10 +32,9 @@ define(["db"], function(DataBaseSchema) {
         location: 0
       }, function(db) {
         this.db = db;
-        //this.test();
         this.createTablesIfNeeded();
         successCb && successCb();
-      }.bind(this), errorCb);*/
+      }.bind(this), errorCb);
     },
 
     close: function() {
@@ -47,7 +46,6 @@ define(["db"], function(DataBaseSchema) {
     createTablesIfNeeded: function() {
       var tables = DataBaseSchema.tables;
       tables.forEach(function(table) {
-        console.info(table);
         if (!table.hasOwnProperty("name")) {
           throw new Error("Cannot create a table without a name");
         }
@@ -142,7 +140,7 @@ define(["db"], function(DataBaseSchema) {
             }
           }.bind(this));
 
-          return this.where;
+          return this;
         },
 
         or: function(values) {
@@ -154,7 +152,7 @@ define(["db"], function(DataBaseSchema) {
             }
           }.bind(this));
 
-          return this.where;
+          return this;
         }
       }
     },
@@ -166,6 +164,7 @@ define(["db"], function(DataBaseSchema) {
         successCb: successCb,
         errorCb: errorCb
       });
+
       this._executeSQL();
     },
 
@@ -176,6 +175,7 @@ define(["db"], function(DataBaseSchema) {
 
       this.working = true;
       var nextStatement = this.sqlQueue.shift();
+
       var self = this;
       console.info("DATABASEMANAGER: Executing sql statement: " + nextStatement.statement);
       console.info("DATABASEMANAGER: With params", nextStatement.params);

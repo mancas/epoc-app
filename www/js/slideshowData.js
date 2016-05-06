@@ -158,8 +158,7 @@ define([], function() {
             type: "number",
             required: true
           },
-          modelName: "userWeight",
-          validationRules: ["userWeight"]
+          modelName: "weight"
         }
       },
       {
@@ -184,8 +183,7 @@ define([], function() {
             type: "number",
             required: true
           },
-          modelName: "userHeight",
-          validationRules: ["userHeight"]
+          modelName: "height"
         }
       },
       {
@@ -200,7 +198,8 @@ define([], function() {
           {
             label: {
               id: "slide.finish_button_label"
-            }
+            },
+            className: "ep-right"
           }
         ],
         question: {
@@ -209,8 +208,7 @@ define([], function() {
             type: "date",
             required: true
           },
-          modelName: "userBirth",
-          validationRules: ["userBirth"]
+          modelName: "birth"
         }
       },
       {
@@ -226,9 +224,9 @@ define([], function() {
       gradeEPOC: "",
       lastRevision: "",
       isSmoker: "",
-      userWeight: "",
-      userHeight: "",
-      userBirth: ""
+      weight: "",
+      height: "",
+      birth: ""
     }
   };
 });

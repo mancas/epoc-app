@@ -135,7 +135,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
     componentDidMount: function() {
       if (this.props.type === "date") {
-        return;
+        // return;
       }
 
       // Render char counter if needed at the initialize
@@ -768,7 +768,6 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     onScroll: function(evt) {
-      console.info("scroll", evt);
       this._currentScrollY = window.scrollY;
       if (!this._lastScrollY) {
         this._lastScrollY = window.scrollY;
@@ -816,7 +815,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
                 <RippleButton
                   extraCSSClasses={{ "borderless": true, "back-icon": true }}
                   handleClick={this.goBack}>
-                  <img src="../../img/material/arrow_back_white.svg" />
+                  <img src="img/material/arrow_back_white.svg" />
                 </RippleButton> : null
             }
             <h1>{this.props.title}</h1>
@@ -1054,21 +1053,23 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
   var CardView = React.createClass({
     propTypes: {
-      content: React.PropTypes.object.isRequired
+      data: React.PropTypes.object.isRequired,
+      onClick: React.PropTypes.func
     },
 
     render: function() {
       return (
         <div className="material-card">
           <div className="card-info-wrapper">
-            <h1 className="card-title">Bienvenido Username</h1>
+            <h1 className="card-title">{this.props.data.title}</h1>
             <p>
-              Usando estas tarjetas te iremos informando de aquellas cosas que sean importantes para ti.
+              {this.props.data.content}
             </p>
           </div>
           <div className="card-buttons">
             <RippleButton
               extraCSSClasses="borderless"
+              handleClick={this.props.onClick}
               label="Aceptar" />
             <RippleButton
               extraCSSClasses="borderless"

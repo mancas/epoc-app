@@ -124,7 +124,7 @@ define([
             Es muy importante que los pacientes con esta patología dejen de fumar, para que la enfermedad no progrese.
           </p>
           <div className="img-caption-group">
-            <img src="../img/bronchus.jpg" />
+            <img src="img/bronchus.jpg" />
             <span className="caption">Comparación entre un bronquio normal y un bronquio con EPOC</span>
           </div>
           <h1>¿Por qué aparece la EPOC?</h1>
@@ -248,10 +248,14 @@ define([
     },
 
     render: function () {
+      if (!this.state.weight || !this.state.height) {
+        return null;
+      }
+
       var fabIcon = this.state.editMode ? "check.svg" : "pencil.svg";
       var isSmokerIcon = "smoke.svg";
       var notSmokerIcon = "smoke_free.svg";
-      var calculatedIMC = utils.calculateIMC(this.state.weight, this.state.height);
+      var calculatedBMI = utils.calculateBMI(this.state.weight, this.state.height);
 
       return (
         <div className="user-profile">
@@ -266,11 +270,11 @@ define([
             <materialViews.FloatActionButton
               extraCSSClasses="edit-mode"
               handleClick={this.toggleEditMode}>
-              <img src={"../../img/material/" + fabIcon} />
+              <img src={"img/material/" + fabIcon} />
             </materialViews.FloatActionButton>
             <div className="profile-section">
               <div className="icon-group">
-                <img className="icon" src="../../img/material/person.svg" />
+                <img className="icon" src="img/material/person.svg" />
                 <p className="text-row">Nombre</p>
               </div>
               <p className="text-row">{this.state.userName}</p>
@@ -292,12 +296,12 @@ define([
                 units="centímetros"
                 ref="height" />
               <div className="icon-group">
-                <img className="icon" src="../../img/material/cake.svg" />
+                <img className="icon" src="img/material/cake.svg" />
                 <p className="text-row">Cumpleaños</p>
               </div>
               <p className="text-row">{DateTimeHelper.format(new Date(this.state.birth), {long: true})}</p>
               <div className="icon-group">
-                <img className="icon" src={"../../img/material/" + (this.state.isSmoker ? isSmokerIcon : notSmokerIcon)} />
+                <img className="icon" src={"img/material/" + (this.state.isSmoker ? isSmokerIcon : notSmokerIcon)} />
                 <EditableField
                   currentValue={this.state.isSmoker ? 1 : 0}
                   isEditModeActive={this.state.editMode}
@@ -309,11 +313,11 @@ define([
               <div className="icon-group no-icon">
                 <p className="text-row">IMC</p>
               </div>
-              <p className="text-row">{calculatedIMC.imc + " - " + calculatedIMC.range}</p>
+              <p className="text-row">{calculatedBMI.bmi + " - " + calculatedBMI.range}</p>
               <div className="icon-group no-icon">
                 <p className="text-row">Grado de EPOC diagnosticado</p>
               </div>
-              <p className="text-row">{this.state.gradeEPOC}</p>
+              <p className="text-row">{"GOLD " + this.state.gradeEPOC}</p>
             </div>
           </div>
         </div>
@@ -356,7 +360,6 @@ define([
         return this.state.newValue + " " + this.props.units;
       } else {
         var selectedOption = this.props.values.filter(function(option) {
-          console.info(option, this.state.newValue);
           return option.value.toString() === this.state.newValue.toString();
         }, this);
 
@@ -390,11 +393,34 @@ define([
     }
   });
 
+  var MyAlarmsView = React.createClass({
+    mixins: [
+      StoreMixin("alarmStore")
+    ],
+
+    propTypes: {
+
+    },
+
+    getInitialState: function () {
+      return this.getStore().getStoreState();
+    },
+
+    render: function() {
+      return (
+        <div className="alarms-list">
+          My alarms
+        </div>
+      );
+    }
+  });
+
   return {
     ChoiceButton: ChoiceButton,
     ChoicesView: ChoicesView,
     ExacerbationsView: ExacerbationsView,
     LoaderView: LoaderView,
+    MyAlarmsView: MyAlarmsView,
     UserProfileView: UserProfileView,
     WhatIsEpocView: WhatIsEpocView
   };

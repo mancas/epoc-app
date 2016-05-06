@@ -67,9 +67,8 @@ define([], function() {
   }
 
   function Action(name, schema, values) {
-    console.info(values);
-    checkSchema(schema, values);
-    checkSchemaTypes(schema, values);
+    checkSchema(schema || {}, values || {});
+    checkSchemaTypes(schema || {}, values || {});
 
     // If we are here, everything went well
     for (var prop in values) {
@@ -86,6 +85,28 @@ define([], function() {
   return {
     Action: Action,
 
+    CreateUser: Action.define("createUser", {
+      // userName: String, Optional,
+      // gradeEPOC: String, Optional,
+      // lastRevision: String, Optional,
+      // isSmoker: Int Optional,
+      // weight: Int Optional,
+      // height: Int Optional,
+      // birth: String, Optional
+    }),
+
+    SetupApp: Action.define("setupApp", {
+      // userName: String, Optional,
+      // gradeEPOC: String, Optional,
+      // lastRevision: String, Optional,
+      // isSmoker: Int Optional,
+      // weight: Int Optional,
+      // height: Int Optional,
+      // birth: String, Optional
+    }),
+
+    AppReady: Action.define("appReady", {}),
+
     UpdateUserData: Action.define("updateUserData", {
       // userName: String, Optional,
       // gradeEPOC: String, Optional,
@@ -95,6 +116,27 @@ define([], function() {
       // height: Int Optional,
       // birth: String, Optional
       // persist: Boolean, Optional
+    }),
+
+    ScheduleAlarm: Action.define("scheduleAlarm", {
+      title: String,
+      text: String,
+      at: Object,
+      every: [Number, String]
+    }),
+
+    CancelAlarm: Action.define("cancelAlarm", {
+      id: Number
+    }),
+
+    AddNotification: Action.define("addNotification", {
+      title: String,
+      text: String
+    }),
+
+    UpdateNotification: Action.define("updateNotification", {
+      id: Number,
+      read: Boolean
     })
   };
 });

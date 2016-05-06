@@ -50,7 +50,11 @@ define([], function() {
             primaryKey: true
           },
           {
-            name: "type",
+            name: "title",
+            type: "text"
+          },
+          {
+            name: "content",
             type: "text"
           },
           {
