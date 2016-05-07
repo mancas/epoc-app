@@ -7,6 +7,12 @@ define([
 ], function(Store, dbManager, DateTimeHelper, actions, utils) {
   "use strict";
 
+  const welcomeNotification = {
+    type: utils.NOTIFICATION_TYPES.WELCOME,
+    title: "Bienvenido!",
+    text: "Usando estas tarjetas te iremos informando de aquellas cosas que sean importantes para ti."
+  };
+
   var UserStore = Store.createStore({
     actions: [
       "createUser",
@@ -14,11 +20,6 @@ define([
       "appReady",
       "updateUserData"
     ],
-
-    welcomeNotification: {
-      title: "Bienvenido!",
-      text: "Usando estas tarjetas te iremos informando de aquellas cosas que sean importantes para ti."
-    },
 
     getInitialStoreState: function() {
       return {
@@ -123,14 +124,24 @@ define([
         every: diffInMins
       }));
 
-      // TODO add notifications: reminders and smoker
+      // TODO add notifications: reminders
       var notifications = [
-        this.welcomeNotification
+        welcomeNotification
       ];
       var calculatedBMI = utils.calculateBMI(parseInt(actionData.weight), parseInt(actionData.height));
       notifications.push({
+        type: utils.NOTIFICATION_TYPES.BMI,
         title: "Información sobre tu IMC",
         text: calculatedBMI.message
+      });
+
+      notifications.push({
+        type: utils.NOTIFICATION_TYPES.SMOKER,
+        title: "La EPOC y el tabaquísmo",
+        text: "Recuerda que el tabaco es uno de los principales factores que provocan " +
+          "el empeoramiento de los síntomas de la EPOC. Consulta con tu especialista para intentar dejar de fumar, " +
+          "tu cuerpo te lo agradecerá.",
+        read: !parseInt(actionData.isSmoker)
       });
 
       notifications.forEach(function (notification) {

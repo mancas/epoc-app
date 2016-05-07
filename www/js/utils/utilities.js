@@ -1,6 +1,13 @@
 define([], function() {
   "use strict";
 
+  const NOTIFICATION_TYPES = {
+    WELCOME: 0,
+    BMI: 1,
+    SMOKER: 2,
+    REMINDER: 3
+  };
+
   function getClosest(el, tag) {
     // this is necessary since nodeName is always in upper case
     tag = tag.toUpperCase();
@@ -66,6 +73,7 @@ define([], function() {
   return {
     calculateBMI: calculateBMI,
     closest: getClosest,
+    NOTIFICATION_TYPES: NOTIFICATION_TYPES,
     prepareModel: prepareModel
   };
 });

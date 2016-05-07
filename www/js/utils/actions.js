@@ -131,11 +131,14 @@ define([], function() {
 
     AddNotification: Action.define("addNotification", {
       title: String,
-      text: String
+      text: String,
+      type: String
+      // read: Boolean, Optional
     }),
 
     UpdateNotification: Action.define("updateNotification", {
-      id: Number,
+      // id: Number, Optional
+      // type: String, Optional
       read: Boolean
     })
   };

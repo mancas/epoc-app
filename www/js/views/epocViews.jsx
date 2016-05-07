@@ -222,6 +222,23 @@ define([
       });
     },
 
+    componentWillUpdate: function(nextProps, nextState) {
+      if (this.state.weight !== nextState.weight ||
+        this.state.height !== nextState.height) {
+        this.props.dispatcher.dispatch(new Actions.UpdateNotification({
+          type: utils.NOTIFICATION_TYPES.BMI,
+          read: 0
+        }));
+      }
+
+      if (!this.state.isSmoker && nextState.isSmoker) {
+        this.props.dispatcher.dispatch(new Actions.UpdateNotification({
+          type: utils.NOTIFICATION_TYPES.SMOKER,
+          read: 0
+        }));
+      }
+    },
+
     toggleEditMode: function () {
       this.setState({
         editMode: !this.state.editMode

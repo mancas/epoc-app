@@ -6,7 +6,8 @@ define([
 
   var NotificationStore = Store.createStore({
     actions: [
-      "addNotification"
+      "addNotification",
+      "updateNotification"
     ],
 
     getInitialStoreState: function() {
@@ -46,9 +47,10 @@ define([
 
     addNotification: function(actionData) {
       var notification = {
+        type: actionData.type,
         title: actionData.title,
         content: actionData.text,
-        read: 0
+        read: actionData.read || 0
       };
       var self = this;
 
@@ -66,6 +68,25 @@ define([
         });
       }, function(error) {
         console.error("Notifications db error", error);
+      });
+    },
+
+    updateNotification: function(actionData) {
+      var self = this;
+      var whereBuilder = dbManager.createWhereBuilder();
+      var whereClause = {};
+      if (actionData.hasOwnProperty("id")) {
+        whereClause  = {id: actionData.id}
+      } else {
+        whereClause  = {type: actionData.type}
+      }
+      whereBuilder.and(whereClause);
+
+      dbManager.update("notification", {read: actionData.read}, whereBuilder.where, function() {
+        // Time to update notifications
+        self.getNotifications();
+      }, function(error) {
+        console.error("Notifications update error", error);
       });
     }
   });

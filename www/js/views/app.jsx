@@ -102,7 +102,8 @@ define([
         <materialViews.TabsContent
           selectedTab={this.props.selectedTab}>
           <materialViews.TabContentView>
-            <NotificationsView />
+            <NotificationsView
+              dispatcher={this.props.dispatcher} />
             <AppSectionsView
               handleClick={this.props.navigate} />
           </materialViews.TabContentView>
@@ -237,24 +238,32 @@ define([
       StoreMixin("notificationStore")
     ],
 
-    getInitialState: function() {
-      return _.extend(this.getStore().getStoreState(), {
-        currentNotification: 0
-      });
+    propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
     },
 
-    componentWillMount: function() {
+    getInitialState: function() {
+      return this.getStore().getStoreState();
+    },
 
+    componentWillUpdate: function() {
+      var notification = this.refs.currentNotification;
+      if (!notification) {
+        return;
+      }
+
+      notification.getDOMNode().classList.remove("fade-out");
     },
 
     onClick: function() {
       var notification = this.refs.currentNotification.getDOMNode();
       notification.addEventListener("animationend", function() {
         console.info("animation end");
-        notification.classList.remove("fade-out");
-        this.setState({
-          currentNotification: this.state.currentNotification + 1
-        });
+
+        this.props.dispatcher.dispatch(new Actions.UpdateNotification({
+          id: this.state.notifications[0].id,
+          read: 1
+        }));
       }.bind(this));
 
       notification.classList.add("fade-out");
@@ -262,15 +271,14 @@ define([
 
     render: function(){
       console.info(this.state);
-      if (!this.state.notifications || !this.state.notifications.length ||
-        this.currentNotification > this.state.notifications.length) {
+      if (!this.state.notifications || !this.state.notifications.length) {
         return null;
       }
 
       return (
         <div className="app-notifications">
           <materialViews.CardView
-            data={this.state.notifications[this.state.currentNotification]}
+            data={this.state.notifications[0]}
             onClick={this.onClick}
             ref="currentNotification" />
         </div>

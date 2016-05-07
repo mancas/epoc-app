@@ -134,10 +134,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     componentDidMount: function() {
-      if (this.props.type === "date") {
-        // return;
-      }
-
+      console.info(this.getDOMNode());
       // Render char counter if needed at the initialize
       this.renderCharCount();
       this.validateInput();
@@ -190,7 +187,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       var hasValue = input[attr].length !== 0;
       var valid = true;
 
-      if (input.required && !hasValue) {
+      if (input.hasAttribute("required") && !hasValue) {
         this.setState({
           invalid: true,
           hasValue: hasValue

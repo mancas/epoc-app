@@ -50,6 +50,10 @@ define([], function() {
             primaryKey: true
           },
           {
+            name: "type",
+            type: "integer"
+          },
+          {
             name: "title",
             type: "text"
           },
