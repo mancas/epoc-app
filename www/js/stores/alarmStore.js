@@ -10,8 +10,9 @@ define([
     ],
 
     initialize: function() {
-      if (!cordova.plugins || !cordova.plugins.notification) {
-        throw new Error("Notification Store: plugin not installed");
+      if (!window.cordova || !cordova.plugins || !cordova.plugins.notification) {
+        return;
+        //throw new Error("Notification Store: plugin not installed");
       }
 
       this._plugin = cordova.plugins.notification;
@@ -20,7 +21,7 @@ define([
       });
 
       // testing
-      this.scheduleDelayed();
+      //this.scheduleDelayed();
 
       this._getNotifications();
     },

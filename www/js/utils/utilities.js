@@ -50,10 +50,10 @@ define([], function() {
     var range, message;
     if (bmi < 18.5) {
       range = "Bajo peso";
-      message = "Tienes bajo peso, deberías llevar una alimentación equilibrada y ganar algo de peso.";
+      message = "Tienes bajo peso, deberías llevar una alimentación equilibrada y ganar algo de peso. Consultalo con tu médico.";
     } else if (bmi >= 18.5 && bmi <= 24.99) {
       range = "Rango normal";
-      message = "Tu peso es ideal, continua con tu alimentación equilibrada y haciendo ejercicios para reducir los síntomas de la EPOC";
+      message = "Tu peso es ideal, continua con tu alimentación equilibrada y practicando deporte para reducir los síntomas de la EPOC.";
     } else if (bmi >= 25 && bmi <= 29.99) {
       range = "Sobrepeso";
       message = "Tienes sobrepeso, no dejes de vigilar tu alimentación y visita a tu médico.";
@@ -64,7 +64,7 @@ define([], function() {
     }
 
     return {
-      bmi: bmi,
+      value: bmi,
       message: message,
       range: range
     };

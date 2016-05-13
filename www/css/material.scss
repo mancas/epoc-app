@@ -8,6 +8,7 @@ $disabled_text: rgba(0, 0, 0, .38);
 $not_selected_tab: rgba(255, 255, 255, 0.7);
 $card-gray: #757575;
 $card-separator: rgba(0, 0, 0, .12);
+$card-background: #fcfcfc;
 
 /** RIPPLE EFFECT **/
 .ripple-effect {
@@ -174,8 +175,13 @@ div.form-control {
   background-color: $grey;
 }
 
-.material-button.selected {
+.material-button.selected,
+.material-button.borderless.selected {
   background-color: $primary;
+}
+
+.material-button.borderless.selected {
+  color: $white;
 }
 
 .material-button[disabled] {
@@ -707,8 +713,8 @@ div.form-control {
 /* Cards */
 .material-card {
   width: 100%;
-  background: $white;
-  box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.24);
+  background: $card-background;
+  box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 0 4px rgba(0,0,0,0.24);
   border-radius: 3px;
   margin-bottom: 20px;
 

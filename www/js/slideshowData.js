@@ -155,6 +155,8 @@ define([], function() {
         question: {
           field: {
             label: "Tu peso",
+            minValue: 20,
+            maxValue: 400,
             type: "number",
             required: true
           },
@@ -180,6 +182,8 @@ define([], function() {
         question: {
           field: {
             label: "Tu estatura (en cm)",
+            minValue: 50,
+            maxValue: 250,
             type: "number",
             required: true
           },
@@ -213,6 +217,7 @@ define([], function() {
       },
       {
         type: "loader",
+        hideIcon: true,
         title: {
           id: "slide.preparing_app_title"
         },

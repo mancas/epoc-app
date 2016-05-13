@@ -51,7 +51,7 @@ define([
           <div className="app-content" >
             <AppContentView
               dispatcher={this.props.dispatcher}
-              currentRoute={this.props.router.current}
+              router={this.props.router}
               navigate={this.props.navigate}
               selectedTab={this.state.selectedTab} />
           </div>
@@ -92,8 +92,8 @@ define([
   var AppContentView = React.createClass({
     propTypes: {
       dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
-      currentRoute: React.PropTypes.string.isRequired,
       navigate: React.PropTypes.func.isRequired,
+      router: React.PropTypes.object.isRequired,
       selectedTab: React.PropTypes.number.isRequired
     },
 
@@ -109,6 +109,7 @@ define([
           </materialViews.TabContentView>
           <materialViews.TabContentView>
             <p>Under construction</p>
+            <epocViews.ChartView />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
             <epocViews.UserProfileView
@@ -119,7 +120,7 @@ define([
     },
 
     render: function() {
-      switch (this.props.currentRoute) {
+      switch (this.props.router.current) {
         case "index":
           return this.renderTabContent();
         case "epoc":
@@ -132,11 +133,17 @@ define([
           );
         case "smoker":
           return (
-            <epocViews.ExacerbationsView />
+            <epocViews.EPOCAndSmokersView />
           );
         case "alarms":
           return (
             <epocViews.MyAlarmsView />
+          );
+        case "inhalers":
+          return (
+            <epocViews.InhalersView
+              navigate={this.props.navigate}
+              router={this.props.router} />
           );
         default:
           return null;
@@ -270,7 +277,6 @@ define([
     },
 
     render: function(){
-      console.info(this.state);
       if (!this.state.notifications || !this.state.notifications.length) {
         return null;
       }
@@ -286,7 +292,20 @@ define([
     }
   });
 
+  var IntroScreenView = React.createClass({
+    propTypes: {
+      navigate: React.PropTypes.func.isRequired
+    },
+
+    render: function() {
+      return (
+        <div className="intro-screen">Hi</div>
+      );
+    }
+  });
+
   return {
-    AppControllerView: AppControllerView
+    AppControllerView: AppControllerView,
+    IntroScreenView: IntroScreenView
   };
 });

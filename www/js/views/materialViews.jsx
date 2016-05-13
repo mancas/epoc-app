@@ -106,6 +106,8 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       isValid: React.PropTypes.func,
       label: React.PropTypes.string,
       maxLength: React.PropTypes.number,
+      maxValue: React.PropTypes.number,
+      minValue: React.PropTypes.number,
       onChange: React.PropTypes.func,
       onFocus: React.PropTypes.func,
       required: React.PropTypes.bool,
@@ -134,7 +136,6 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     componentDidMount: function() {
-      console.info(this.getDOMNode());
       // Render char counter if needed at the initialize
       this.renderCharCount();
       this.validateInput();
@@ -187,7 +188,15 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       var hasValue = input[attr].length !== 0;
       var valid = true;
 
+      var rangeValid = this._upperBoundValid(input[attr]) && this._lowerBoundValid(input[attr]);
+
       if (input.hasAttribute("required") && !hasValue) {
+        this.setState({
+          invalid: true,
+          hasValue: hasValue
+        });
+        valid = false;
+      } else if ((this.props.maxValue || this.props.minValue) && !rangeValid) {
         this.setState({
           invalid: true,
           hasValue: hasValue
@@ -201,6 +210,22 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       }
 
       this.props.isValid && this.props.isValid(valid);
+    },
+
+    _upperBoundValid: function(value) {
+      if (!this.props.maxValue) {
+        return true;
+      }
+
+      return this.props.maxValue >= value;
+    },
+
+    _lowerBoundValid: function(value) {
+      if (!this.props.minValue) {
+        return true;
+      }
+
+      return this.props.minValue <= value;
     },
 
     onChange: function(event) {
@@ -749,13 +774,13 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
     componentWillMount: function() {
       if (this.props.children && this.props.currentRoute === "index") {
-        window.addEventListener("scroll", this.onScroll);
+        // window.addEventListener("scroll", this.onScroll);
       }
     },
 
     componentWillUnMount: function() {
       if (this.props.children && this.props.currentRoute === "index") {
-        window.removeEventListener("scroll", this.onScroll);
+        // window.removeEventListener("scroll", this.onScroll);
       }
     },
 
@@ -1068,9 +1093,6 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
               extraCSSClasses="borderless"
               handleClick={this.props.onClick}
               label="Aceptar" />
-            <RippleButton
-              extraCSSClasses="borderless"
-              label="Cancelar" />
           </div>
         </div>
       );
@@ -1084,6 +1106,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
     propTypes: {
       children: React.PropTypes.node.isRequired,
+      extraCSSClass: React.PropTypes.string,
       label: React.PropTypes.string.isRequired,
       opened: React.PropTypes.bool
     },
@@ -1119,7 +1142,15 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     _calculateContentHeight: function() {
       var height = 0;
       var container = this.getDOMNode().querySelector(".dropdown-content");
+      var self = this;
       Array.prototype.forEach.call(container.children, function(children) {
+        if (children.tagName === "IMG") {
+          children.addEventListener("load", function onLoad() {
+            children.removeEventListener("load", onLoad);
+            // Let's calculate again the height once the image has been loaded
+            self._calculateContentHeight();
+          });
+        }
         height += children.clientHeight;
       });
 
@@ -1133,6 +1164,14 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
         "opened": this.state.opened
       };
 
+      var contentClasses = {
+        "dropdown-content": true
+      };
+
+      if (this.props.extraCSSClass) {
+        contentClasses[this.props.extraCSSClass] = true;
+      }
+
       var styleContent = {
         height: this.state.opened ? this.state.height + "px" : 0
       };
@@ -1143,7 +1182,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
             extraCSSClasses={btnExtraClasses}
             handleClick={this.toggleDropdow}
             label={this.props.label} />
-          <div className="dropdown-content" style={styleContent}>
+          <div className={classNames(contentClasses)} style={styleContent}>
             {this.props.children}
           </div>
         </div>

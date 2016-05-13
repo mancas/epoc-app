@@ -18,6 +18,15 @@ html, body {
   box-sizing: border-box;
 }
 
+p {
+  font-family: "Roboto Light", sans-serif;
+  font-size: 14px;
+}
+
+b {
+  font-family: "Roboto Bold", sans-serif;
+}
+
 .ep-right {
   float: right;
 }
@@ -61,15 +70,6 @@ html, body {
           margin-top: 30px;
           color: $primary;
           font-size: 16px;
-        }
-
-        p {
-          font-family: "Roboto Light", sans-serif;
-          font-size: 14px;
-        }
-
-        b {
-          font-family: "Roboto Bold", sans-serif;
         }
 
         .img-caption-group {
@@ -217,6 +217,87 @@ html, body {
 
 .slide-content > button:first-of-type {
   margin-left: 0;
+}
+
+/* EPOC test */
+.epoc-test {
+  > .slideshow {
+    > .slide {
+      > .slide-content {
+        text-align: left;
+        position: initial;
+        top: initial;
+        left: initial;
+        transform: none;
+        padding-top: 70px;
+
+        > p {
+          margin: 0 0 16px 0;
+        }
+      }
+    }
+
+    > .slide.epoc-test-intro {
+      > .slide-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        padding-top: 0;
+      }
+    }
+
+    .choices {
+      width: 100%;
+      max-width: initial;
+      .choice-button {
+        display: block;
+        margin-top: 10px;
+
+        &:first-of-type {
+          margin-top: 0;
+        }
+
+        &:nth-child(even) {
+          margin-left: initial;
+        }
+
+        .material-button {
+          margin: 0;
+          text-transform: initial;
+          white-space: normal;
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  .epoc-test-score {
+    padding: 70px 16px 16px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    h1 {
+      font-family: "Roboto Medium", sans-serif;
+      font-size: 16px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: "Roboto Bold", sans-serif;
+      color: $primary;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    h2.score {
+      font-size: 46px;
+      text-align: center;
+    }
+  }
 }
 
 /* Pagination */
@@ -368,4 +449,59 @@ html, body {
       }
     }
   }
+}
+
+/* Inhalers */
+.inhaler-section {
+  img {
+    max-width: 50%;
+    margin: 0 auto 10px auto;
+    display: block;
+  }
+
+  .material-button {
+    margin: 0;
+  }
+}
+
+.inhaler-steps {
+  margin-left: 16px;
+  border-left: solid 2px $primary;
+
+  .inhaler-step {
+    position: relative;
+    padding: 14px 0;
+    .step {
+      width: 26px;
+      height: 26px;
+      line-height: 22px;
+      background: $white;
+      border-radius: 50%;
+      border: solid 2px $primary;
+      position: absolute;
+      transform: translateX(-50%);
+      display: block;
+      text-align: center;
+    }
+
+    p {
+      display: inline-block;
+      margin: 0 0 0 20px;
+      line-height: 26px;
+    }
+  }
+}
+
+/* Smokers and EPOC */
+.smokers, .epoc-test {
+  .btn-info {
+    margin: 20px 0 0;
+  }
+}
+
+/* EPOC chart */
+.epoc-chart {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }

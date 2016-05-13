@@ -22,6 +22,10 @@ define(["db"], function(DataBaseSchema) {
     working: false,
 
     openDatabase: function (successCb, errorCb) {
+      if (!window.sqlitePlugin) {
+        return;
+      }
+
       if (this.db) {
         successCb && successCb();
         return;

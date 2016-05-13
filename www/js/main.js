@@ -6,7 +6,8 @@ require.config({
     "classnames": "../vendor/classNames",
     "_": "../vendor/underscore.min",
     "jquery": "../vendor/jquery.min",
-    "Backbone": "../vendor/backbone.min"
+    "Backbone": "../vendor/backbone.min",
+    "Chart": "../vendor/Chart.min"
   },
 
   shim: {
@@ -32,6 +33,10 @@ require.config({
     "Backbone": {
       deps: ["jquery"],
       exports: "Backbone"
+    },
+    "Chart": {
+      deps: [],
+      exports: "Chart"
     },
     "appShim": {
       deps: ["react", "jquery", "Backbone", "classnames", "_"],

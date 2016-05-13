@@ -37,14 +37,14 @@ define([
 
     initialize: function() {
       var self = this;
-      dbManager.openDatabase(function(){
+      /*dbManager.openDatabase(function(){
         dbManager.select("User", null, null, function(result) {
           console.info("SELECT result initilize", result.rows.item(0));
           result.rows.item(0) && self.setStoreState(result.rows.item(0));
         });
       }, function(err) {
         console.error(err);
-      });
+      });*/
     },
 
     createUser: function (actionData) {
@@ -54,17 +54,10 @@ define([
       var model = utils.prepareModel(newState);
       dbManager.openDatabase(function(){
         dbManager.insert("User", model, function(result) {
-          console.info("INSERT result", result.rows.item(0));
+          console.info("INSERT result", result.rows.item(0), result);
           self.setStoreState({
-            id: result.rows.insertId
+            id: result.insertId
           });
-          /*dbManager.select("User", null, null, function(result) {
-            console.info("SELECT result create", result.rows.item(0));
-            // Need to update ID on the first time use
-            result.rows.item(0) && self.setStoreState({
-              id: result.rows.item(0).id
-            });
-          });*/
         });
       }, function(err) {
         console.error(err);

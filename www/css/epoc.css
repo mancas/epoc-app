@@ -8,6 +8,13 @@ html, body {
 * {
   box-sizing: border-box; }
 
+p {
+  font-family: "Roboto Light", sans-serif;
+  font-size: 14px; }
+
+b {
+  font-family: "Roboto Bold", sans-serif; }
+
 .ep-right {
   float: right; }
 
@@ -40,11 +47,6 @@ html, body {
           margin-top: 30px;
           color: #00acb4;
           font-size: 16px; }
-        #container .app .app-content .section-info p {
-          font-family: "Roboto Light", sans-serif;
-          font-size: 14px; }
-        #container .app .app-content .section-info b {
-          font-family: "Roboto Bold", sans-serif; }
         #container .app .app-content .section-info .img-caption-group img {
           max-width: 100%;
           display: block;
@@ -147,6 +149,57 @@ html, body {
 .slide-content > button:first-of-type {
   margin-left: 0; }
 
+/* EPOC test */
+.epoc-test > .slideshow > .slide > .slide-content {
+  text-align: left;
+  position: initial;
+  top: initial;
+  left: initial;
+  transform: none;
+  padding-top: 70px; }
+  .epoc-test > .slideshow > .slide > .slide-content > p {
+    margin: 0 0 16px 0; }
+.epoc-test > .slideshow > .slide.epoc-test-intro > .slide-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding-top: 0; }
+.epoc-test > .slideshow .choices {
+  width: 100%;
+  max-width: initial; }
+  .epoc-test > .slideshow .choices .choice-button {
+    display: block;
+    margin-top: 10px; }
+    .epoc-test > .slideshow .choices .choice-button:first-of-type {
+      margin-top: 0; }
+    .epoc-test > .slideshow .choices .choice-button:nth-child(even) {
+      margin-left: initial; }
+    .epoc-test > .slideshow .choices .choice-button .material-button {
+      margin: 0;
+      text-transform: initial;
+      white-space: normal;
+      text-align: left; }
+.epoc-test .epoc-test-score {
+  padding: 70px 16px 16px;
+  width: 100%;
+  height: 100%;
+  overflow: auto; }
+  .epoc-test .epoc-test-score h1 {
+    font-family: "Roboto Medium", sans-serif;
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: center; }
+  .epoc-test .epoc-test-score h2 {
+    font-family: "Roboto Bold", sans-serif;
+    color: #00acb4;
+    font-size: 16px;
+    margin-top: 20px; }
+  .epoc-test .epoc-test-score h2.score {
+    font-size: 46px;
+    text-align: center; }
+
 /* Pagination */
 .pagination {
   display: block;
@@ -245,5 +298,45 @@ html, body {
       display: block; }
     .user-profile .user-information .profile-section .editable-field.editable .text-row {
       display: none; }
+
+/* Inhalers */
+.inhaler-section img {
+  max-width: 50%;
+  margin: 0 auto 10px auto;
+  display: block; }
+.inhaler-section .material-button {
+  margin: 0; }
+
+.inhaler-steps {
+  margin-left: 16px;
+  border-left: solid 2px #00acb4; }
+  .inhaler-steps .inhaler-step {
+    position: relative;
+    padding: 14px 0; }
+    .inhaler-steps .inhaler-step .step {
+      width: 26px;
+      height: 26px;
+      line-height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      border: solid 2px #00acb4;
+      position: absolute;
+      transform: translateX(-50%);
+      display: block;
+      text-align: center; }
+    .inhaler-steps .inhaler-step p {
+      display: inline-block;
+      margin: 0 0 0 20px;
+      line-height: 26px; }
+
+/* Smokers and EPOC */
+.smokers .btn-info, .epoc-test .btn-info {
+  margin: 20px 0 0; }
+
+/* EPOC chart */
+.epoc-chart {
+  width: 100%;
+  height: 100%;
+  position: relative; }
 
 /*# sourceMappingURL=epoc.css.map */

@@ -1,21 +1,26 @@
 define([
   "build/materialViews",
   "build/epocViews",
-  "slideshowData",
-  "utils/dispatcher",
   "utils/dateTime",
   "utils/stringsHelper",
-  "utils/databaseManager",
-  "utils/actions",
   "utils/utilities",
   "_"
-], function(materialViews, epocViews, slideshowData, Dispatcher,
-            DateTimeHelper, StringsHelper, dbManager, actions, utils, _) {
+], function(materialViews, epocViews,
+            DateTimeHelper, StringsHelper, utils, _) {
   "use strict";
 
   var SlideshowView = React.createClass({
     propTypes: {
-      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
+      model: React.PropTypes.object.isRequired,
+      onFinish: React.PropTypes.func,
+      showPagination: React.PropTypes.bool,
+      slides: React.PropTypes.array.isRequired
+    },
+
+    getDefaultProps: function() {
+      return {
+        showPagination: true
+      };
     },
 
     next: function(modelKey, value) {
@@ -41,22 +46,15 @@ define([
 
     componentWillUpdate: function(nextProps, nextState) {
       // Last slide so let's start preparing the database
-      if (nextState.currentSlide === slideshowData.slides.length - 1) {
-        this._setupApp(nextState.model);
+      if (nextState.currentSlide === this.props.slides.length - 1) {
+        this.props.onFinish && this.props.onFinish(nextState.model);
       }
-    },
-
-    _setupApp: function (model) {
-      localStorage.setItem("introSeen", "true");
-      console.info(model);
-      this.props.dispatcher.dispatch(new actions.CreateUser(model));
-      this.props.dispatcher.dispatch(new actions.SetupApp(model));
     },
 
     getInitialState: function() {
       return {
         currentSlide: 0,
-        model: slideshowData.model
+        model: this.props.model
       };
     },
 
@@ -64,7 +62,7 @@ define([
       return (
         <div className="slideshow">
           {
-            slideshowData.slides.map(function(slideNode, index) {
+            this.props.slides.map(function(slideNode, index) {
               var ref = "slide-" + index;
               return (
                 <Slide
@@ -78,10 +76,13 @@ define([
               );
             }, this)
           }
-          <PaginationView
-            currentPage={this.state.currentSlide}
-            pages={slideshowData.slides.length - 1}
-            ref="pagination"/>
+          {
+            this.props.showPagination ?
+              <PaginationView
+                currentPage={this.state.currentSlide}
+                pages={this.props.slides.length - 1}
+                ref="pagination"/> : null
+          }
         </div>
       );
     }
@@ -216,7 +217,9 @@ define([
           inputName={this.props.slide.question.modelName}
           isValid={this.isValid}
           label={this.props.slide.question.field.label}
+          maxValue={this.props.slide.question.field.maxValue}
           maxLength={this.props.slide.question.field.maxLength}
+          minValue={this.props.slide.question.field.minValue}
           onFocus={onFocus}
           ref="slideInput"
           required={this.props.slide.question.field.required}
@@ -234,7 +237,8 @@ define([
       return (
         <epocViews.ChoicesView
           choiceName={this.props.slide.question.modelName}
-          choices={this.props.slide.question.choices} />
+          choices={this.props.slide.question.choices}
+          hasValue={this.isValid}/>
       );
     },
 
@@ -274,9 +278,11 @@ define([
         "current": this.props.currentSlide === this.props.index
       };
 
+      _.extend(cssClasses, this.props.slide.slideCSSClasses || {});
+
       var iconClasses = {
         "slide-icon": true,
-        "hidden": this.props.slide.type === "loader"
+        "hidden": !!this.props.slide.hideIcon
       };
 
       return (
@@ -353,5 +359,8 @@ define([
     }
   });
 
-  return SlideshowView;
+  return {
+    Slide: Slide,
+    SlideshowView: SlideshowView
+  };
 });
