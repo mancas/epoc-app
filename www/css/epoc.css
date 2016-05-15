@@ -34,14 +34,16 @@ b {
       width: 100%;
       height: 100%;
       padding: 70px 0 0; }
+      #container .app .app-content h1 {
+        font-family: "Roboto Medium", sans-serif;
+        font-size: 16px;
+        margin-top: 30px; }
+      #container .app .app-content .epoc-test h1:first-of-type {
+        margin-top: 10px; }
       #container .app .app-content .section-info {
         padding: 0 16px 16px; }
-        #container .app .app-content .section-info h1 {
-          font-family: "Roboto Medium", sans-serif;
-          font-size: 16px;
-          margin-top: 30px; }
-          #container .app .app-content .section-info h1:first-of-type {
-            margin-top: 10px; }
+        #container .app .app-content .section-info h1:first-of-type {
+          margin-top: 10px; }
         #container .app .app-content .section-info h2 {
           font-family: "Roboto Bold", sans-serif;
           margin-top: 30px;
@@ -56,6 +58,8 @@ b {
           margin-top: 10px;
           font-size: 12px;
           font-family: 'Roboto Medium', sans-serif; }
+      #container .app .app-content .epoc-chart h1:first-of-type {
+        margin-top: 0; }
 
 /* Slideshow */
 .slideshow {
@@ -181,24 +185,33 @@ b {
       text-transform: initial;
       white-space: normal;
       text-align: left; }
-.epoc-test .epoc-test-score {
+.epoc-test .epoc-test-content {
   padding: 70px 16px 16px;
   width: 100%;
   height: 100%;
   overflow: auto; }
-  .epoc-test .epoc-test-score h1 {
+  .epoc-test .epoc-test-content h1 {
     font-family: "Roboto Medium", sans-serif;
     font-size: 16px;
-    margin-top: 10px;
-    text-align: center; }
-  .epoc-test .epoc-test-score h2 {
+    margin-top: 10px; }
+  .epoc-test .epoc-test-content h2 {
     font-family: "Roboto Bold", sans-serif;
     color: #00acb4;
     font-size: 16px;
     margin-top: 20px; }
-  .epoc-test .epoc-test-score h2.score {
-    font-size: 46px;
-    text-align: center; }
+.epoc-test .epoc-test-score h1 {
+  text-align: center; }
+.epoc-test .epoc-test-score h2.score {
+  font-size: 46px;
+  text-align: center; }
+
+.app-content .epoc-test-content {
+  padding-top: 0; }
+.app-content .epoc-test {
+  width: 100%;
+  height: 100%; }
+  .app-content .epoc-test > .slideshow > .slide > .slide-content {
+    padding-top: 0; }
 
 /* Pagination */
 .pagination {
@@ -278,7 +291,8 @@ b {
       display: inline-block;
       margin-left: 0;
       color: #4a4a4a;
-      font-size: 16px; }
+      font-size: 16px;
+      font-family: "Roboto Bold", sans-serif; }
     .user-profile .user-information .profile-section .icon-group .editable-field {
       display: inline-block; }
       .user-profile .user-information .profile-section .icon-group .editable-field .material-input-wrapper {
@@ -337,6 +351,48 @@ b {
 .epoc-chart {
   width: 100%;
   height: 100%;
-  position: relative; }
+  position: relative;
+  padding-bottom: 72px; }
+  .epoc-chart .add-button {
+    position: absolute;
+    right: 0;
+    bottom: 16px;
+    z-index: 1024; }
+  .epoc-chart .add-button[disabled] {
+    background: rgba(79, 79, 79, 0.26);
+    color: rgba(0, 0, 0, 0.38);
+    box-shadow: none; }
+  .epoc-chart .add-form {
+    position: absolute;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s cubic-bezier(0.55, 0, 0.55, 0.2) 0s;
+    transform: translateY(100%);
+    background: #fff; }
+    .epoc-chart .add-form .material-input-wrapper {
+      margin: 0; }
+  .epoc-chart .add-form.open {
+    transform: translateY(0); }
+
+/* Introduction screen */
+.intro-screen {
+  padding: 0 16px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%; }
+  .intro-screen h1 {
+    font-family: 'Roboto Medium', sans-serif;
+    font-size: 18px;
+    margin: 30px 0 20px 0; }
+  .intro-screen p {
+    margin: 0 0 45px 0; }
+  .intro-screen .material-button {
+    margin: 0 0 20px; }
+    .intro-screen .material-button:last-of-type {
+      margin: 0; }
 
 /*# sourceMappingURL=epoc.css.map */

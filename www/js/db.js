@@ -66,6 +66,24 @@ define([], function() {
             type: "integer"
           }
         ]
+      },
+      {
+        name: "bloodSaturation",
+        fields: [
+          {
+            name: "id",
+            type: "integer",
+            primaryKey: true
+          },
+          {
+            name: "date",
+            type: "text"
+          },
+          {
+            name: "value",
+            type: "integer"
+          }
+        ]
       }
     ]
   };

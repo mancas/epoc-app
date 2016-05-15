@@ -8,10 +8,11 @@ define([
   "utils/dispatcher",
   "stores/userStore",
   "stores/alarmStore",
+  "stores/bloodSaturationStore",
   "stores/notificationStore",
   "mixins/storeMixin"],
   function(materialViews, appViews, slideshowViews, epocTest, slideshowData, Actions, Dispatcher,
-           UserStore, AlarmStore, NotificationStore, StoreMixin) {
+           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, StoreMixin) {
     "use strict";
 
     var InterfaceComponent = React.createClass({
@@ -20,13 +21,23 @@ define([
         userStore: React.PropTypes.instanceOf(UserStore).isRequired
       },
 
+      componentWillUnmount : function() {
+        console.info("unmount");
+        this.props.router.off("route", this.routerCallback);
+      },
+
       componentDidMount : function() {
         if (localStorage.getItem("introSeen") === null) {
           this.props.userStore.on("change", this.storeStateChange);
-          this.navigate("#epoc-test");
+          this.navigate("#introduction");
+          this.props.router.on("route", this.routerCallback);
         } else {
           this.navigate("#index");
         }
+        this.forceUpdate();
+      },
+
+      routerCallback: function() {
         this.forceUpdate();
       },
 
@@ -37,11 +48,7 @@ define([
         this.navigate("");
         this.forceUpdate();
         this.props.userStore.off("change", this.storeStateChange);
-      },
-
-      shouldComponentUpdate: function(nextProps) {
-        // return nextProps.router.current !== "slideshow";
-        return true;
+        this.props.router.off("route", this.routerCallback);
       },
 
       navigate: function (path) {
@@ -50,6 +57,10 @@ define([
       },
 
       render : function() {
+        if (!this.props.router.current) {
+          return null;
+        }
+
         switch (this.props.router.current) {
           case "introduction":
             return (
@@ -59,7 +70,7 @@ define([
           case "test":
             return (
               <epocTest.EpocTestController
-                dispatcher={this.props.dispatcher}
+                navigate={this.navigate}
                 router={this.props.router} />
             );
           case "slideshow":
@@ -106,11 +117,13 @@ define([
       var userStore = new UserStore(dispatcher);
       var alarmStore = new AlarmStore(dispatcher);
       var notificationStore = new NotificationStore(dispatcher);
+      var bloodSaturationStore = new BloodSaturationStore(dispatcher);
       // For testing purpose
       //localStorage.removeItem("introSeen");
 
       StoreMixin.register({
         alarmStore: alarmStore,
+        bloodSaturationStore: bloodSaturationStore,
         notificationStore: notificationStore,
         userStore: userStore
       });
@@ -119,7 +132,7 @@ define([
         routes : {
           "introduction" : "introduction",
           "index": "index",
-          "epoc-test": "test",
+          "epoc-test(/:section)": "test",
           "slideshow" : "slideshow",
           "what-is-epoc": "whatIsEpoc",
           "exacerbations": "exacerbations",
@@ -134,9 +147,10 @@ define([
         introduction: function() {
           this.current = "introduction";
         },
-        test: function() {
+        test: function(section) {
           this.current = "test";
-          this.appBarTitle = "Test de riesgo";
+          this.appBarTitle = !section ? "Test de riesgo" : "Test de riesgo: Información";
+          this.showInfo = !!section;
         },
         slideshow : function() {
           this.current = "slideshow";

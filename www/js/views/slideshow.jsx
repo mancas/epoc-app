@@ -44,6 +44,11 @@ define([
       this.setState(newState);
     },
 
+    shouldComponentUpdate: function(nextProps, nextState) {
+      // Prevents the component updates twice
+      return nextState.currentSlide !== this.state.currentSlide;
+    },
+
     componentWillUpdate: function(nextProps, nextState) {
       // Last slide so let's start preparing the database
       if (nextState.currentSlide === this.props.slides.length - 1) {
@@ -320,6 +325,10 @@ define([
     },
 
     shouldComponentUpdate: function(newProps) {
+      if (newProps.currentPage > this.props.pages - 1) {
+        return true;
+      }
+
       var activeBullet = this.getDOMNode().querySelector(".active");
       activeBullet.classList.remove("active");
       var newActiveBullet = this.refs["page-" + newProps.currentPage];
@@ -347,7 +356,7 @@ define([
     },
 
     render: function() {
-      if (this.props.currentPage > this.props.pages) {
+      if (this.props.currentPage > this.props.pages - 1) {
         return null;
       }
 

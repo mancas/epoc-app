@@ -102,6 +102,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
   var Input = React.createClass({
     propTypes: {
+      hasValue: React.PropTypes.func,
       inputName: React.PropTypes.string.isRequired,
       isValid: React.PropTypes.func,
       label: React.PropTypes.string,
@@ -210,6 +211,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       }
 
       this.props.isValid && this.props.isValid(valid);
+      this.props.hasValue && this.props.hasValue(hasValue);
     },
 
     _upperBoundValid: function(value) {
@@ -758,9 +760,16 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
   });
 
   var AppBarView = React.createClass({
+    statics: {
+      // The width of each button displayed in the app bar
+      APP_BAR_ICON: 56
+    },
+
     propTypes: {
       children: React.PropTypes.node,
       currentRoute: React.PropTypes.string.isRequired,
+      infoCallback: React.PropTypes.func,
+      showInfoButton: React.PropTypes.bool,
       title: React.PropTypes.string.isRequired,
       style: React.PropTypes.object,
       zIndex: React.PropTypes.oneOf([1, 2, 3, 4, 5])
@@ -768,6 +777,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
     getDefaultProps: function() {
       return {
+        showInfoButton: false,
         zIndex: 1
       };
     },
@@ -821,6 +831,21 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       return this.props.currentRoute !== "index";
     },
 
+    _getTitleWidth: function() {
+      var width = window.innerWidth;
+      if (this._shouldRenderBackButton()) {
+        width -= this.constructor.APP_BAR_ICON;
+      }
+
+      if (this.props.showInfoButton) {
+        width -= this.constructor.APP_BAR_ICON;
+      }
+
+      return {
+        width: width + "px"
+      };
+    },
+
     render: function() {
       var containerClasses = {
         "material-app-bar-container": true,
@@ -835,12 +860,20 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
             {
               this._shouldRenderBackButton() ?
                 <RippleButton
-                  extraCSSClasses={{ "borderless": true, "back-icon": true }}
+                  extraCSSClasses={{ "borderless": true, "app-bar-icon": true }}
                   handleClick={this.goBack}>
                   <img src="img/material/arrow_back_white.svg" />
                 </RippleButton> : null
             }
-            <h1>{this.props.title}</h1>
+            <h1 style={this._getTitleWidth()}>{this.props.title}</h1>
+            {
+              this.props.showInfoButton ?
+                <RippleButton
+                  extraCSSClasses={{ "borderless": true, "app-bar-icon": true, "info-icon": true }}
+                  handleClick={this.props.infoCallback}>
+                  <img src="img/material/info.svg" />
+                </RippleButton> : null
+            }
           </div>
           { this.props.currentRoute === "index" ? this.props.children : null }
         </div>
@@ -1065,8 +1098,13 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
         "from-left": this.state.fromLeft
       };
 
+      // XXX trick to let the tab fits the whole screen
+      var style = {
+        height: (window.innerHeight - 70) + "px"
+      };
+
       return (
-        <div className={classNames(cssClasses)}>
+        <div className={classNames(cssClasses)} style={style}>
           {this.props.children}
         </div>
       );
@@ -1193,11 +1231,18 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
   var FloatActionButton = React.createClass({
     propTypes: {
       children: React.PropTypes.node,
+      disabled: React.PropTypes.bool,
       extraCSSClasses: React.PropTypes.oneOfType([
         React.PropTypes.string,
         React.PropTypes.object
       ]),
       handleClick: React.PropTypes.func
+    },
+
+    getDefaultProps: function (){
+      return {
+        disabled: false
+      };
     },
 
     render: function() {
@@ -1214,6 +1259,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
       return (
         <button
           className={classNames(cssClasses)}
+          disabled={this.props.disabled}
           onClick={this.props.handleClick}>
           {this.props.children}
         </button>

@@ -39,6 +39,11 @@ define([], function() {
       isEnabled: {
         "isSmoker": true
       }
+    },
+    {
+      name: "Test de riesgo",
+      icon: "test",
+      path: "#epoc-test"
     }
   ];
 });

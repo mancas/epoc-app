@@ -5,6 +5,8 @@ $white: #fff;
 $light_grey: #c1c1c1;
 $profile_background: #f6f6f6;
 $grey_secondary: #757575;
+$disabled: rgba(79, 79, 79, .26);
+$disabled_text: rgba(0, 0, 0, .38);
 
 html, body {
   height: 100%;
@@ -52,14 +54,24 @@ b {
       height: 100%;
       padding: 70px 0 0;
 
+      h1 {
+        font-family: "Roboto Medium", sans-serif;
+        font-size: 16px;
+        margin-top: 30px;
+      }
+
+      .epoc-test {
+        h1 {
+          &:first-of-type {
+            margin-top: 10px;
+          }
+        }
+      }
+
       .section-info {
         padding: 0 16px 16px;
 
         h1 {
-          font-family: "Roboto Medium", sans-serif;
-          font-size: 16px;
-          margin-top: 30px;
-
           &:first-of-type {
             margin-top: 10px;
           }
@@ -84,6 +96,14 @@ b {
             margin-top: 10px;
             font-size: 12px;
             font-family: 'Roboto Medium', sans-serif;
+          }
+        }
+      }
+
+      .epoc-chart {
+        h1 {
+          &:first-of-type {
+            margin-top: 0;
           }
         }
       }
@@ -273,7 +293,7 @@ b {
     }
   }
 
-  .epoc-test-score {
+  .epoc-test-content {
     padding: 70px 16px 16px;
     width: 100%;
     height: 100%;
@@ -283,7 +303,6 @@ b {
       font-family: "Roboto Medium", sans-serif;
       font-size: 16px;
       margin-top: 10px;
-      text-align: center;
     }
 
     h2 {
@@ -292,10 +311,34 @@ b {
       font-size: 16px;
       margin-top: 20px;
     }
+  }
+
+  .epoc-test-score {
+    h1 {
+      text-align: center;
+    }
 
     h2.score {
       font-size: 46px;
       text-align: center;
+    }
+  }
+}
+
+.app-content {
+  .epoc-test-content {
+    padding-top: 0;
+  }
+
+  .epoc-test {
+    width: 100%;
+    height: 100%;
+    > .slideshow {
+      > .slide {
+        > .slide-content {
+          padding-top: 0;
+        }
+      }
     }
   }
 }
@@ -408,6 +451,7 @@ b {
           margin-left: 0;
           color: $grey;
           font-size: 16px;
+          font-family: "Roboto Bold", sans-serif;
         }
 
         .editable-field {
@@ -504,4 +548,65 @@ b {
   width: 100%;
   height: 100%;
   position: relative;
+  padding-bottom: 72px;
+
+  .add-button {
+    position: absolute;
+    right: 0;
+    bottom: 16px;
+    z-index: 1024;
+  }
+
+  .add-button[disabled] {
+    background: $disabled;
+    color: $disabled_text;
+    box-shadow: none;
+  }
+
+  .add-form {
+    position: absolute;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    transition: transform .3s cubic-bezier(0.55, 0, 0.55, 0.2) 0s;
+    transform: translateY(100%);
+    background: $white;
+
+    .material-input-wrapper {
+      margin: 0;
+    }
+  }
+
+  .add-form.open {
+    transform: translateY(0);
+  }
+}
+
+/* Introduction screen */
+.intro-screen {
+  padding: 0 16px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+
+  h1 {
+    font-family: 'Roboto Medium', sans-serif;
+    font-size: 18px;
+    margin: 30px 0 20px 0;
+  }
+
+  p {
+    margin: 0 0 45px 0;
+  }
+
+  .material-button {
+    margin: 0 0 20px;
+
+    &:last-of-type {
+      margin: 0;
+    }
+  }
 }

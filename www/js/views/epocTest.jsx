@@ -8,7 +8,32 @@ define([
 
   var EpocTestController = React.createClass({
     propTypes: {
-      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
+      navigate: React.PropTypes.func.isRequired,
+      router: React.PropTypes.object.isRequired
+    },
+
+    handleInfoClick: function() {
+      this.props.navigate("#epoc-test/information");
+    },
+
+    render: function() {
+      return (
+        <div className="app epoc-test">
+          <materialViews.AppBarView
+            currentRoute={this.props.router.current}
+            infoCallback={this.handleInfoClick}
+            showInfoButton={!this.props.router.showInfo}
+            title={this.props.router.appBarTitle}
+            zIndex={2} />
+          <EpocTestContent
+            router={this.props.router} />
+        </div>
+      );
+    }
+  });
+
+  var EpocTestContent = React.createClass({
+    propTypes: {
       router: React.PropTypes.object.isRequired
     },
 
@@ -31,24 +56,26 @@ define([
     },
 
     render: function() {
-      return (
-        <div className="app epoc-test">
-          <materialViews.AppBarView
-            currentRoute={this.props.router.current}
-            title={this.props.router.appBarTitle}
-            zIndex={2} />
-          {
-            this.state.showResults ?
-              <EpocTestScoreView
-                score={this.state.score} /> :
-              <slideshowViews.SlideshowView
-                model={epocTestData.model}
-                onFinish={this._showResults}
-                showPagination={false}
-                slides={epocTestData.slides} />
-          }
-        </div>
-      );
+      if (this.props.router.showInfo) {
+        return (
+          <InfoTestView />
+        );
+      }
+
+      if (this.state.showResults) {
+        return (
+          <EpocTestScoreView
+            score={this.state.score} />
+        );
+      } else {
+        return (
+          <slideshowViews.SlideshowView
+            model={epocTestData.model}
+            onFinish={this._showResults}
+            showPagination={false}
+            slides={epocTestData.slides} />
+        );
+      }
     }
   });
 
@@ -95,7 +122,7 @@ define([
 
     render: function() {
       return (
-        <div className="epoc-test-score">
+        <div className="epoc-test-content epoc-test-score">
           <h1>Tu puntuación</h1>
           <h2 className="score">{this.props.score}</h2>
           <h2>¿Qué significa esta puntuación?</h2>
@@ -118,7 +145,50 @@ define([
     }
   });
 
+  var InfoTestView = React.createClass({
+    statics: {
+      CODP_FOUNDATION_URL: "http://www.copdfoundation.org/"
+    },
+
+    shouldComponentUpdate: function () {
+      return false;
+    },
+
+    openURL: function() {
+      window.open(this.constructor.CODP_FOUNDATION_URL, "_blank", "location=yes");
+    },
+
+    render: function() {
+      return (
+        <div className="epoc-test-content">
+          <h1>Test de riesgo</h1>
+          <p>
+            Este test consta de cinco preguntas a través de las cuales se puede comprobar si una persona
+            es suceptible de padecer o tener la EPOC. El resultado del test en ningún momento puede servir como
+            un diagnóstico médico válido, es simplemente una herramienta guía que puede ayudar a los profesionales del sector
+            a realizar un diagnóstico temprano y reducir así un mayor desgaste de la función respiratoria en caso de que el paciente
+            padezca la EPOC.
+          </p>
+          <p>
+            Todo el contenido del test pertenece a la <b>COPD Foundation</b>, una organización sin ánimo de lucro que se encarga
+            de ayudar a los pacientes de EPOC y ofrecerles información para un mayor conocimiento de la enfermedad.
+          </p>
+          <p>
+            Puedes visitar la página web de la COPD Foundation en el siguiente enlace. Encontrarás información más técnica sobre la EPOC
+            así como consejos y hábitos de vida. (Información en inglés)
+          </p>
+          <materialViews.RippleButton
+            extraCSSClasses={{"btn-info": true}}
+            fullWidth={true}
+            handleClick={this.openURL}
+            label="Acceder a la COPD Foundation" />
+        </div>
+      );
+    }
+  });
+
   return {
+    EpocTestContent: EpocTestContent,
     EpocTestController: EpocTestController
   };
 });

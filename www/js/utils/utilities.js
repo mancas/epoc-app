@@ -59,8 +59,8 @@ define([], function() {
       message = "Tienes sobrepeso, no dejes de vigilar tu alimentación y visita a tu médico.";
     } else {
       range = "Obesidad";
-      message = "Tienes obesidad, deberías visitar a tu médico para que te aconseje una dieta sana para bajar peso." +
-        "Recuerda que un peso excesivo puede hacer que tus síntomas empeoren";
+      message = "Tienes obesidad, deberías visitar a tu médico para que te aconseje una dieta sana para bajar peso. " +
+        "Recuerda que un peso excesivo puede hacer que tus síntomas empeoren.";
     }
 
     return {

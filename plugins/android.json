@@ -15,6 +15,9 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.mancas.epoc"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.mancas.epoc"
         }
     },
     "dependent_plugins": {

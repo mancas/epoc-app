@@ -172,7 +172,7 @@ div.form-control {
 }
 
 .material-button.btn-dark {
-  background-color: $grey;
+  background-color: $light_grey;
 }
 
 .material-button.selected,
@@ -498,7 +498,6 @@ div.form-control {
 
   .material-app-bar {
     height: 56px;
-    padding: 16px;
 
     h1 {
       margin: 0;
@@ -506,15 +505,25 @@ div.form-control {
       font-size: 20px;
       font-weight: normal;
       display: inline-block;
+      line-height: 56px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 16px;
     }
 
-    .back-icon {
+    .app-bar-icon {
       min-width: initial;
       line-height: initial;
       height: 100%;
       float: left;
       margin: 0;
       padding: 0 10px;
+      width: 56px;
+    }
+
+    .info-icon {
+      float: right;
     }
   }
 
@@ -546,15 +555,10 @@ div.form-control {
 }
 
 .material-app-bar-container.back-icon-visible {
-  .material-app-bar {
-    padding: 0 16px 0 0;
-
-    h1 {
-      line-height: 54px;
-    }
+  h1 {
+    padding-left: 0;
   }
 }
-
 
 .material-app-bar-container.fixed {
   top: -54px;
@@ -721,11 +725,11 @@ div.form-control {
   .card-info-wrapper {
     padding: 20px 16px 0;
 
-    .card-title {
+    h1.card-title {
       font-size: 14px;
       font-weight: bold;
       font-family: 'Roboto Medium', sans-serif;
-      margin: 0 0 14px;
+      margin: 0 0 14px !important;
     }
 
     p {
@@ -739,9 +743,11 @@ div.form-control {
   .card-buttons {
     border-top: solid 1px $card-separator;
     padding: 7px 10px;
+    overflow: hidden;
     .material-button {
-      margin: 0 20px 0 0;
+      margin: 0  0 0 20px;
       min-width: initial;
+      float: right;
     }
   }
 }

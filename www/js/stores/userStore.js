@@ -3,8 +3,9 @@ define([
   "utils/databaseManager",
   "utils/dateTime",
   "utils/actions",
-  "utils/utilities"
-], function(Store, dbManager, DateTimeHelper, actions, utils) {
+  "utils/utilities",
+  "_"
+], function(Store, dbManager, DateTimeHelper, actions, utils, _) {
   "use strict";
 
   const welcomeNotification = {
@@ -31,20 +32,27 @@ define([
         weight: "",
         height: "",
         birth: "",
-        appReady: false
+        appReady: false,
+        bmi: null
       };
     },
 
     initialize: function() {
       var self = this;
-      /*dbManager.openDatabase(function(){
+      dbManager.openDatabase(function(){
         dbManager.select("User", null, null, function(result) {
           console.info("SELECT result initilize", result.rows.item(0));
+          if (result.rows.item(0)) {
+            var user = result.rows.item(0);
+            var calculatedBMI = utils.calculateBMI(parseInt(user.weight), parseInt(user.height));
+            user.bmi = calculatedBMI;
+            self.setStoreState(user);
+          }
           result.rows.item(0) && self.setStoreState(result.rows.item(0));
         });
       }, function(err) {
         console.error(err);
-      });*/
+      });
     },
 
     createUser: function (actionData) {
@@ -55,8 +63,10 @@ define([
       dbManager.openDatabase(function(){
         dbManager.insert("User", model, function(result) {
           console.info("INSERT result", result.rows.item(0), result);
+          var calculatedBMI = utils.calculateBMI(parseInt(self._storeState.weight), parseInt(self._storeState.height));
           self.setStoreState({
-            id: result.insertId
+            id: result.insertId,
+            bmi: calculatedBMI
           });
         });
       }, function(err) {
@@ -81,7 +91,13 @@ define([
         }
       }
 
-      this.setStoreState(newState);
+      var calculatedBMI = utils.calculateBMI(parseInt(newState.weight || this._storeState.weight),
+        parseInt(newState.height || this._storeState.height));
+      var clonedNewState = _.extend({}, newState, {
+        bmi: calculatedBMI
+      });
+
+      this.setStoreState(clonedNewState);
       return newState;
     },
 

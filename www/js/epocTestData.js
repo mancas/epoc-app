@@ -272,6 +272,12 @@ define([], function() {
         question: {
           choices: [
             {
+              label: "Menor de 35 años",
+              extraCSSClass: "borderless",
+              fullWidth: true,
+              value: 0
+            },
+            {
               label: "De 35 a 49 años",
               extraCSSClass: "borderless",
               fullWidth: true,

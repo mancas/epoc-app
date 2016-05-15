@@ -1,6 +1,7 @@
 define([
   "build/materialViews",
   "build/epocViews",
+  "build/epocTest",
   "utils/actions",
   "utils/dispatcher",
   "stores/userStore",
@@ -8,7 +9,7 @@ define([
   "utils/databaseManager",
   "data/sections",
   "_"
-], function(materialViews, epocViews, Actions, Dispatcher, UserStore, StoreMixin, dbManager, AppSections, _) {
+], function(materialViews, epocViews, epocTest, Actions, Dispatcher, UserStore, StoreMixin, dbManager, AppSections, _) {
   "use strict";
 
   var AppControllerView = React.createClass({
@@ -42,12 +43,32 @@ define([
       });
     },
 
+    handleInfoClick: function() {
+      var url;
+      switch (this.props.router.current) {
+        case "test":
+          url = "#epoc-test/information";
+          break;
+        default:
+          url = "#index/information";
+          break;
+      }
+      this.props.navigate(url);
+    },
+
+    _shouldShowInfoButton: function() {
+      // Just display the info button in index or test screen
+      return (this.props.router.current === "index" || this.props.router.current === "test");
+    },
+
     render: function() {
       return (
         <div className="app">
           <AppBarView
+            handleInfoClick={this.handleInfoClick}
+            onTabChange={this.onTabChange}
             router={this.props.router}
-            onTabChange={this.onTabChange} />
+            showInfoButton={this._shouldShowInfoButton()} />
           <div className="app-content" >
             <AppContentView
               dispatcher={this.props.dispatcher}
@@ -62,14 +83,18 @@ define([
 
   var AppBarView = React.createClass({
     propTypes: {
+      handleInfoClick: React.PropTypes.func,
       onTabChange: React.PropTypes.func.isRequired,
-      router: React.PropTypes.object.isRequired
+      router: React.PropTypes.object.isRequired,
+      showInfoButton: React.PropTypes.bool.isRequired
     },
 
     render: function() {
       return (
         <materialViews.AppBarView
           currentRoute={this.props.router.current}
+          infoCallback={this.props.handleInfoClick}
+          showInfoButton={this.props.showInfoButton}
           title={this.props.router.appBarTitle}
           zIndex={2}>
           <materialViews.TabsView
@@ -108,7 +133,6 @@ define([
               handleClick={this.props.navigate} />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
-            <p>Under construction</p>
             <epocViews.ChartView />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
@@ -144,6 +168,13 @@ define([
             <epocViews.InhalersView
               navigate={this.props.navigate}
               router={this.props.router} />
+          );
+        case "test":
+          return (
+            <div className="epoc-test">
+            <epocTest.EpocTestContent
+              router={this.props.router} />
+            </div>
           );
         default:
           return null;
@@ -297,9 +328,34 @@ define([
       navigate: React.PropTypes.func.isRequired
     },
 
+    navigateToEPOCTest: function() {
+      this.props.navigate("#epoc-test");
+    },
+
+    navigateToSlideshow: function() {
+      this.props.navigate("#slideshow");
+    },
+
     render: function() {
       return (
-        <div className="intro-screen">Hi</div>
+        <div className="intro-screen">
+          <img className="logo-icon" src="img/logo.svg" />
+          <h1>Bienvenido a APPNAME</h1>
+          <p>
+            ¿Padeces EPOC o crees que puedes tener la enfermedar? APPNAME
+            te ayudará en tu día a día para mejorar tu calidad de vida.
+          </p>
+          <materialViews.RippleButton
+            extraCSSClasses={{"btn-info": true}}
+            fullWidth={true}
+            handleClick={this.navigateToEPOCTest}
+            label="Realizar test de riesgo" />
+          <materialViews.RippleButton
+            extraCSSClasses={{"btn-info": true}}
+            fullWidth={true}
+            handleClick={this.navigateToSlideshow}
+            label="Padezco la EPOC" />
+        </div>
       );
     }
   });

@@ -240,27 +240,17 @@ define([
       });
     },
 
-    componentWillMount: function() {
-      if (this.state.weight && this.state.height) {
-        var calculatedBMI = utils.calculateBMI(this.state.weight, this.state.height);
-        this.setState({
-          bmi: calculatedBMI
-        });
-      }
-    },
-
-    componentWillUpdate: function(nextProps, nextState) {
-      if ((this.state.weight !== nextState.weight ||
-        this.state.height !== nextState.height) && this.state.bmi.range !== nextState.bmi.range) {
+    componentDidUpdate: function(prevProps, prevState) {
+      if (this.state.bmi.range !== prevState.bmi.range) {
         // Just enable notification if bmi range has changed
         this.props.dispatcher.dispatch(new Actions.UpdateNotification({
           type: utils.NOTIFICATION_TYPES.BMI,
-          text: nextBMI.text,
+          content: this.state.bmi.message,
           read: 0
         }));
       }
 
-      if (!this.state.isSmoker && nextState.isSmoker) {
+      if (!prevState.isSmoker && this.state.isSmoker) {
         this.props.dispatcher.dispatch(new Actions.UpdateNotification({
           type: utils.NOTIFICATION_TYPES.SMOKER,
           read: 0
@@ -288,13 +278,6 @@ define([
           return;
         }
 
-        if (newState.hasOwnProperty("height") || newState.hasOwnProperty("weight")) {
-          var calculatedBMI = utils.calculateBMI(newState.weight, newState.height);
-          this.setState({
-            bmi: calculatedBMI
-          });
-        }
-
         // Save data into database
         newState.persist = true;
         this.props.dispatcher.dispatch(new Actions.UpdateUserData(newState));
@@ -309,7 +292,6 @@ define([
       var fabIcon = this.state.editMode ? "check.svg" : "pencil.svg";
       var isSmokerIcon = "smoke.svg";
       var notSmokerIcon = "smoke_free.svg";
-      var calculatedBMI = utils.calculateBMI(this.state.weight, this.state.height);
 
       return (
         <div className="user-profile">
@@ -367,7 +349,7 @@ define([
               <div className="icon-group no-icon">
                 <p className="text-row">IMC</p>
               </div>
-              <p className="text-row">{calculatedBMI.value + " - " + calculatedBMI.range}</p>
+              <p className="text-row">{this.state.bmi.value + " - " + this.state.bmi.range}</p>
               <div className="icon-group no-icon">
                 <p className="text-row">Grado de EPOC diagnosticado</p>
               </div>
@@ -534,7 +516,7 @@ define([
             selecciona tu inhalador y sigue los pasos descritos, poco a poco te habituarás a su uso.
           </p>
           <p>
-            (No dejes de hablar con tu especialista)
+            <b>Esta información debe ser entendida como una guía anteponiendose siempre las recomendaciones de los especialistas.</b>
           </p>
           <materialViews.DropdownView
             extraCSSClass="inhaler-section"
@@ -818,8 +800,20 @@ define([
   });
 
   var ChartView = React.createClass({
+    mixins: [
+      StoreMixin("bloodSaturationStore")
+    ],
+
     propTypes: {
 
+    },
+
+    getInitialState: function() {
+      return _.extend(this.getStore().getStoreState(), {
+        addModeEnabled: false,
+        hasValue: false,
+        isValid: true
+      });
     },
 
     componentDidMount: function() {
@@ -857,16 +851,112 @@ define([
       });
     },
 
+    isValid: function(isValid) {
+      this.setState({
+        isValid: isValid
+      });
+    },
+
+    hasValue: function(hasValue) {
+      this.setState({
+        hasValue: hasValue
+      });
+    },
+
+    toggleAddMode: function() {
+      this.setState({
+        addModeEnabled: !this.state.addModeEnabled
+      });
+    },
+
     render: function() {
+      var icon = "add.svg";
+      var iconCSSClasses = {
+        "add-button": true
+      };
+      var disabled = this.state.hasValue && !this.state.isValid;
+
+      if (this.state.addModeEnabled) {
+        icon = "check.svg";
+        if (!this.state.hasValue) {
+          icon = "clear.svg";
+        }
+      }
+
       return (
         <div className="epoc-chart">
+          <h1>Saturación de oxígeno en sangre</h1>
+          <p>
+            Es la medida de la cantidad de oxígeno disponible en el torrente sanguíneo. Cuando la sangre se
+            bombea desde el corazón al cuerpo, primero pasa a través de los pulmones, donde las moléculas de oxígeno
+            se unen a las células rojas de la sangre (eritrocitos) con el fin de ser llevado al resto del cuerpo. El
+            porcentaje de eritrocitos que están completamente saturados con oxígeno se conoce como saturación arterial de
+            oxígeno o nivel de oxígeno en sangre.
+          </p>
           <canvas ref="chart"></canvas>
-          <div className="card-buttons">
-            <materialViews.RippleButton
-              extraCSSClasses="borderless"
-              handleClick={null}
-              label="Aceptar" />
-          </div>
+          <materialViews.FloatActionButton
+            disabled={disabled}
+            extraCSSClasses={iconCSSClasses}
+            handleClick={this.toggleAddMode}>
+            <img src={"img/material/" + icon} />
+          </materialViews.FloatActionButton>
+          <AddBloodSaturationView
+            hasValue={this.hasValue}
+            isValid={this.isValid}
+            show={this.state.addModeEnabled} />
+        </div>
+      );
+    }
+  });
+
+  var AddBloodSaturationView = React.createClass({
+    propTypes: {
+      hasValue: React.PropTypes.func.isRequired,
+      isValid: React.PropTypes.func.isRequired,
+      show: React.PropTypes.bool.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        show: this.props.show
+      };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({
+        show: nextProps.show
+      });
+    },
+
+    componentDidUpdate: function() {
+      if (this.state.show) {
+        setTimeout(function() {
+          this.getDOMNode().classList.add("open");
+        }.bind(this), 10);
+      }
+    },
+
+    render: function() {
+      if (!this.state.show) {
+        return null;
+      }
+      return (
+        <div className="add-form">
+          <h1>Añadir nuevo valor de saturación</h1>
+          <p>
+            Si has acudido a tu médico y te han tomado las medidas de la saturación de oxígeno en sangre, añadelas
+            a la aplicación para visualizar tu evolución a lo largo del tiempo y comparar tu estado con la franja
+            ideal de tu saturación en sangre.
+          </p>
+          <materialViews.Input
+            hasValue={this.props.hasValue}
+            inputName={"blood-saturation"}
+            isValid={this.props.isValid}
+            label={"Saturación en sangre"}
+            minValue={0}
+            maxValue={100}
+            onChange={this.handleFieldChange}
+            type={"number"} />
         </div>
       );
     }

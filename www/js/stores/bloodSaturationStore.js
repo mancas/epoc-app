@@ -4,49 +4,46 @@ define([
 ], function(Store, dbManager) {
   "use strict";
 
-  var NotificationStore = Store.createStore({
+  var BloodSaturationStore = Store.createStore({
     actions: [
-      "addNotification",
-      "updateNotification"
+      "addBloodSaturation"
     ],
 
     getInitialStoreState: function() {
       return {
-        notifications: []
+        data: []
       };
     },
 
     initialize: function() {
       var self = this;
       dbManager.openDatabase(function() {
-        self.getNotifications();
+        self.getBloodSaturationData();
       }, function(error) {
-        console.error("Notifications db error", error);
+        console.error("Blood Saturation db error", error);
       });
     },
 
     // Be sure this function is always called inside an openDatabase callback
-    getNotifications: function() {
+    getBloodSaturationData: function() {
       var self = this;
-      var whereBuilder = dbManager.createWhereBuilder();
-      whereBuilder.and({read: 0});
 
-      dbManager.select("notification", null, whereBuilder.where, function(result) {
-        var notifications = [];
+      dbManager.select("bloodSaturation", null, null, function(result) {
+        var data = [];
         for (var i = 0; i < result.rows.length; i++) {
-          notifications.push(result.rows.item(i));
+          data.push(result.rows.item(i));
         }
 
         self.setStoreState({
-          notifications: notifications
+          data: data
         });
       }, function(error) {
-        console.error("Notifications select error", error);
+        console.error("Blood Saturation select error", error);
       });
     },
 
-    addNotification: function(actionData) {
-      var notification = {
+    addBloodSaturation: function(actionData) {
+      var bloodSaturationMeasure = {
         type: actionData.type,
         title: actionData.title,
         content: actionData.text,
@@ -82,15 +79,7 @@ define([
       }
       whereBuilder.and(whereClause);
 
-      var updatedFields = {
-        read: actionData.read
-      };
-
-      if (actionData.content) {
-        updatedFields.content = actionData.content;
-      }
-
-      dbManager.update("notification", updatedFields, whereBuilder.where, function() {
+      dbManager.update("notification", {read: actionData.read}, whereBuilder.where, function() {
         // Time to update notifications
         self.getNotifications();
       }, function(error) {
@@ -99,5 +88,5 @@ define([
     }
   });
 
-  return NotificationStore;
+  return BloodSaturationStore;
 });
