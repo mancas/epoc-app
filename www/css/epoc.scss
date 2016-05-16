@@ -596,7 +596,7 @@ b {
 /* Add slide form */
 .add-button {
   position: fixed;
-  right: 0;
+  right: 16px;
   bottom: 16px;
   z-index: 1024;
 }
@@ -636,9 +636,6 @@ b {
 /* Alarms */
 .alarm-list {
   padding-bottom: 76px;
-  .add-button {
-    right: 16px;
-  }
 
   .add-form {
     left: 0;
