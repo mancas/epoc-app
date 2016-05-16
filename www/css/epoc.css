@@ -40,6 +40,9 @@ b {
         margin-top: 30px; }
       #container .app .app-content .epoc-test h1:first-of-type {
         margin-top: 10px; }
+      #container .app .app-content .section-info.alarm-list {
+        overflow: auto;
+        padding-bottom: 72px; }
       #container .app .app-content .section-info {
         padding: 0 16px 16px; }
         #container .app .app-content .section-info h1:first-of-type {
@@ -49,6 +52,8 @@ b {
           margin-top: 30px;
           color: #00acb4;
           font-size: 16px; }
+        #container .app .app-content .section-info .alarm-info > h2 {
+          margin: 0 0 10px 0; }
         #container .app .app-content .section-info .img-caption-group img {
           max-width: 100%;
           display: block;
@@ -160,7 +165,9 @@ b {
   top: initial;
   left: initial;
   transform: none;
-  padding-top: 70px; }
+  padding-top: 70px;
+  padding-bottom: 20px;
+  overflow: hidden; }
   .epoc-test > .slideshow > .slide > .slide-content > p {
     margin: 0 0 16px 0; }
 .epoc-test > .slideshow > .slide.epoc-test-intro > .slide-content {
@@ -237,25 +244,26 @@ b {
   .pagination {
     display: none; } }
 /* APP Sections */
-.app-sections .section-btn {
-  width: 33.33333333%;
-  display: block;
-  float: left;
-  text-align: center;
-  min-height: 118px;
-  border-radius: 0;
-  margin: 0 0 20px 0;
-  padding: 0;
-  min-width: initial;
-  white-space: initial;
-  line-height: 18px; }
-  .app-sections .section-btn img {
-    margin-bottom: 10px; }
-  .app-sections .section-btn span:not(.ripple-effect) {
-    display: block;
-    font-size: 13px;
-    color: #4a4a4a;
-    text-transform: none; }
+.app-sections {
+  display: table; }
+  .app-sections .section-btn {
+    width: 33.33333333%;
+    display: table-cell;
+    text-align: center;
+    min-height: 118px;
+    border-radius: 0;
+    margin: 0 0 20px 0;
+    padding: 0;
+    min-width: initial;
+    white-space: initial;
+    line-height: 18px; }
+    .app-sections .section-btn img {
+      margin-bottom: 10px; }
+    .app-sections .section-btn span:not(.ripple-effect) {
+      display: block;
+      font-size: 13px;
+      color: #4a4a4a;
+      text-transform: none; }
 
 /* Profile */
 .user-profile {
@@ -353,28 +361,6 @@ b {
   height: 100%;
   position: relative;
   padding-bottom: 72px; }
-  .epoc-chart .add-button {
-    position: absolute;
-    right: 0;
-    bottom: 16px;
-    z-index: 1024; }
-  .epoc-chart .add-button[disabled] {
-    background: rgba(79, 79, 79, 0.26);
-    color: rgba(0, 0, 0, 0.38);
-    box-shadow: none; }
-  .epoc-chart .add-form {
-    position: absolute;
-    top: 0;
-    z-index: 999;
-    width: 100%;
-    height: 100%;
-    transition: transform .4s ease 0s;
-    transform: translateY(100%);
-    background: #fff; }
-    .epoc-chart .add-form .material-input-wrapper {
-      margin: 0; }
-  .epoc-chart .add-form.open {
-    transform: translateY(0); }
 
 /* Introduction screen */
 .intro-screen {
@@ -394,5 +380,62 @@ b {
     margin: 0 0 20px; }
     .intro-screen .material-button:last-of-type {
       margin: 0; }
+
+/* Add slide form */
+.add-button {
+  position: fixed;
+  right: 0;
+  bottom: 16px;
+  z-index: 1024; }
+
+.add-button[disabled] {
+  background: rgba(79, 79, 79, 0.26);
+  color: rgba(0, 0, 0, 0.38);
+  box-shadow: none; }
+
+.add-form {
+  position: absolute;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  transition: transform .4s ease 0s;
+  transform: translateY(100%);
+  background: #fff; }
+  .add-form .add-form-wrapper {
+    height: 100%;
+    width: 100%;
+    padding-bottom: 72px;
+    overflow: auto; }
+  .add-form .material-input-wrapper {
+    margin: 20px 0; }
+
+.add-form.open {
+  transform: translateY(0); }
+
+/* Alarms */
+.alarm-list {
+  padding-bottom: 76px; }
+  .alarm-list .add-button {
+    right: 16px; }
+  .alarm-list .add-form {
+    left: 0;
+    padding: 70px 16px 0; }
+  .alarm-list .alarm {
+    display: table;
+    width: 100%;
+    padding: 15px 0 20px 0;
+    border-bottom: solid 1px #c1c1c1; }
+    .alarm-list .alarm:first-of-type {
+      border-top: solid 1px #c1c1c1; }
+    .alarm-list .alarm .alarm-info,
+    .alarm-list .alarm .cancel-alarm-btn {
+      display: table-cell; }
+    .alarm-list .alarm .cancel-alarm-btn {
+      min-width: initial;
+      margin: 0;
+      height: 100%; }
+    .alarm-list .alarm .alarm-info {
+      width: 100%; }
 
 /*# sourceMappingURL=epoc.css.map */

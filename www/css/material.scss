@@ -411,17 +411,6 @@ div.form-control {
         }
       }
     }
-
-    .calendar-buttons {
-      background: $white;
-      padding: 0 14px 5px;
-      text-align: right;
-
-      button {
-        margin: 0;
-        min-width: 88px;
-      }
-    }
   }
 }
 
@@ -437,6 +426,93 @@ div.form-control {
   100% {
     opacity: 0;
     transform: scale(1.5);
+  }
+}
+
+.widget-buttons {
+  background: $white;
+  padding: 0 14px 5px;
+  text-align: right;
+
+  button {
+    margin: 0;
+    min-width: 88px;
+  }
+}
+
+/* Time picker */
+.material-time-picker-wrapper {
+  background: rgba(0, 0, 0, .4);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .material-time-picker {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    transition: all .4s ease;
+    width: 320px;
+    opacity: 0;
+    background: $white;
+    z-index: 99;
+
+    .time-picker-header {
+      padding: 10px 20px;
+      background: $primary;
+      color: $white;
+
+      span.info {
+        display: block;
+        opacity: .7;
+        font-size: 16px;
+      }
+
+      h1.selected-time {
+        margin: 0 !important;
+        font-size: 36px !important;
+      }
+    }
+
+    .time-spinner {
+      height: 110px;
+      overflow: auto;
+      padding: 16px;
+
+      &:after {
+        position: absolute;
+        content: ":";
+        font-size: 36px;
+        right: 50%;
+        line-height: 72px;
+      }
+
+      .spinner-hours, .spinner-minutes {
+        text-align: center;
+        width: 50%;
+        float: left;
+        position: relative;
+        font-size: 36px;
+        height: 100%;
+        overflow: auto;
+        padding: 18px 0;
+
+        .time-button.selected {
+          color: $primary;
+        }
+      }
+    }
+  }
+}
+
+.material-time-picker-wrapper.material-time-picker-display {
+  .material-time-picker {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
   }
 }
 

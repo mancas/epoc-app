@@ -435,18 +435,280 @@ define([
     ],
 
     propTypes: {
-
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
     },
 
-    getInitialState: function () {
-      return this.getStore().getStoreState();
+    getInitialState: function() {
+      return _.extend(this.getStore().getStoreState(), {
+        addModeEnabled: false,
+        isValid: false
+      });
+    },
+
+    toggleAddMode: function() {
+      this.setState({
+        addModeEnabled: !this.state.addModeEnabled
+      });
+    },
+
+    isValid: function(valid) {
+      this.setState({
+        isValid: valid
+      });
+    },
+
+    onClose: function(alarmData) {
+      if (!this.state.isValid) {
+        return;
+      }
+
+      console.info(alarmData);
+      var alarmDate = new Date();
+      alarmDate.setHours(alarmData.time.hours);
+      alarmDate.setMinutes(alarmData.time.minutes);
+      alarmDate.setSeconds(0);
+      this.props.dispatcher.dispatch(new Actions.ScheduleAlarm({
+        title: alarmData.title,
+        text: "",
+        at: alarmDate,
+        // Hours to minutes
+        every: parseInt(alarmData.periodicity) * 60,
+        type: utils.ALARM_TYPES.MEDICINE
+      }));
+    },
+
+    render: function() {
+      var icon = "add.svg";
+      var iconCSSClasses = {
+        "add-button": true
+      };
+
+      if (this.state.addModeEnabled) {
+        icon = "check.svg";
+        if (!this.state.isValid) {
+          icon = "clear.svg";
+        }
+      }
+
+      return (
+        <div className="section-info alarm-list">
+          <h1>Alarmas</h1>
+          <p>
+            La aplicación te recordará, de forma automática, cuando debes acudir a una revisión médica dependiendo
+            de tu grado de EPOC, pero también puede avisarte para no olvidar tomar la dosis de medicamento que tu médico te haya
+            recetado.
+          </p>
+          <p>
+            Añadir nuevas alarmas es fácil, solo tienes que pulsar en el botón <b>"+"</b> y ajustar el tiempo entre cada dosis y la hora
+            de la toma.
+          </p>
+          {
+            this.state.alarms.map(function(alarm, index) {
+              return (
+                <AlarmView
+                  alarm={alarm}
+                  key={index} />
+              );
+            }, this)
+          }
+          <materialViews.FloatActionButton
+            extraCSSClasses={iconCSSClasses}
+            handleClick={this.toggleAddMode}>
+            <img src={"img/material/" + icon} />
+          </materialViews.FloatActionButton>
+          <AddAlarmView
+            isValid={this.isValid}
+            onClose={this.onClose}
+            show={this.state.addModeEnabled} />
+        </div>
+      );
+    }
+  });
+
+  var AlarmView = React.createClass({
+    propTypes: {
+      alarm: React.PropTypes.object.isRequired
+    },
+
+    render: function() {
+      var date = new Date(this.props.alarm.at * 1000);
+      var time = DateTimeHelper.formatTime(date);
+      var periodicity = this.props.alarm.every/60;
+      return (
+        <div className="alarm">
+          <div className="alarm-info">
+            <h2>{this.props.alarm.title}</h2>
+            <span>
+              {time + " - Repetir cada " + periodicity + " horas"}
+            </span>
+          </div>
+          <materialViews.RippleButton
+            extraCSSClasses={{"borderless": true, "cancel-alarm-btn": true}}
+            handleClick={null}>
+            <img src="img/material/clear_dark.svg" />
+          </materialViews.RippleButton>
+        </div>
+      );
+    }
+  });
+
+  var AddAlarmView = React.createClass({
+    statics: {
+      PERIODICITY_VALUES: [
+        {
+          label: "2 horas",
+          value: 2
+        },
+        {
+          label: "4 horas",
+          value: 4
+        },
+        {
+          label: "6 horas",
+          value: 6
+        },
+        {
+          label: "8 horas",
+          value: 8
+        },
+        {
+          label: "12 horas",
+          value: 12
+        },
+        {
+          label: "24 horas",
+          value: 24
+        }
+      ]
+    },
+
+    propTypes: {
+      isValid: React.PropTypes.func.isRequired,
+      onClose: React.PropTypes.func,
+      show: React.PropTypes.bool.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        data: {
+          periodicity: 2
+        },
+        showTimePicker: false,
+        valid: {
+          title: false,
+          time: false
+        }
+      };
+    },
+
+    componentWillReceiveProps: function(newProps) {
+      if (this.props.show && !newProps.show) {
+        this.props.onClose && this.props.onClose(this.state.data);
+      }
+    },
+
+    handleFieldChange: function(value) {
+      this.setState({
+        data: value
+      });
+    },
+
+    handleOnFocus: function() {
+      this.setState({
+        showTimePicker: true
+      });
+    },
+
+    handleTimePickerAccept: function(hours, minutes) {
+      var validState = this.state.valid;
+      validState.time = true;
+      var dataState = this.state.data;
+      dataState.time = {
+        hours: hours,
+        minutes: minutes
+      };
+      this.setState({
+        showTimePicker: false,
+        valid: validState,
+        data: dataState
+      });
+
+      var d = new Date();
+      d.setHours(hours, minutes, 0, 0);
+
+      this.refs.alarmTime.setInputValue(DateTimeHelper.formatTime(d));
+      this.isValid();
+    },
+
+    handleTimePickerCancel: function() {
+      this.setState({
+        showTimePicker: false
+      });
+    },
+
+    handleTitleChange: function(value) {
+      var validState = this.state.valid;
+      validState.title = !!value;
+      var dataState = this.state.data;
+      dataState.title = value;
+      this.setState({
+        data: dataState,
+        valid: validState
+      });
+
+      this.isValid();
+    },
+
+    handlePeriodicityChange: function(value) {
+      var dataState = this.state.data;
+      dataState.periodicity = value;
+      this.setState({
+        data: dataState
+      });
+    },
+
+    isValid: function() {
+      var validState = this.state.valid;
+      var isValid = validState.title && validState.time;
+
+      this.props.isValid(isValid);
     },
 
     render: function() {
       return (
-        <div className="alarms-list">
-          My alarms
-        </div>
+        <SlideScreenView
+          show={this.props.show}>
+          <h1>Añadir nueva alarma</h1>
+          <p>
+            Crea una nueva alarma para recordar la toma de tu medicación a la hora y periodicidad que tu indiques.
+          </p>
+          <h2>Pon un título a tu alarma</h2>
+          <materialViews.Input
+            hasValue={this.props.hasValue}
+            inputName={"alarm-title"}
+            label={"Título de la alarma"}
+            onChange={this.handleTitleChange}
+            type={"text"} />
+          <h2>¿Cada cuanto tienes que tomar la medicación?</h2>
+          <materialViews.SelectView
+            currentValue={"2"}
+            onChange={this.handlePeriodicityChange}
+            selectName={"alarm-periodicity"}
+            values={this.constructor.PERIODICITY_VALUES} />
+          <h2>¿A qué hora?</h2>
+          <materialViews.Input
+            hasValue={this.props.hasValue}
+            inputName={"alarm-time"}
+            label={"Hora de la alarma"}
+            onFocus={this.handleOnFocus}
+            ref="alarmTime"
+            type={"time"} />
+          <materialViews.TimePickerView
+            format={24}
+            handleAccept={this.handleTimePickerAccept}
+            handleCancel={this.handleTimePickerCancel}
+            show={this.state.showTimePicker} />
+        </SlideScreenView>
       );
     }
   });
@@ -817,10 +1079,7 @@ define([
     },
 
     componentDidMount: function() {
-      if (!this.state.data.length) {
-        return;
-      }
-
+      // Creates a empty chart
       this._createChart();
     },
 
@@ -860,6 +1119,8 @@ define([
         }]
       };
 
+      this._noDataFetched = !data.length;
+
       data.forEach(function(bloodSaturation) {
         var date = new Date(bloodSaturation.date);
         var formatedDate = DateTimeHelper.format(date, {fullDate: true});
@@ -882,10 +1143,9 @@ define([
     },
 
     componentWillUpdate: function(nextProps, nextState) {
-      // Prepare the chart for the first time when data has been fetched from db
-      if (!this._chartData && nextState.data.length) {
+      // Add data to the chart for the first time when data has been fetched from db
+      if (this._noDataFetched && nextState.data.length) {
         this._createChart();
-
         return;
       }
     },
@@ -967,23 +1227,8 @@ define([
 
     getInitialState: function() {
       return {
-        data: null,
-        show: this.props.show
+        data: null
       };
-    },
-
-    componentWillReceiveProps: function(nextProps) {
-      this.setState({
-        show: nextProps.show
-      });
-    },
-
-    componentDidUpdate: function() {
-      if (this.state.show) {
-        setTimeout(function() {
-          this.getDOMNode().classList.add("open");
-        }.bind(this), 10);
-      }
     },
 
     getBloodSaturationData: function() {
@@ -997,11 +1242,9 @@ define([
     },
 
     render: function() {
-      if (!this.state.show) {
-        return null;
-      }
       return (
-        <div className="add-form">
+        <SlideScreenView
+          show={this.props.show}>
           <h1>Añadir nuevo valor de saturación</h1>
           <p>
             Si has acudido a tu médico y te han tomado las medidas de la saturación de oxígeno en sangre, añadelas
@@ -1017,6 +1260,50 @@ define([
             maxValue={100}
             onChange={this.handleFieldChange}
             type={"number"} />
+        </SlideScreenView>
+      );
+    }
+  });
+
+  var SlideScreenView = React.createClass({
+    propTypes: {
+      children: React.PropTypes.node.isRequired,
+      show: React.PropTypes.bool.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        show: this.props.show
+      };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      this.setState({
+        show: nextProps.show
+      });
+    },
+
+    componentDidUpdate: function() {
+      if (this.state.show) {
+        setTimeout(function() {
+          if (!this.getDOMNode()) {
+            return;
+          }
+
+          this.getDOMNode().classList.add("open");
+        }.bind(this), 10);
+      }
+    },
+
+    render: function() {
+      if (!this.state.show) {
+        return null;
+      }
+      return (
+        <div className="add-form">
+          <div className="add-form-wrapper">
+          {this.props.children}
+          </div>
         </div>
       );
     }

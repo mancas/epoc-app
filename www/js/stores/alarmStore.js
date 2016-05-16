@@ -1,7 +1,10 @@
 define([
-  "store"
-], function(Store) {
+  "store",
+  "utils/utilities"
+], function(Store, utils) {
   "use strict";
+
+  const ALARM_TYPES = utils.ALARM_TYPES;
 
   var AlarmStore = Store.createStore({
     actions: [
@@ -16,22 +19,30 @@ define([
       }
 
       this._plugin = cordova.plugins.notification;
-      this._plugin.local.on("schedule", function(notification) {
-        console.info("scheduled: " + notification.id, notification);
-      });
+      this._schedulerListener = this.addAlarmToStore.bind(this);
+      this._plugin.local.on("schedule", this._schedulerListener);
 
       // testing
-      //this.scheduleDelayed();
+      // this.scheduleDelayed();
 
-      this._getNotifications();
+      this._getAlarms();
     },
 
-    _getNotifications: function() {
-      this._plugin.local.getScheduled(function(notifications) {
-        console.info(notifications);
+    addAlarmToStore: function(alarm) {
+      console.info("scheduled: " + alarm.id, alarm);
+      var alarms = this._storeState.alarms;
+      alarms.push(alarm);
+      this.setStoreState({
+        alarms: alarms
+      });
+    },
+
+    _getAlarms: function() {
+      this._plugin.local.getScheduled(function(alarms) {
+        console.info(alarms);
         this.setStoreState({
-          notifications: notifications
-        })
+          alarms: alarms
+        });
       }, this);
     },
 
@@ -41,9 +52,12 @@ define([
         title: actionData.title,
         text: actionData.text,
         at: actionData.at,
-        every: actionData.every
+        every: actionData.every,
+        data: {
+          type: actionData.type || ALARM_TYPES.SYSTEM
+        }
       };
-      console.info(alarm);
+
       this._plugin.local.schedule(alarm);
     },
 
@@ -60,7 +74,8 @@ define([
         id: 1,
         title: "Próxima revisión médica",
         text: "Recuerda que debes acudir al médico para tu revisión",
-        at: _5_sec_from_now
+        at: _5_sec_from_now,
+        every: 1
       });
     }
   });

@@ -27,7 +27,7 @@ define([
 
       componentDidMount : function() {
         if (localStorage.getItem("introSeen") === null) {
-          this.props.userStore.on("change", this.storeStateChange);
+          this.props.userStore.on("change:appReady", this.storeStateChange);
           this.navigate("#introduction");
           this.props.router.on("route", this.routerCallback);
         } else {
@@ -44,9 +44,9 @@ define([
         if (!this.props.userStore.getStoreState("appReady")) {
           return;
         }
-        this.navigate("");
+        this.navigate("#index");
         this.forceUpdate();
-        this.props.userStore.off("change", this.storeStateChange);
+        this.props.userStore.off("change:appReady", this.storeStateChange);
         this.props.router.off("route", this.routerCallback);
       },
 

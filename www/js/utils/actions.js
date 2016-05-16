@@ -123,6 +123,7 @@ define([], function() {
       text: String,
       at: Object,
       every: [Number, String]
+      // type: Int, Optional
     }),
 
     CancelAlarm: Action.define("cancelAlarm", {

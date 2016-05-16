@@ -158,9 +158,9 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     setInputValue: function(value) {
-      var input = this.getDOMNode().querySelector("div.form-control");
+      var input = this.getDOMNode().querySelector(".form-control");
       var attr = "value";
-      if (this.props.type === "date") {
+      if (this.props.type === "date" || this.props.type === "time") {
         attr = "textContent";
       }
 
@@ -185,7 +185,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
 
     validateInput: function () {
       var input = this.getDOMNode().querySelector(".form-control");
-      var attr = this.props.type === "date" ? "textContent" : "value";
+      var attr = this.props.type === "date" || this.props.type === "time" ? "textContent" : "value";
       var hasValue = input[attr].length !== 0;
       var valid = true;
 
@@ -250,7 +250,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
         <div className={classes}>
           <label>{this.props.label}</label>
           {
-            this.props.type === "date" ?
+            this.props.type === "date" || this.props.type === "time" ?
               <div
                 className="form-control"
                 onClick={this.props.onFocus}
@@ -264,7 +264,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
                      onInput={this.renderCharCount}
                      onKeyUp={this.renderCharCount}
                      required={this.props.required ? true : false}
-                     type={this.props.type === "date" ? "text" : this.props.type}
+                     type={this.props.type === "date" || this.props.type === "time" ? "text" : this.props.type}
                      value={this.state.value} />
           }
           {this.props.maxLength ? this.renderMaxLengthView() : null}
@@ -443,7 +443,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
                 this.state.yearViewActive ?
                   this.renderYearView() : this.renderMonthView()
               }
-            <CalendarButtons
+            <WidgetButtons
               handleCancelAction={this.dismissCalendar}
               handleAcceptAction={this.handleAcceptAction} />
           </div>
@@ -729,8 +729,9 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     }
   });
 
-  var CalendarButtons = React.createClass({
+  var WidgetButtons = React.createClass({
     propTypes: {
+      extraCSSClass: React.PropTypes.string,
       handleCancelAction: React.PropTypes.func.isRequired,
       handleAcceptAction: React.PropTypes.func.isRequired
     },
@@ -740,8 +741,16 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     render: function() {
+      var cssClasses = {
+        "widget-buttons": true
+      };
+
+      if (this.props.extraCSSClass) {
+        cssClasses[this.props.extraCSSClass] = true;
+      }
+
       return (
-        <div className="calendar-buttons">
+        <div className={classNames(cssClasses)}>
           <RippleButton
             extraCSSClasses="borderless"
             handleClick={this.props.handleCancelAction}
@@ -750,6 +759,225 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
             extraCSSClasses="borderless"
             handleClick={this.props.handleAcceptAction}
             label="Aceptar" />
+        </div>
+      );
+    }
+  });
+
+  var TimePickerView = React.createClass({
+    statics: {
+      SHOW_DELAY: 200
+    },
+
+    propTypes: {
+      format: React.PropTypes.oneOf([12, 24]),
+      handleAccept: React.PropTypes.func,
+      handleCancel: React.PropTypes.func,
+      show: React.PropTypes.bool.isRequired
+    },
+
+    getDefaultProps: function() {
+      return {
+        format: 24
+      };
+    },
+
+    getInitialState: function() {
+      var currentTime = new Date();
+      return {
+        selectedHour: currentTime.getHours(),
+        selectedMinute: currentTime.getMinutes(),
+        showTimePicker: this.props.show
+      };
+    },
+
+    componentDidUpdate: function() {
+      if (this.state.showTimePicker) {
+        setTimeout(() => {
+          this.getDOMNode().classList.add("material-time-picker-display");
+        }, this.constructor.SHOW_DELAY);
+      }
+    },
+
+    componentWillReceiveProps: function(newProps) {
+      this.setState({
+        showTimePicker: newProps.show
+      });
+    },
+
+    handleHourClick: function(event, hour) {
+      this.setState({
+        selectedHour: hour
+      });
+    },
+
+    handleMinuteClick: function(event, minute) {
+      this.setState({
+        selectedMinute: minute
+      });
+    },
+
+    handleAccept: function() {
+      this.props.handleAccept && this.props.handleAccept(this.state.selectedHour, this.state.selectedMinute);
+    },
+
+    handleCancel: function() {
+      this.props.handleCancel && this.props.handleCancel();
+    },
+
+    render: function() {
+      if (!this.state.showTimePicker) {
+        return null;
+      }
+
+      var hours = this.state.selectedHour < 10 ? "0" + this.state.selectedHour : this.state.selectedHour;
+      var minutes = this.state.selectedMinute < 10 ? "0" + this.state.selectedMinute : this.state.selectedMinute;
+
+      return (
+        <div className="material-time-picker-wrapper">
+          <div className="material-time-picker">
+            <div className="time-picker-header">
+              <span className="info">Hora seleccionada</span>
+              <h1 className="selected-time">
+                {hours + " : " + minutes}
+              </h1>
+            </div>
+            <TimeSpinnerView
+              format={this.props.format}
+              handleHourClick={this.handleHourClick}
+              handleMinuteClick={this.handleMinuteClick}
+              selectedHour={this.state.selectedHour}
+              selectedMinute={this.state.selectedMinute} />
+            <WidgetButtons
+              handleAcceptAction={this.handleAccept}
+              handleCancelAction={this.handleCancel} />
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var TimeSpinnerView = React.createClass({
+    propTypes: {
+      format: React.PropTypes.oneOf([12, 24]).isRequired,
+      handleHourClick: React.PropTypes.func.isRequired,
+      handleMinuteClick: React.PropTypes.func.isRequired,
+      selectedHour: React.PropTypes.number,
+      selectedMinute: React.PropTypes.number,
+    },
+
+    _getHours: function() {
+      var hours = [];
+      var initHour = this.props.format === 12 ? 1 : 0;
+      for (var h = initHour; h < this.props.format; h++) {
+        hours.push(h);
+      }
+
+      if (this.props.format === 12) {
+        hours.push(12);
+      }
+
+      return hours;
+    },
+
+    _getMinutes: function() {
+      var minutes = [];
+      for (var m = 0; m < 60; m++) {
+        minutes.push(m);
+      }
+
+      return minutes;
+    },
+
+    componentWillUpdate: function(nextProps) {
+      var selectedHourNode = this.refs["hour-" + nextProps.selectedHour].getDOMNode();
+      var selectedMinuteNode = this.refs["minute-" + nextProps.selectedMinute].getDOMNode();
+
+      this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
+    },
+
+    componentDidMount: function() {
+      var selectedHourNode = this.refs["hour-" + this.props.selectedHour].getDOMNode();
+      var selectedMinuteNode = this.refs["minute-" + this.props.selectedMinute].getDOMNode();
+
+      this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
+    },
+
+    _scrollToSelectedTime: function(selectedHour, selectedMinute) {
+      var container = this.getDOMNode();
+      var containerHours = container.querySelector(".spinner-hours");
+      var containerMinutes = container.querySelector(".spinner-minutes");
+      var containerHeight = containerHours.clientHeight;
+      var buttonHeight = selectedHour.clientHeight;
+
+      var scrollHourYOffset = (selectedHour.offsetTop + buttonHeight / 2) - containerHeight / 2;
+      var scrollMinuteYOffset = (selectedMinute.offsetTop + buttonHeight / 2) - containerHeight / 2;
+
+      containerHours.scrollTop = scrollHourYOffset;
+      containerMinutes.scrollTop = scrollMinuteYOffset;
+    },
+
+    render: function() {
+      var hours = this._getHours();
+      var minutes = this._getMinutes();
+      return (
+        <div className="time-spinner">
+          <div className="spinner-hours">
+            {
+              hours.map(function(hour, index) {
+                return (
+                  <TimeSpinnerButton
+                    handleClick={this.props.handleHourClick}
+                    label={hour}
+                    key={index}
+                    ref={"hour-" + hour}
+                    selected={hour === this.props.selectedHour} />
+                );
+              }, this)
+            }
+          </div>
+          <div className="spinner-minutes">
+            {
+              minutes.map(function(minute, index) {
+                return (
+                  <TimeSpinnerButton
+                    handleClick={this.props.handleMinuteClick}
+                    label={minute}
+                    key={index}
+                    ref={"minute-" + minute}
+                    selected={minute === this.props.selectedMinute} />
+                );
+              }, this)
+            }
+          </div>
+        </div>
+      );
+    }
+  });
+
+  var TimeSpinnerButton = React.createClass({
+    propTypes: {
+      handleClick: React.PropTypes.func,
+      label: React.PropTypes.number.isRequired,
+      selected: React.PropTypes.bool.isRequired
+    },
+
+    handleClick: function(event) {
+      this.props.handleClick && this.props.handleClick(event, this.props.label);
+    },
+
+    render: function() {
+      var cssClasses = {
+        "time-button": true,
+        "selected": this.props.selected
+      };
+      return (
+        <div className={classNames(cssClasses)} onClick={this.handleClick}>
+          {
+            this.props.label < 10 ?
+              "0" + this.props.label :
+              this.props.label
+          }
         </div>
       );
     }
@@ -1275,6 +1503,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     TabContentView: TabContentView,
     TabsContent: TabsContent,
     TabView: TabView,
-    TabsView: TabsView
+    TabsView: TabsView,
+    TimePickerView: TimePickerView
   };
 });

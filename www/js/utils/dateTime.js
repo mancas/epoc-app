@@ -142,6 +142,16 @@ define([], function() {
       return monthLongList[d.getMonth()] + " " + d.getFullYear().toString();
     },
 
+    formatTime: function(d) {
+      var hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+      var minutes = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+
+      return hour + ":" + minutes;
+    },
+
+    minutesToMonths: function(minutes) {
+    },
+
     equals: function(d1, d2) {
       return d1 && d2 &&
         (d1.getFullYear() === d2.getFullYear()) &&

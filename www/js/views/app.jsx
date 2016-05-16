@@ -162,7 +162,8 @@ define([
           );
         case "alarms":
           return (
-            <epocViews.MyAlarmsView />
+            <epocViews.MyAlarmsView
+              dispatcher={this.props.dispatcher} />
           );
         case "inhalers":
           return (
@@ -285,7 +286,25 @@ define([
       return this.getStore().getStoreState();
     },
 
-    componentWillUpdate: function() {
+    componentDidMount: function() {
+      var notification = this.refs.currentNotification.getDOMNode();
+      if (!notification) {
+        return;
+      }
+
+      notification.addEventListener("animationend", this.onAnimationEnd);
+    },
+
+    componentWillUnmount: function() {
+      var notification = this.refs.currentNotification.getDOMNode();
+      if (!notification) {
+        return;
+      }
+
+      notification.removeEventListener("animationend", this.onAnimationEnd);
+    },
+
+    componentDidUpdate: function() {
       var notification = this.refs.currentNotification;
       if (!notification) {
         return;
@@ -294,17 +313,15 @@ define([
       notification.getDOMNode().classList.remove("fade-out");
     },
 
+    onAnimationEnd: function() {
+      this.props.dispatcher.dispatch(new Actions.UpdateNotification({
+        id: this.state.notifications[0].id,
+        read: 1
+      }));
+    },
+
     onClick: function() {
       var notification = this.refs.currentNotification.getDOMNode();
-      notification.addEventListener("animationend", function() {
-        console.info("animation end");
-
-        this.props.dispatcher.dispatch(new Actions.UpdateNotification({
-          id: this.state.notifications[0].id,
-          read: 1
-        }));
-      }.bind(this));
-
       notification.classList.add("fade-out");
     },
 

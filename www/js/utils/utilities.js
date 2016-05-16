@@ -8,6 +8,11 @@ define([], function() {
     REMINDER: 3
   };
 
+  const ALARM_TYPES = {
+    SYSTEM: 0,
+    MEDICINE: 1
+  };
+
   function getClosest(el, tag) {
     // this is necessary since nodeName is always in upper case
     tag = tag.toUpperCase();
@@ -71,6 +76,7 @@ define([], function() {
   }
 
   return {
+    ALARM_TYPES: ALARM_TYPES,
     calculateBMI: calculateBMI,
     closest: getClosest,
     NOTIFICATION_TYPES: NOTIFICATION_TYPES,
