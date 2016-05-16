@@ -140,6 +140,11 @@ define([], function() {
       // id: Number, Optional
       // type: String, Optional
       read: Boolean
+    }),
+
+    AddBloodSaturation: Action.define("addBloodSaturation", {
+      date: Object,
+      value: Number
     })
   };
 });

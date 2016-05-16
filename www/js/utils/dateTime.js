@@ -128,6 +128,12 @@ define([], function() {
     format: function (d, options) {
       if (options && options.long) {
         return d.getDate() + " de " + monthLongList[d.getMonth()] + " de " + d.getFullYear().toString();
+      } else if (options && options.fullDate) {
+        var hour = d.getHours() < 10 ? "0" + d.getHours() : d.getHours();
+        var minutes = d.getMinutes() < 10 ? "0" + d.getMinutes() : d.getMinutes();
+        var seconds = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
+        return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear().toString().substring(2) +
+          " - " + hour + ":" + minutes + ":" + seconds;
       }
       return dayList[d.getDay()] + ', ' + monthList[d.getMonth()] + " " + d.getFullYear().toString().substring(2);
     },

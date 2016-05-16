@@ -231,10 +231,6 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     },
 
     onChange: function(event) {
-      if (!this.props.value) {
-        return;
-      }
-
       this.setState({
         value: event.target.value
       });

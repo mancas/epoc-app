@@ -133,7 +133,8 @@ define([
               handleClick={this.props.navigate} />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
-            <epocViews.ChartView />
+            <epocViews.ChartView
+              dispatcher={this.props.dispatcher} />
           </materialViews.TabContentView>
           <materialViews.TabContentView>
             <epocViews.UserProfileView

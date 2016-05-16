@@ -368,7 +368,7 @@ b {
     z-index: 999;
     width: 100%;
     height: 100%;
-    transition: transform 0.3s cubic-bezier(0.55, 0, 0.55, 0.2) 0s;
+    transition: transform .4s ease 0s;
     transform: translateY(100%);
     background: #fff; }
     .epoc-chart .add-form .material-input-wrapper {

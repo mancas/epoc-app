@@ -43,47 +43,26 @@ define([
     },
 
     addBloodSaturation: function(actionData) {
-      var bloodSaturationMeasure = {
-        type: actionData.type,
-        title: actionData.title,
-        content: actionData.text,
-        read: actionData.read || 0
+      var mark = {
+        date: actionData.date.toString(),
+        value: actionData.value
       };
       var self = this;
 
       dbManager.openDatabase(function() {
-        dbManager.insert("notification", notification, function(result) {
+        dbManager.insert("bloodSaturation", mark, function(result) {
           // Update store state
-          var currentNotifications = self._storeState.notifications;
-          notification.id = result.insertId;
-          currentNotifications.push(notification);
+          var currentData = self._storeState.data;
+          mark.id = result.insertId;
+          currentData.push(mark);
           self.setStoreState({
-            notifications: currentNotifications
+            data: currentData
           });
         }, function(error) {
-          console.error("Notifications insert error", error);
+          console.error("Blood Saturation insert error", error);
         });
       }, function(error) {
-        console.error("Notifications db error", error);
-      });
-    },
-
-    updateNotification: function(actionData) {
-      var self = this;
-      var whereBuilder = dbManager.createWhereBuilder();
-      var whereClause = {};
-      if (actionData.hasOwnProperty("id")) {
-        whereClause  = {id: actionData.id}
-      } else {
-        whereClause  = {type: actionData.type}
-      }
-      whereBuilder.and(whereClause);
-
-      dbManager.update("notification", {read: actionData.read}, whereBuilder.where, function() {
-        // Time to update notifications
-        self.getNotifications();
-      }, function(error) {
-        console.error("Notifications update error", error);
+        console.error("Blood Saturation db error", error);
       });
     }
   });

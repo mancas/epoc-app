@@ -805,7 +805,7 @@ define([
     ],
 
     propTypes: {
-
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
     },
 
     getInitialState: function() {
@@ -817,30 +817,28 @@ define([
     },
 
     componentDidMount: function() {
-      var ctx = this.refs.chart.getDOMNode();
-      // TODO: Configure options and get real data
-      var myChart = new Chart(ctx, {
+      if (!this.state.data.length) {
+        return;
+      }
+
+      this._createChart();
+    },
+
+    _createChart: function() {
+      var ctx = this.refs.chart.getDOMNode()
+      var bloodSaturationData = this._prepareData(this.state.data);
+      this._chartData = bloodSaturationData;
+      this._chart = new Chart(ctx, {
         type: 'line',
-        data: {
-          labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-          datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)"
-          },
-          {
-            label: '# of Test',
-              data: [3, 2, 5, 3, 19, 12],
-              backgroundColor: "rgba(255,99,132,0.4)",
-              borderColor: "rgba(255,99,132,0.4)"
-          }]
-        },
+        data: bloodSaturationData,
         options: {
           scales: {
             yAxes: [{
               ticks: {
-                beginAtZero:true
+                maxTicksLimit: 3,
+                stepSize: 10,
+                max: 110,
+                min: 80
               }
             }],
             xAxes: [{
@@ -849,6 +847,47 @@ define([
           }
         }
       });
+    },
+
+    _prepareData: function(data) {
+      var chartData = {
+        labels: [],
+        datasets: [{
+          label: "Saturación en sangre",
+          data: [],
+          backgroundColor: "rgba(75,192,192,0.4)",
+          borderColor: "rgba(75,192,192,1)"
+        }]
+      };
+
+      data.forEach(function(bloodSaturation) {
+        var date = new Date(bloodSaturation.date);
+        var formatedDate = DateTimeHelper.format(date, {fullDate: true});
+        chartData.labels.push(formatedDate);
+        chartData.datasets[0].data.push(bloodSaturation.value);
+      });
+
+      return chartData;
+    },
+
+    _updateChart: function(data) {
+      if (!this._chartData) {
+        return;
+      }
+
+      var formatedDate = DateTimeHelper.format(data.date, {fullDate: true});
+      this._chartData.labels.push(formatedDate);
+      this._chartData.datasets[0].data.push(data.value);
+      this._chart.update();
+    },
+
+    componentWillUpdate: function(nextProps, nextState) {
+      // Prepare the chart for the first time when data has been fetched from db
+      if (!this._chartData && nextState.data.length) {
+        this._createChart();
+
+        return;
+      }
     },
 
     isValid: function(isValid) {
@@ -864,6 +903,15 @@ define([
     },
 
     toggleAddMode: function() {
+      if (this.state.addModeEnabled && this.state.hasValue && this.state.isValid) {
+        var newData = {
+          date: new Date(),
+          value: this.refs.addView.getBloodSaturationData()
+        };
+        this.props.dispatcher.dispatch(new Actions.AddBloodSaturation(newData));
+        this._updateChart(newData);
+      }
+
       this.setState({
         addModeEnabled: !this.state.addModeEnabled
       });
@@ -903,6 +951,7 @@ define([
           <AddBloodSaturationView
             hasValue={this.hasValue}
             isValid={this.isValid}
+            ref="addView"
             show={this.state.addModeEnabled} />
         </div>
       );
@@ -918,6 +967,7 @@ define([
 
     getInitialState: function() {
       return {
+        data: null,
         show: this.props.show
       };
     },
@@ -934,6 +984,16 @@ define([
           this.getDOMNode().classList.add("open");
         }.bind(this), 10);
       }
+    },
+
+    getBloodSaturationData: function() {
+      return this.state.data;
+    },
+
+    handleFieldChange: function(value) {
+      this.setState({
+        data: value
+      });
     },
 
     render: function() {

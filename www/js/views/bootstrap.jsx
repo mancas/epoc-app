@@ -22,7 +22,6 @@ define([
       },
 
       componentWillUnmount : function() {
-        console.info("unmount");
         this.props.router.off("route", this.routerCallback);
       },
 
