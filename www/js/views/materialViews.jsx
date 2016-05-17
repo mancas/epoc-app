@@ -254,7 +254,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
               <div
                 className="form-control"
                 onClick={this.props.onFocus}
-                required={this.props.required ? true : false}></div> :
+                required={this.props.required ? true : false}>{this.props.value}</div> :
               <input className="form-control"
                      maxLength={this.props.maxLength}
                      name={this.props.inputName}
@@ -275,7 +275,10 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
   var SelectView = React.createClass({
     propTypes: {
-      currentValue: React.PropTypes.string,
+      currentValue: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ]),
       onChange: React.PropTypes.func,
       selectName: React.PropTypes.string.isRequired,
       values: React.PropTypes.array.isRequired

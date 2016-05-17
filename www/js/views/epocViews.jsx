@@ -446,8 +446,24 @@ define([
     },
 
     toggleAddMode: function() {
+      // Handle edit mode
+      if (this.state.editModeEnabled) {
+        this.setState({
+          alarmToEdit: null,
+          editModeEnabled: !this.state.editModeEnabled
+        });
+        return;
+      }
+
       this.setState({
         addModeEnabled: !this.state.addModeEnabled
+      });
+    },
+
+    enterEditMode: function(alarmData) {
+      this.setState({
+        alarmToEdit: alarmData,
+        editModeEnabled: !this.state.editModeEnabled
       });
     },
 
@@ -457,24 +473,34 @@ define([
       });
     },
 
-    onClose: function(alarmData) {
+    onClose: function(alarmData, update) {
       if (!this.state.isValid) {
         return;
       }
 
-      console.info(alarmData);
       var alarmDate = new Date();
       alarmDate.setHours(alarmData.time.hours);
       alarmDate.setMinutes(alarmData.time.minutes);
       alarmDate.setSeconds(0);
-      this.props.dispatcher.dispatch(new Actions.ScheduleAlarm({
-        title: alarmData.title,
-        text: "",
-        at: alarmDate,
-        // Hours to minutes
-        every: parseInt(alarmData.periodicity) * 60,
-        type: utils.ALARM_TYPES.MEDICINE
-      }));
+
+      if (update) {
+        this.props.dispatcher.dispatch(new Actions.UpdateAlarm({
+          id: alarmData.id,
+          title: alarmData.title,
+          at: alarmDate,
+          // Hours to minutes
+          every: parseInt(alarmData.periodicity) * 60
+        }));
+      } else {
+        this.props.dispatcher.dispatch(new Actions.ScheduleAlarm({
+          title: alarmData.title,
+          text: "",
+          at: alarmDate,
+          // Hours to minutes
+          every: parseInt(alarmData.periodicity) * 60,
+          type: utils.ALARM_TYPES.MEDICINE
+        }));
+      }
     },
 
     render: function() {
@@ -483,7 +509,7 @@ define([
         "add-button": true
       };
 
-      if (this.state.addModeEnabled) {
+      if (this.state.addModeEnabled || this.state.editModeEnabled) {
         icon = "check.svg";
         if (!this.state.isValid) {
           icon = "clear.svg";
@@ -508,6 +534,7 @@ define([
                 <AlarmView
                   alarm={alarm}
                   dispatcher={this.props.dispatcher}
+                  handleEditAlarm={this.enterEditMode}
                   key={index} />
               );
             }, this)
@@ -518,9 +545,10 @@ define([
             <img src={"img/material/" + icon} />
           </materialViews.FloatActionButton>
           <AddAlarmView
+            alarm={this.state.alarmToEdit}
             isValid={this.isValid}
             onClose={this.onClose}
-            show={this.state.addModeEnabled} />
+            show={this.state.addModeEnabled || this.state.editModeEnabled} />
         </div>
       );
     }
@@ -529,13 +557,18 @@ define([
   var AlarmView = React.createClass({
     propTypes: {
       alarm: React.PropTypes.object.isRequired,
-      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
+      handleEditAlarm: React.PropTypes.func.isRequired
     },
 
     cancelAlarm: function() {
       this.props.dispatcher.dispatch(new Actions.CancelAlarm({
         id: this.props.alarm.id
       }));
+    },
+
+    handleAlarmClick: function() {
+      this.props.handleEditAlarm(this.props.alarm);
     },
 
     render: function() {
@@ -545,10 +578,14 @@ define([
       return (
         <div className="alarm">
           <div className="alarm-info">
-            <h2>{this.props.alarm.title}</h2>
-            <span>
-              {time + " - Repetir cada " + periodicity + " horas"}
-            </span>
+            <materialViews.RippleButton
+              extraCSSClasses={{"borderless": true, "edit-alarm-btn": true}}
+              handleClick={this.handleAlarmClick}>
+              <h2>{this.props.alarm.title}</h2>
+              <span>
+                {time + " - Repetir cada " + periodicity + " horas"}
+              </span>
+            </materialViews.RippleButton>
           </div>
           <materialViews.RippleButton
             extraCSSClasses={{"borderless": true, "cancel-alarm-btn": true}}
@@ -591,27 +628,60 @@ define([
     },
 
     propTypes: {
+      alarm: React.PropTypes.object,
       isValid: React.PropTypes.func.isRequired,
       onClose: React.PropTypes.func,
       show: React.PropTypes.bool.isRequired
     },
 
     getInitialState: function() {
-      return {
-        data: {
-          periodicity: 2
-        },
-        showTimePicker: false,
-        valid: {
-          title: false,
-          time: false
-        }
-      };
+      return this.constructor.defaultState;
     },
 
-    componentWillReceiveProps: function(newProps) {
-      if (this.props.show && !newProps.show) {
-        this.props.onClose && this.props.onClose(this.state.data);
+    componentWillReceiveProps: function(nextProps) {
+      // there's no need to upload state again
+      if (this.props.show === nextProps.show) {
+        return;
+      }
+
+      if (this.props.show && !nextProps.show) {
+        this.props.onClose && this.props.onClose(this.state.data, !!this.props.alarm);
+        return;
+      }
+
+      if (nextProps.alarm) {
+        var data = this.state.data;
+        data.title = nextProps.alarm.title;
+        data.periodicity = nextProps.alarm.every/60;
+        var alarmDate = new Date(1000*nextProps.alarm.at);
+        data.time.hours = alarmDate.getHours();
+        data.time.minutes = alarmDate.getMinutes();
+        data.id = nextProps.alarm.id;
+        // We have a valid alarm so let's update the valid state
+        this.setState({
+          valid: {
+            title: true,
+            time: true
+          },
+          data: data
+        });
+      } else {
+        // Need to reset the state
+        this.setState({
+          data: {
+            title: null,
+            periodicity: 2,
+            time: {
+              hours: null,
+              minutes: null
+            }
+          },
+          showTimePicker: false,
+          valid: {
+            title: false,
+            time: false
+          }
+        });
       }
     },
 
@@ -635,16 +705,13 @@ define([
         hours: hours,
         minutes: minutes
       };
+
       this.setState({
         showTimePicker: false,
         valid: validState,
         data: dataState
       });
 
-      var d = new Date();
-      d.setHours(hours, minutes, 0, 0);
-
-      this.refs.alarmTime.setInputValue(DateTimeHelper.formatTime(d));
       this.isValid();
     },
 
@@ -683,6 +750,15 @@ define([
     },
 
     render: function() {
+      var title = this.state.data.title;
+      var periodicity = this.state.data.periodicity;
+      var alarmDate = this.state.data.time;
+      var time = null;
+
+      if (alarmDate.hours !== null && alarmDate.minutes !== null) {
+        time = alarmDate.hours + ":" + alarmDate.minutes;
+      }
+
       return (
         <SlideScreenView
           show={this.props.show}>
@@ -696,10 +772,11 @@ define([
             inputName={"alarm-title"}
             label={"Título de la alarma"}
             onChange={this.handleTitleChange}
-            type={"text"} />
+            type={"text"}
+            value={title} />
           <h2>¿Cada cuanto tienes que tomar la medicación?</h2>
           <materialViews.SelectView
-            currentValue={"2"}
+            currentValue={periodicity}
             onChange={this.handlePeriodicityChange}
             selectName={"alarm-periodicity"}
             values={this.constructor.PERIODICITY_VALUES} />
@@ -709,8 +786,8 @@ define([
             inputName={"alarm-time"}
             label={"Hora de la alarma"}
             onFocus={this.handleOnFocus}
-            ref="alarmTime"
-            type={"time"} />
+            type={"time"}
+            value={time} />
           <materialViews.TimePickerView
             format={24}
             handleAccept={this.handleTimePickerAccept}

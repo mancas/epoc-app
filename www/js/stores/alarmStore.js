@@ -10,7 +10,8 @@ define([
   var AlarmStore = Store.createStore({
     actions: [
       "cancelAlarm",
-      "scheduleAlarm"
+      "scheduleAlarm",
+      "updateAlarm"
     ],
 
     initialize: function() {
@@ -30,6 +31,18 @@ define([
         alert("clicked: " + alarm.id);
       });
 
+      this._plugin.local.on("cancel", function() {
+        this.dispatcher.dispatch(new Actions.ShowSnackbar({
+          label: "Alarma cancelada"
+        }));
+      }.bind(this));
+
+      this._plugin.local.on("update", function() {
+        this.dispatcher.dispatch(new Actions.ShowSnackbar({
+          label: "Alarma actualizada"
+        }));
+      }.bind(this));
+
       // testing
       // this.scheduleDelayed();
       // this.cancel(1);
@@ -48,6 +61,10 @@ define([
       this.setStoreState({
         alarms: alarms
       });
+
+      this.dispatcher.dispatch(new Actions.ShowSnackbar({
+        label: "Alarma creada"
+      }));
     },
 
     _getAlarms: function() {
@@ -72,18 +89,26 @@ define([
       };
 
       this._plugin.local.schedule(alarm);
-      this.dispatcher.dispatch(new Actions.ShowSnackbar({
-        label: "Alarma creada"
-      }));
     },
 
     cancelAlarm: function(actionData) {
       this._plugin.local.cancel(actionData.id, function () {
         // Alarm cancelled so let's update the store
         this._getAlarms();
-        this.dispatcher.dispatch(new Actions.ShowSnackbar({
-          label: "Alarma cancelada"
-        }));
+      }.bind(this));
+    },
+
+    updateAlarm: function(actionData) {
+      console.info(actionData);
+      var newAlarmData = {};
+      for (var key in actionData) {
+        if (key !== "name") {
+          newAlarmData[key] = actionData[key];
+        }
+      }
+      this._plugin.local.update(newAlarmData, function () {
+        // Alarm update so let's update the store
+        this._getAlarms();
       }.bind(this));
     },
 

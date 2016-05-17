@@ -126,6 +126,15 @@ define([], function() {
       // type: Int, Optional
     }),
 
+    UpdateAlarm: Action.define("updateAlarm", {
+      id: Number
+      // title: String, Optional
+      // text: String, Optional
+      // at: Object, Optional
+      // every: [Number, String], Optional
+      // type: Int, Optional
+    }),
+
     CancelAlarm: Action.define("cancelAlarm", {
       id: Number
     }),

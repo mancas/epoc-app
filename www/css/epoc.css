@@ -52,8 +52,11 @@ b {
           margin-top: 30px;
           color: #00acb4;
           font-size: 16px; }
-        #container .app .app-content .section-info .alarm-info > h2 {
-          margin: 0 0 10px 0; }
+        #container .app .app-content .section-info .alarm-info > .edit-alarm-btn > h2 {
+          margin: 0 0 10px 0;
+          line-height: 16px; }
+        #container .app .app-content .section-info .alarm-info > .edit-alarm-btn > span {
+          color: #4a4a4a; }
         #container .app .app-content .section-info .img-caption-group img {
           max-width: 100%;
           display: block;
@@ -422,19 +425,23 @@ b {
   .alarm-list .alarm {
     display: table;
     width: 100%;
-    padding: 15px 0 20px 0;
+    padding: 5px 0 10px 0;
     border-bottom: solid 1px #c1c1c1; }
     .alarm-list .alarm:first-of-type {
       border-top: solid 1px #c1c1c1; }
     .alarm-list .alarm .alarm-info,
     .alarm-list .alarm .cancel-alarm-btn {
       display: table-cell; }
+    .alarm-list .alarm .edit-alarm-btn,
     .alarm-list .alarm .cancel-alarm-btn {
       min-width: initial;
       margin: 0;
       height: 100%; }
+    .alarm-list .alarm .edit-alarm-btn {
+      text-transform: none;
+      text-align: left;
+      width: 100%; }
     .alarm-list .alarm .alarm-info {
-      width: 100%;
-      height: 100%; }
+      width: 100%; }
 
 /*# sourceMappingURL=epoc.css.map */
