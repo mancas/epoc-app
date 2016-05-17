@@ -1,7 +1,8 @@
 define([
   "store",
-  "utils/databaseManager"
-], function(Store, dbManager) {
+  "utils/databaseManager",
+  "utils/actions"
+], function(Store, dbManager, Actions) {
   "use strict";
 
   var BloodSaturationStore = Store.createStore({
@@ -58,6 +59,9 @@ define([
           self.setStoreState({
             data: currentData
           });
+          self.dispatcher.dispatch(new Actions.ShowSnackbar({
+            label: "Saturación en sangre añadida"
+          }));
         }, function(error) {
           console.error("Blood Saturation insert error", error);
         });

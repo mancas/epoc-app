@@ -507,6 +507,7 @@ define([
               return (
                 <AlarmView
                   alarm={alarm}
+                  dispatcher={this.props.dispatcher}
                   key={index} />
               );
             }, this)
@@ -527,7 +528,14 @@ define([
 
   var AlarmView = React.createClass({
     propTypes: {
-      alarm: React.PropTypes.object.isRequired
+      alarm: React.PropTypes.object.isRequired,
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired
+    },
+
+    cancelAlarm: function() {
+      this.props.dispatcher.dispatch(new Actions.CancelAlarm({
+        id: this.props.alarm.id
+      }));
     },
 
     render: function() {
@@ -544,7 +552,7 @@ define([
           </div>
           <materialViews.RippleButton
             extraCSSClasses={{"borderless": true, "cancel-alarm-btn": true}}
-            handleClick={null}>
+            handleClick={this.cancelAlarm}>
             <img src="img/material/clear_dark.svg" />
           </materialViews.RippleButton>
         </div>

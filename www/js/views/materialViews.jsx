@@ -1,4 +1,4 @@
-define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, utils, _) {
+define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function(DateTimeHelper, utils, StoreMixin, _) {
   "use strict";
 
   var RippleButton = React.createClass({
@@ -1491,6 +1491,42 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     }
   });
 
+  var SnackbarView = React.createClass({
+    statics: {
+      CLOSE_DELAY: 3000
+    },
+
+    mixins: [
+      StoreMixin("snackbarStore")
+    ],
+
+    getInitialState: function() {
+      return this.getStore().getStoreState();
+    },
+
+    componentDidUpdate: function() {
+      if (this.state.label) {
+        this.getDOMNode().classList.add("open");
+        setTimeout(function() {
+          // Let's reset the label and hide the snackbar
+          this.getStore().setStoreState({
+            label: ""
+          });
+        }.bind(this), this.constructor.CLOSE_DELAY);
+      } else {
+        this.getDOMNode().classList.remove("open");
+      }
+    },
+
+    render: function() {
+      return (
+        <div className="material-snackbar">
+          {this.state.label}
+        </div>
+      );
+    }
+  });
+
   return {
     AppBarView: AppBarView,
     CalendarView: CalendarView,
@@ -1500,6 +1536,7 @@ define(["utils/dateTime", "utils/utilities", "_"], function(DateTimeHelper, util
     Input: Input,
     RippleButton: RippleButton,
     SelectView: SelectView,
+    SnackbarView: SnackbarView,
     TabContentView: TabContentView,
     TabsContent: TabsContent,
     TabView: TabView,

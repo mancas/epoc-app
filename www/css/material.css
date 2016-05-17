@@ -629,4 +629,23 @@ div.form-control {
   .material-fab:active {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
 
+/* Snackbar */
+.material-snackbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 24px;
+  line-height: 48px;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1025;
+  color: #fff;
+  transform: translateY(100%);
+  transition: transform .3s ease 0s; }
+  .material-snackbar p {
+    margin: 0; }
+
+.material-snackbar.open {
+  transform: translateY(0); }
+
 /*# sourceMappingURL=material.css.map */

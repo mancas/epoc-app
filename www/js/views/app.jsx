@@ -76,6 +76,7 @@ define([
               navigate={this.props.navigate}
               selectedTab={this.state.selectedTab} />
           </div>
+          <materialViews.SnackbarView />
         </div>
       );
     }
@@ -287,20 +288,20 @@ define([
     },
 
     componentDidMount: function() {
-      var notification = this.refs.currentNotification.getDOMNode();
-      if (!notification) {
+      if (!this.refs.currentNotification) {
         return;
       }
 
+      var notification = this.refs.currentNotification.getDOMNode();
       notification.addEventListener("animationend", this.onAnimationEnd);
     },
 
     componentWillUnmount: function() {
-      var notification = this.refs.currentNotification.getDOMNode();
-      if (!notification) {
+      if (!this.refs.currentNotification) {
         return;
       }
 
+      var notification = this.refs.currentNotification.getDOMNode();
       notification.removeEventListener("animationend", this.onAnimationEnd);
     },
 

@@ -10,9 +10,10 @@ define([
   "stores/alarmStore",
   "stores/bloodSaturationStore",
   "stores/notificationStore",
+  "stores/snackbarStore",
   "mixins/storeMixin"],
   function(materialViews, appViews, slideshowViews, epocTest, slideshowData, Actions, Dispatcher,
-           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, StoreMixin) {
+           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, SnackbarStore, StoreMixin) {
     "use strict";
 
     var InterfaceComponent = React.createClass({
@@ -117,6 +118,7 @@ define([
       var alarmStore = new AlarmStore(dispatcher);
       var notificationStore = new NotificationStore(dispatcher);
       var bloodSaturationStore = new BloodSaturationStore(dispatcher);
+      var snackbarStore = new SnackbarStore(dispatcher);
       // For testing purpose
       //localStorage.removeItem("introSeen");
 
@@ -124,7 +126,8 @@ define([
         alarmStore: alarmStore,
         bloodSaturationStore: bloodSaturationStore,
         notificationStore: notificationStore,
-        userStore: userStore
+        userStore: userStore,
+        snackbarStore: snackbarStore
       });
 
       var Router = Backbone.Router.extend({

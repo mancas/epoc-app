@@ -146,6 +146,10 @@ define([], function() {
     AddBloodSaturation: Action.define("addBloodSaturation", {
       date: Object,
       value: Number
+    }),
+
+    ShowSnackbar: Action.define("showSnackbar", {
+      label: String
     })
   };
 });

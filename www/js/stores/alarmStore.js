@@ -1,7 +1,8 @@
 define([
   "store",
-  "utils/utilities"
-], function(Store, utils) {
+  "utils/utilities",
+  "utils/actions"
+], function(Store, utils, Actions) {
   "use strict";
 
   const ALARM_TYPES = utils.ALARM_TYPES;
@@ -21,9 +22,21 @@ define([
       this._plugin = cordova.plugins.notification;
       this._schedulerListener = this.addAlarmToStore.bind(this);
       this._plugin.local.on("schedule", this._schedulerListener);
+      this._plugin.local.on("trigger", function(alarm) {
+        console.info(alarm);
+        alert("trigger: " + alarm.id);
+      });
+      this._plugin.local.on("click", function(alarm) {
+        alert("clicked: " + alarm.id);
+      });
 
       // testing
       // this.scheduleDelayed();
+      // this.cancel(1);
+
+      this._plugin.local.getTriggered(function(alarms) {
+        console.info("already triggered", alarms);
+      }, this);
 
       this._getAlarms();
     },
@@ -59,12 +72,19 @@ define([
       };
 
       this._plugin.local.schedule(alarm);
+      this.dispatcher.dispatch(new Actions.ShowSnackbar({
+        label: "Alarma creada"
+      }));
     },
 
     cancelAlarm: function(actionData) {
       this._plugin.local.cancel(actionData.id, function () {
-        // Notifications were cancelled
-      });
+        // Alarm cancelled so let's update the store
+        this._getAlarms();
+        this.dispatcher.dispatch(new Actions.ShowSnackbar({
+          label: "Alarma cancelada"
+        }));
+      }.bind(this));
     },
 
     scheduleDelayed: function () {
@@ -75,7 +95,14 @@ define([
         title: "Próxima revisión médica",
         text: "Recuerda que debes acudir al médico para tu revisión",
         at: _5_sec_from_now,
-        every: 1
+        every: 30
+      });
+    },
+
+    cancel: function(id) {
+      this._plugin.local.cancel(id, function () {
+        // Notifications were cancelled
+        console.info("cancelled");
       });
     }
   });
