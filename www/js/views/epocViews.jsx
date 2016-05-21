@@ -1,129 +1,14 @@
 define([
   "build/materialViews",
+  "build/nutritionTest",
   "utils/dispatcher",
   "utils/actions",
   "utils/utilities",
   "utils/dateTime",
   "mixins/storeMixin",
   "Chart",
-  "_"], function(materialViews, Dispatcher, Actions, utils, DateTimeHelper, StoreMixin, Chart, _) {
+  "_"], function(materialViews, nutritionTestViews, Dispatcher, Actions, utils, DateTimeHelper, StoreMixin, Chart, _) {
   "use strict";
-
-  var ChoicesView = React.createClass({
-    propTypes: {
-      choices: React.PropTypes.array.isRequired,
-      choiceName: React.PropTypes.string.isRequired,
-      extraCSSClass: React.PropTypes.string,
-      hasValue: React.PropTypes.func
-    },
-
-    componentDidMount: function() {
-      this.props.hasValue && this.props.hasValue(false);
-    },
-
-    select: function(event) {
-      var currentChoice = this.getDOMNode().querySelector(".choices .selected");
-
-      if (currentChoice) {
-        currentChoice.classList.remove("selected");
-        var currentCheckbox = currentChoice.previousElementSibling;
-        currentCheckbox.checked = false;
-      }
-
-      var target = event.target;
-      if (target.nodeName !== "BUTTON") {
-        target = utils.closest(target, "BUTTON");
-      }
-      target.classList.add("selected");
-      var checkbox = utils.closest(target, "input");
-      checkbox.checked = true;
-
-      this.props.hasValue && this.props.hasValue(true);
-    },
-
-    render: function() {
-      var cssClasses = {
-        "choices": true
-      };
-
-      if (this.props.extraCSSClass) {
-        cssClasses[this.props.extraCSSClass] = true;
-      }
-      return (
-        <div className={classNames(cssClasses)}>
-          {
-            this.props.choices.map(function(choice, index) {
-              return (
-                <ChoiceButton
-                  choiceName={this.props.choiceName}
-                  extraCSSClass={choice.extraCSSClass}
-                  fullWidth={choice.fullWidth}
-                  handleClick={this.select}
-                  key={index}
-                  label={choice.label}
-                  value={choice.value} />
-              );
-            }, this)
-          }
-        </div>
-      );
-    }
-  });
-
-  var ChoiceButton = React.createClass({
-    propTypes: {
-      choiceName: React.PropTypes.string.isRequired,
-      extraCSSClass: React.PropTypes.string,
-      fullWidth: React.PropTypes.bool,
-      handleClick: React.PropTypes.func,
-      label: React.PropTypes.string.isRequired,
-      value: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.number
-      ])
-    },
-
-    render: function() {
-      var inputValue = typeof this.props.value !== "undefined" ? this.props.value : this.props.label;
-      return (
-        <div className="choice-button">
-          <input className="hidden" name={this.props.choiceName} value={inputValue} type="radio" />
-          <materialViews.RippleButton
-            extraCSSClasses={this.props.extraCSSClass}
-            fullWidth={this.props.fullWidth}
-            handleClick={this.props.handleClick}
-            label={this.props.label} />
-        </div>
-      );
-    }
-  });
-
-  var LoaderView = React.createClass({
-    propTypes: {
-      height: React.PropTypes.number,
-      width: React.PropTypes.number
-    },
-
-    shouldComponentUpdate: function() {
-      return false;
-    },
-
-    getDefaultProps: function() {
-      return {
-        height: 40,
-        width: 40
-      }
-    },
-
-    render: function() {
-      return (
-        <div className="pulses-loader">
-          <div className="first"></div>
-          <div className="second"></div>
-        </div>
-      );
-    }
-  });
 
   var WhatIsEpocView = React.createClass({
     shouldComponentUpdate: function() {
@@ -270,7 +155,7 @@ define([
           var editableField = this.refs[ref];
           var newValue = editableField.getNewValue();
           if (this.state[ref].toString() !== newValue.toString()) {
-            newState[ref] = parseInt(newValue);
+            newState[ref] = parseInt(newValue) ? parseInt(newValue) : this.state[ref];
           }
         }, this);
 
@@ -320,6 +205,8 @@ define([
               <EditableField
                 isEditModeActive={this.state.editMode}
                 label={this.state.weight.toString()}
+                maxValue={250}
+                minValue={40}
                 type="input"
                 inputType="number"
                 units="kilos"
@@ -327,6 +214,8 @@ define([
               <EditableField
                 isEditModeActive={this.state.editMode}
                 label={this.state.height.toString()}
+                maxValue={220}
+                minValue={90}
                 type="input"
                 inputType="number"
                 units="centímetros"
@@ -369,6 +258,8 @@ define([
       ]),
       isEditModeActive: React.PropTypes.bool.isRequired,
       label: React.PropTypes.string.isRequired,
+      maxValue: React.PropTypes.number,
+      minValue: React.PropTypes.number,
       type: React.PropTypes.oneOf(["input", "select"]).isRequired,
       inputType: React.PropTypes.string,
       units: React.PropTypes.string,
@@ -377,11 +268,16 @@ define([
 
     getInitialState: function() {
       return {
-        newValue: (this.props.type === "input" ? this.props.label : this.props.currentValue)
+        newValue: (this.props.type === "input" ? this.props.label : this.props.currentValue),
+        isValid: true
       }
     },
 
     getNewValue: function() {
+      if (!this.state.isValid) {
+        return "";
+      }
+
       return this.state.newValue;
     },
 
@@ -403,6 +299,12 @@ define([
       }
     },
 
+    isValid: function (valid) {
+      this.setState({
+        isValid: valid
+      });
+    },
+
     render: function() {
       var cssClasses = {
         "editable-field": true,
@@ -415,7 +317,11 @@ define([
             this.props.type === "input" ?
               <materialViews.Input
                 inputName={this.props.label}
+                isValid={this.isValid}
+                maxValue={this.props.maxValue}
+                minValue={this.props.minValue}
                 onChange={this.handleFieldChange}
+                required={true}
                 type={this.props.inputType}
                 value={this.props.label}/> :
               <materialViews.SelectView
@@ -441,6 +347,7 @@ define([
     getInitialState: function() {
       return _.extend(this.getStore().getStoreState(), {
         addModeEnabled: false,
+        editModeEnabled: false,
         isValid: false
       });
     },
@@ -568,6 +475,13 @@ define([
     },
 
     handleAlarmClick: function() {
+      var data = JSON.parse(this.props.alarm.data);
+      if (data.type === utils.ALARM_TYPES.SYSTEM) {
+        this.props.dispatcher.dispatch(new Actions.ShowSnackbar({
+          label: "No puedes editar una alarma del sistema"
+        }));
+        return;
+      }
       this.props.handleEditAlarm(this.props.alarm);
     },
 
@@ -575,6 +489,12 @@ define([
       var date = new Date(this.props.alarm.at * 1000);
       var time = DateTimeHelper.formatTime(date);
       var periodicity = this.props.alarm.every/60;
+
+      var data = JSON.parse(this.props.alarm.data);
+      if (data.type === utils.ALARM_TYPES.SYSTEM) {
+        periodicity = DateTimeHelper.minutesToMonths(this.props.alarm.every * 60).month;
+      }
+
       return (
         <div className="alarm">
           <div className="alarm-info">
@@ -583,7 +503,7 @@ define([
               handleClick={this.handleAlarmClick}>
               <h2>{this.props.alarm.title}</h2>
               <span>
-                {time + " - Repetir cada " + periodicity + " horas"}
+                {time + " - Repetir cada " + periodicity + (data.type === utils.ALARM_TYPES.SYSTEM ? " meses" : " horas")}
               </span>
             </materialViews.RippleButton>
           </div>
@@ -635,7 +555,21 @@ define([
     },
 
     getInitialState: function() {
-      return this.constructor.defaultState;
+      return {
+        data: {
+          title: null,
+          periodicity: 2,
+          time: {
+            hours: null,
+            minutes: null
+          }
+        },
+        showTimePicker: false,
+        valid: {
+          title: false,
+          time: false
+        }
+      };
     },
 
     componentWillReceiveProps: function(nextProps) {
@@ -756,7 +690,9 @@ define([
       var time = null;
 
       if (alarmDate.hours !== null && alarmDate.minutes !== null) {
-        time = alarmDate.hours + ":" + alarmDate.minutes;
+        var hours = alarmDate.hours > 10 ? alarmDate.hours : "0" + alarmDate.hours;
+        var minutes = alarmDate.minutes > 10 ? alarmDate.minutes : "0" + alarmDate.minutes;
+        time = hours + ":" + minutes;
       }
 
       return (
@@ -1169,7 +1105,7 @@ define([
     },
 
     _createChart: function() {
-      var ctx = this.refs.chart.getDOMNode()
+      var ctx = this.refs.chart
       var bloodSaturationData = this._prepareData(this.state.data);
       this._chartData = bloodSaturationData;
       this._chart = new Chart(ctx, {
@@ -1371,11 +1307,11 @@ define([
     componentDidUpdate: function() {
       if (this.state.show) {
         setTimeout(function() {
-          if (!this.getDOMNode()) {
+          if (!ReactDOM.findDOMNode(this)) {
             return;
           }
 
-          this.getDOMNode().classList.add("open");
+          ReactDOM.findDOMNode(this).classList.add("open");
         }.bind(this), 10);
       }
     },
@@ -1394,15 +1330,214 @@ define([
     }
   });
 
+  var MyNutritionView = React.createClass({
+    mixins: [
+      StoreMixin("userStore")
+    ],
+
+    propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
+      navigate: React.PropTypes.func.isRequired,
+      router: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return _.extend(this.getStore().getStoreState(), {
+        showTestWarning: false
+      });
+    },
+
+    componentWillMount: function() {
+      var lastTest = localStorage.getItem("nutritionTest");
+      if (!lastTest) {
+        return;
+      }
+
+      var lastTestDate = new Date(parseInt(lastTest));
+      var nextTestDate = DateTimeHelper.addMonths(lastTestDate, 3);
+
+      var today = new Date();
+      if (today.getTime() >= nextTestDate.getTime()) {
+        this.setState({
+          showTestWarning: true
+        });
+      }
+    },
+
+    skipTest: function() {
+      this.setState({
+        showTestWarning: false
+      });
+    },
+
+    goToTest: function() {
+      this.props.navigate("#nutrition-test");
+    },
+
+    render: function() {
+      if (this.props.router.sectionId) {
+        switch (this.props.router.sectionId) {
+          case 0:
+            return (
+              <ReduceSodiumView />
+            );
+          case 1:
+            return (
+              <GeneralTipsView />
+            );
+          case 2:
+            return (
+              <PersonalTipsView
+                bmi={this.state.bmi} />
+            );
+          default:
+            return null;
+        }
+      }
+
+      if (!this.state.nutritionScore) {
+        return (
+          <nutritionTestViews.NutritionTestController
+            dispatcher={this.props.dispatcher}
+            router={this.props.router} />
+        );
+      }
+
+      if (this.state.showTestWarning) {
+        return (
+          <div className="section-info">
+            <div className="nutrition-test-warning">
+              <span className="nutrition-test-icon"></span>
+              <h1>Test de nutrición</h1>
+              <p>
+                Hace más de tres meses que no realizas el test. ¿Por qué no lo realizas para comprobar tu progreso?
+              </p>
+              <materialViews.RippleButton
+                handleClick={this.goToTest}
+                label="Realizar ahora" />
+              <materialViews.RippleButton
+                extraCSSClasses={{"btn-dark": true}}
+                handleClick={this.skipTest}
+                label="Más tarde" />
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="section-info">
+          <h1>
+            La nutrición y la EPOC
+          </h1>
+          <p>
+            Es común ver en los pacientes de EPOC, una alteración del peso, generalmente
+            acompañado de una disminución de la masa muscular y un aumento de la
+            masa grasa.
+          </p>
+          <p>
+            Esto sucede porque al consumir más oxigeno y a mayor trabajo
+            respiratorio, el organismo necesita más energía, que acompañado de
+            pérdida de apetito, cansancio y tos frecuente, hacen que muchas veces,
+            los pacientes tengan dificultades para cubrir los requerimientos de
+            nutrientes y energía que el cuerpo necesita. Así, los músculos respiratorios
+            tienen menos fuerza y resistencia para la contracción.
+          </p>
+          <h2>¿Sabías que...?</h2>
+          <p>
+            El uso de ciertos medicamentos puede disminuir la utilización de calcio
+            por el organismo, por eso te recomendamos aumentar la ingesta de los
+            alimentos, ricos en calcio. ADD IMG
+          </p>
+          <h2>Ingesta de sodio</h2>
+          <p>
+            Debido a.... debes reducir la ingesta de sodio
+            Navigate to Tips para la reucción
+          </p>
+        </div>
+      );
+    }
+  });
+
+  var ReduceSodiumView = React.createClass({
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      return (
+        <div className="section-info">
+          <h1>Consejos para reducir el sodio en tu dieta</h1>
+          <p>
+            A continuación tienes unos consejos que te ayudarán a reducir y controlar los niveles de sodio
+            en tu dieta diaria. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
+          </p>
+        </div>
+      );
+    }
+  });
+
+  var GeneralTipsView = React.createClass({
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      return (
+        <div className="section-info">
+          <h1>Consejos para mejorar tu nutrición</h1>
+          <p>
+            Mejorar tu nutrición hará que te sientas mejor y puedas tener una vida más plena
+            dentro de tus limitaciones. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
+          </p>
+        </div>
+      );
+    }
+  });
+
+  var PersonalTipsView = React.createClass({
+    propTypes: {
+      bmi: React.PropTypes.object.isRequired
+    },
+
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      return (
+        <div className="section-info">
+          <h1>Consejos para mejorar tu nutrición</h1>
+          <p>
+            TODO. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
+          </p>
+        </div>
+      );
+    }
+  });
+
+  var NutritionTestView = React.createClass({
+    propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
+      router: React.PropTypes.object.isRequired
+    },
+
+    render: function() {
+      return (
+        <nutritionTestViews.NutritionTestController
+          dispatcher={this.props.dispatcher}
+          router={this.props.router} />
+      );
+    }
+  });
+
   return {
     ChartView: ChartView,
-    ChoiceButton: ChoiceButton,
-    ChoicesView: ChoicesView,
     EPOCAndSmokersView: EPOCAndSmokersView,
     ExacerbationsView: ExacerbationsView,
     InhalersView: InhalersView,
-    LoaderView: LoaderView,
     MyAlarmsView: MyAlarmsView,
+    MyNutritionView: MyNutritionView,
+    NutritionTestView: NutritionTestView,
     UserProfileView: UserProfileView,
     WhatIsEpocView: WhatIsEpocView
   };

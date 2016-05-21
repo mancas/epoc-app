@@ -9,6 +9,7 @@ $not_selected_tab: rgba(255, 255, 255, 0.7);
 $card-gray: #757575;
 $card-separator: rgba(0, 0, 0, .12);
 $card-background: #fcfcfc;
+$button-gray: #565656;
 
 /** RIPPLE EFFECT **/
 .ripple-effect {
@@ -140,7 +141,7 @@ div.form-control {
   text-transform: uppercase;
   color: $white;
   background-color: $primary;
-  margin: 35px 0 0;
+  margin: 25px 0 0;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
   border-radius: 3px;
   box-sizing: border-box;
@@ -228,6 +229,28 @@ div.form-control {
 .material-button.dropdown-btn.opened {
   &:after {
     transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.material-button.bordered {
+  background-color: transparent;
+  border: solid 2px $primary;
+  color: $button-gray;
+}
+
+.material-button.bordered.selected {
+  background: $primary;
+  color: $white;
+}
+
+.material-button,
+.material-button.btn-dark,
+.material-button.borderless,
+.material-button.bordered,
+.material-button.dropdown-btn {
+  &:active {
+    background-color: $primary !important;
+    color: $white !important;
   }
 }
 
@@ -809,7 +832,6 @@ div.form-control {
     }
 
     p {
-      font-size: 13px;
       font-family: "Roboto Regular", sans-serif;
       margin: 0 0 16px;
       color: $card-gray;
@@ -828,7 +850,7 @@ div.form-control {
   }
 }
 
-.material-card.fade-out {
+.fade-out {
   animation: fade-out 0.65s cubic-bezier(0.23, 1, 0.32, 1);
 }
 

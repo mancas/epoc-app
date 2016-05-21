@@ -149,7 +149,24 @@ define([], function() {
       return hour + ":" + minutes;
     },
 
-    minutesToMonths: function(minutes) {
+    minutesToMonths: function(seconds) {
+      var r = {};
+      var s = {
+        // year: 31536000,
+        month: 2592000,
+        week: 604800, // uncomment row to ignore
+        day: 86400,   // feel free to add your own row
+        hour: 3600,
+        minute: 6,
+        second: 1
+      };
+
+      Object.keys(s).forEach(function(key){
+        r[key] = Math.floor(seconds / s[key]);
+        seconds -= r[key] * s[key];
+      });
+
+      return r;
     },
 
     equals: function(d1, d2) {

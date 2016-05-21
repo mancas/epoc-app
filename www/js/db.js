@@ -38,6 +38,10 @@ define([], function() {
           {
             name: "birth",
             type: "text"
+          },
+          {
+            name: "nutritionScore",
+            type: "integer"
           }
         ]
       },

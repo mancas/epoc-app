@@ -31,12 +31,12 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     componentDidMount: function() {
-      this.getDOMNode().addEventListener("touchstart", this.onTouchStart);
+      ReactDOM.findDOMNode(this).addEventListener("touchstart", this.onTouchStart);
     },
 
     onTouchStart: function(event) {
-      var elementBoundingClientRect = this.getDOMNode().getBoundingClientRect();
-      var rippleElement = this.getDOMNode().querySelector(".ripple-effect");
+      var elementBoundingClientRect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+      var rippleElement = ReactDOM.findDOMNode(this).querySelector(".ripple-effect");
       var diagonal;
       var x, y;
       // Stop the previous animation in case of a
@@ -132,7 +132,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
         touched: false,
         focused: false,
         hasValue: false,
-        value: this.props.value ? this.props.value : null
+        value: this.props.value ? this.props.value : ""
       }
     },
 
@@ -158,7 +158,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     setInputValue: function(value) {
-      var input = this.getDOMNode().querySelector(".form-control");
+      var input = ReactDOM.findDOMNode(this).querySelector(".form-control");
       var attr = "value";
       if (this.props.type === "date" || this.props.type === "time") {
         attr = "textContent";
@@ -169,8 +169,8 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     renderCharCount: function() {
-      var input = this.getDOMNode().querySelector("input");
-      var charCounterElement = this.getDOMNode().querySelector(".material-char-counter");
+      var input = ReactDOM.findDOMNode(this).querySelector("input");
+      var charCounterElement = ReactDOM.findDOMNode(this).querySelector(".material-char-counter");
       if (charCounterElement) {
         charCounterElement.textContent = String(input.value || '').length + '/' + this.props.maxLength;
       }
@@ -184,7 +184,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     validateInput: function () {
-      var input = this.getDOMNode().querySelector(".form-control");
+      var input = ReactDOM.findDOMNode(this).querySelector(".form-control");
       var attr = this.props.type === "date" || this.props.type === "time" ? "textContent" : "value";
       var hasValue = input[attr].length !== 0;
       var valid = true;
@@ -354,7 +354,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     componentDidUpdate: function() {
       if (this.state.showCalendar) {
         setTimeout(() => {
-          this.getDOMNode().classList.add("material-calendar-display");
+          ReactDOM.findDOMNode(this).classList.add("material-calendar-display");
         }, this.constructor.SHOW_DELAY);
       }
     },
@@ -502,7 +502,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
     handlePrev: function(event) {
       var target = this.refs["navigation-prev"];
-      this._animateNode(target.getDOMNode());
+      this._animateNode(target);
 
       this.props.handleMonthChange && this.props.handleMonthChange(event, -1);
     },
@@ -510,7 +510,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     handleNext: function(event) {
       event.preventDefault();
       var target = this.refs["navigation-next"];
-      this._animateNode(target.getDOMNode());
+      this._animateNode(target);
       this.props.handleMonthChange && this.props.handleMonthChange(event, 1);
     },
 
@@ -590,7 +590,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     propTypes: {
       handleClick: React.PropTypes.func,
       selectedDate: React.PropTypes.object.isRequired,
-      week: React.PropTypes.object.isRequired
+      week: React.PropTypes.array.isRequired
     },
 
     render: function() {
@@ -614,7 +614,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
   var CalendarDayButton = React.createClass({
     propTypes: {
-      day: React.PropTypes.object.isRequired,
+      day: React.PropTypes.object,
       handleClick: React.PropTypes.func,
       selectedDate: React.PropTypes.object.isRequired
     },
@@ -650,8 +650,8 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
       if (this.props.selectedDate.getTime() !== nextProps.selectedDate.getTime()) {
         var oldYearRef = "year-" + this.props.selectedDate.getFullYear();
         var newYearRef = "year-" + nextProps.selectedDate.getFullYear();
-        var oldYearBtn = this.refs[oldYearRef].getDOMNode();
-        var newYearBtn = this.refs[newYearRef].getDOMNode();
+        var oldYearBtn = ReactDOM.findDOMNode(this.refs[oldYearRef]);
+        var newYearBtn = ReactDOM.findDOMNode(this.refs[newYearRef]);
         oldYearBtn.classList.remove("selected-year");
         newYearBtn.classList.add("selected-year");
 
@@ -663,14 +663,14 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
     componentDidMount: function() {
       var yearRef = "year-" + this.props.selectedDate.getFullYear();
-      var yearBtn = this.refs[yearRef].getDOMNode();
+      var yearBtn = ReactDOM.findDOMNode(this.refs[yearRef]);
       yearBtn.classList.add("selected-year");
 
       this._scrollToSelectedYear(yearBtn);
     },
 
     _scrollToSelectedYear: function(selectedYearNode) {
-      var container = this.getDOMNode();
+      var container = ReactDOM.findDOMNode(this);
       var containerHeight = container.clientHeight;
       var buttonHeight = selectedYearNode.clientHeight || 42;
 
@@ -797,7 +797,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     componentDidUpdate: function() {
       if (this.state.showTimePicker) {
         setTimeout(() => {
-          this.getDOMNode().classList.add("material-time-picker-display");
+          ReactDOM.findDOMNode(this).classList.add("material-time-picker-display");
         }, this.constructor.SHOW_DELAY);
       }
     },
@@ -893,21 +893,21 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     componentWillUpdate: function(nextProps) {
-      var selectedHourNode = this.refs["hour-" + nextProps.selectedHour].getDOMNode();
-      var selectedMinuteNode = this.refs["minute-" + nextProps.selectedMinute].getDOMNode();
+      var selectedHourNode = this.refs["hour-" + nextProps.selectedHour];
+      var selectedMinuteNode = this.refs["minute-" + nextProps.selectedMinute];
 
       this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
     },
 
     componentDidMount: function() {
-      var selectedHourNode = this.refs["hour-" + this.props.selectedHour].getDOMNode();
-      var selectedMinuteNode = this.refs["minute-" + this.props.selectedMinute].getDOMNode();
+      var selectedHourNode = this.refs["hour-" + this.props.selectedHour];
+      var selectedMinuteNode = this.refs["minute-" + this.props.selectedMinute];
 
       this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
     },
 
     _scrollToSelectedTime: function(selectedHour, selectedMinute) {
-      var container = this.getDOMNode();
+      var container = ReactDOM.findDOMNode(this);
       var containerHours = container.querySelector(".spinner-hours");
       var containerMinutes = container.querySelector(".spinner-minutes");
       var containerHeight = containerHours.clientHeight;
@@ -1022,7 +1022,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     _getStyleProperty: function(property) {
-      var style = window.getComputedStyle(this.getDOMNode(), null);
+      var style = window.getComputedStyle(ReactDOM.findDOMNode(this), null);
       return parseInt(style.getPropertyValue(property), 10);
     },
 
@@ -1042,7 +1042,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
           } else {
             top = top < -54 ? -54 : top;
           }
-          this.getDOMNode().style.top = top + "px";
+          ReactDOM.findDOMNode(this).style.top = top + "px";
           this._lastScrollY = this._currentScrollY;
           this.ticking = false;
         }.bind(this));
@@ -1406,7 +1406,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
     _calculateContentHeight: function() {
       var height = 0;
-      var container = this.getDOMNode().querySelector(".dropdown-content");
+      var container = ReactDOM.findDOMNode(this).querySelector(".dropdown-content");
       var self = this;
       Array.prototype.forEach.call(container.children, function(children) {
         if (children.tagName === "IMG") {
@@ -1509,7 +1509,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
 
     componentDidUpdate: function() {
       if (this.state.label) {
-        this.getDOMNode().classList.add("open");
+        ReactDOM.findDOMNode(this).classList.add("open");
         setTimeout(function() {
           // Let's reset the label and hide the snackbar
           this.getStore().setStoreState({
@@ -1517,7 +1517,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
           });
         }.bind(this), this.constructor.CLOSE_DELAY);
       } else {
-        this.getDOMNode().classList.remove("open");
+        ReactDOM.findDOMNode(this).classList.remove("open");
       }
     },
 
@@ -1530,13 +1530,132 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     }
   });
 
+  var ChoicesView = React.createClass({
+    propTypes: {
+      choices: React.PropTypes.array.isRequired,
+      choiceName: React.PropTypes.string.isRequired,
+      extraCSSClass: React.PropTypes.string,
+      hasValue: React.PropTypes.func
+    },
+
+    componentDidMount: function() {
+      this.props.hasValue && this.props.hasValue(false);
+    },
+
+    select: function(event) {
+      var currentChoice = ReactDOM.findDOMNode(this).querySelector(".choices .selected");
+
+      if (currentChoice) {
+        currentChoice.classList.remove("selected");
+        var currentCheckbox = currentChoice.previousElementSibling;
+        currentCheckbox.checked = false;
+      }
+
+      var target = event.target;
+      if (target.nodeName !== "BUTTON") {
+        target = utils.closest(target, "BUTTON");
+      }
+      target.classList.add("selected");
+      var checkbox = utils.closest(target, "input");
+      checkbox.checked = true;
+
+      this.props.hasValue && this.props.hasValue(true);
+    },
+
+    render: function() {
+      var cssClasses = {
+        "choices": true
+      };
+
+      if (this.props.extraCSSClass) {
+        cssClasses[this.props.extraCSSClass] = true;
+      }
+      return (
+        <div className={classNames(cssClasses)}>
+          {
+            this.props.choices.map(function(choice, index) {
+              return (
+                <ChoiceButton
+                  choiceName={this.props.choiceName}
+                  extraCSSClass={choice.extraCSSClass}
+                  fullWidth={choice.fullWidth}
+                  handleClick={this.select}
+                  key={index}
+                  label={choice.label}
+                  value={choice.value} />
+              );
+            }, this)
+          }
+        </div>
+      );
+    }
+  });
+
+  var ChoiceButton = React.createClass({
+    propTypes: {
+      choiceName: React.PropTypes.string.isRequired,
+      extraCSSClass: React.PropTypes.string,
+      fullWidth: React.PropTypes.bool,
+      handleClick: React.PropTypes.func,
+      label: React.PropTypes.string.isRequired,
+      value: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.number
+      ])
+    },
+
+    render: function() {
+      var inputValue = typeof this.props.value !== "undefined" ? this.props.value : this.props.label;
+      return (
+        <div className="choice-button">
+          <input className="hidden" name={this.props.choiceName} value={inputValue} type="radio" />
+          <RippleButton
+            extraCSSClasses={this.props.extraCSSClass}
+            fullWidth={this.props.fullWidth}
+            handleClick={this.props.handleClick}
+            label={this.props.label} />
+        </div>
+      );
+    }
+  });
+
+  var LoaderView = React.createClass({
+    propTypes: {
+      height: React.PropTypes.number,
+      width: React.PropTypes.number
+    },
+
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    getDefaultProps: function() {
+      return {
+        height: 40,
+        width: 40
+      }
+    },
+
+    render: function() {
+      return (
+        <div className="pulses-loader">
+          <div className="first"></div>
+          <div className="second"></div>
+        </div>
+      );
+    }
+  });
+
   return {
     AppBarView: AppBarView,
     CalendarView: CalendarView,
     CardView: CardView,
+    ChoiceButton: ChoiceButton,
+    ChoicesView: ChoicesView,
     DropdownView: DropdownView,
     FloatActionButton: FloatActionButton,
     Input: Input,
+    LoaderView: LoaderView,
     RippleButton: RippleButton,
     SelectView: SelectView,
     SnackbarView: SnackbarView,

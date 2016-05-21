@@ -44,6 +44,14 @@ define([], function() {
       name: "Test de riesgo",
       icon: "test",
       path: "#epoc-test"
+    },
+    {
+      name: "Test de nutrición",
+      icon: "nutrition_test",
+      path: "#nutrition-test",
+      isEnabled: {
+        "nutritionScore": true
+      }
     }
   ];
 });

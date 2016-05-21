@@ -10,7 +10,7 @@ html, body {
 
 p {
   font-family: "Roboto Light", sans-serif;
-  font-size: 14px; }
+  font-size: 15px; }
 
 b {
   font-family: "Roboto Bold", sans-serif; }
@@ -36,7 +36,7 @@ b {
       padding: 70px 0 0; }
       #container .app .app-content h1 {
         font-family: "Roboto Medium", sans-serif;
-        font-size: 16px;
+        font-size: 18px;
         margin-top: 30px; }
       #container .app .app-content .epoc-test h1:first-of-type {
         margin-top: 10px; }
@@ -44,7 +44,9 @@ b {
         overflow: auto;
         padding-bottom: 72px; }
       #container .app .app-content .section-info {
-        padding: 0 16px 16px; }
+        padding: 0 16px 16px;
+        width: 100%;
+        height: 100%; }
         #container .app .app-content .section-info h1:first-of-type {
           margin-top: 10px; }
         #container .app .app-content .section-info h2 {
@@ -57,6 +59,8 @@ b {
           line-height: 16px; }
         #container .app .app-content .section-info .alarm-info > .edit-alarm-btn > span {
           color: #4a4a4a; }
+        #container .app .app-content .section-info .alarm-info .material-button.edit-alarm-btn:active {
+          background-color: transparent !important; }
         #container .app .app-content .section-info .img-caption-group img {
           max-width: 100%;
           display: block;
@@ -105,7 +109,7 @@ b {
   width: 104px;
   height: 104px;
   display: block;
-  margin: 0 auto 38px;
+  margin: 8px auto 38px;
   border: solid 2px #fff;
   border-radius: 50%;
   position: relative; }
@@ -132,8 +136,8 @@ b {
   margin: 0 0 20px; }
 
 .slideshow > .slide > .slide-content > p {
-  font-size: 14px;
-  margin: 0 0 30px 0; }
+  font-size: 15px;
+  margin: 0 0 20px 0; }
 
 .slideshow > .slide > .slide-content > .input-group {
   margin: 0 14px; }
@@ -179,7 +183,7 @@ b {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  padding-top: 0; }
+  padding-top: 20px; }
 .epoc-test > .slideshow .choices {
   width: 100%;
   max-width: initial; }
@@ -194,7 +198,8 @@ b {
       margin: 0;
       text-transform: initial;
       white-space: normal;
-      text-align: left; }
+      text-align: left;
+      border: none; }
 .epoc-test .epoc-test-content {
   padding: 70px 16px 16px;
   width: 100%;
@@ -209,10 +214,11 @@ b {
     color: #00acb4;
     font-size: 16px;
     margin-top: 20px; }
-.epoc-test .epoc-test-score h1 {
+
+.epoc-test-score h1 {
   text-align: center; }
-.epoc-test .epoc-test-score h2.score {
-  font-size: 46px;
+.epoc-test-score h2.score {
+  font-size: 46px !important;
   text-align: center; }
 
 .app-content .epoc-test-content {
@@ -259,14 +265,12 @@ b {
     padding: 0;
     min-width: initial;
     white-space: initial;
-    line-height: 18px; }
+    line-height: 18px;
+    color: #4a4a4a;
+    text-transform: none; }
     .app-sections .section-btn img {
-      margin-bottom: 10px; }
-    .app-sections .section-btn span:not(.ripple-effect) {
       display: block;
-      font-size: 13px;
-      color: #4a4a4a;
-      text-transform: none; }
+      margin: 0 auto 10px; }
 
 /* Profile */
 .user-profile {
@@ -443,5 +447,38 @@ b {
       width: 100%; }
     .alarm-list .alarm .alarm-info {
       width: 100%; }
+
+/* Nutrition test */
+.section-info.nutrition-test {
+  width: 100%;
+  height: 100%; }
+  .section-info.nutrition-test .slideshow > .slide > .slide-content > .slide-icon {
+    background: url("../img/nutrition_test_icon.svg") no-repeat;
+    height: 140px;
+    width: 140px;
+    background-size: 140px 140px;
+    margin-bottom: 20px;
+    border: 0;
+    border-radius: 0; }
+    .section-info.nutrition-test .slideshow > .slide > .slide-content > .slide-icon:after {
+      display: none; }
+
+.section-info .nutrition-test-warning {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  padding: 0 16px; }
+  .section-info .nutrition-test-warning .nutrition-test-icon {
+    background: url("../img/nutrition_test_icon.svg") no-repeat;
+    height: 140px;
+    width: 140px;
+    background-size: 140px 140px;
+    margin: 0 auto 20px;
+    display: block; }
+  .section-info .nutrition-test-warning .material-button:first-of-type {
+    margin-right: 30px; }
 
 /*# sourceMappingURL=epoc.css.map */

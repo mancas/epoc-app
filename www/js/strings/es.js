@@ -16,7 +16,7 @@ define([], function() {
     "slide.start_button_label": "Empezar",
     "slide.next_slide_label": "Continuar",
     "slide.finish_button_label": "Terminar",
-    "slide.decision_yes_label": "Yes",
+    "slide.decision_yes_label": "Sí",
     "slide.decision_no_label": "No",
     "slide.preparing_app_title": "Espera mientras preparamos la aplicación.",
     "slide.welcome_test_title": "Test de riesgo",
@@ -27,6 +27,19 @@ define([], function() {
     "slide.test.question4": "¿Has fumado al menos 100 cigarrillos en toda tu vida?",
     "slide.test.question5": "¿En qué rango de edad te encuentras?",
     "slide.test.question.title": "Pregunta {{QUESTIONNUMBER}}",
-    "slide.preparing_test_result_title": "Espera mientras calculamos los resultados."
+    "slide.preparing_test_result_title": "Espera mientras calculamos los resultados.",
+    "slide.welcome_nutrition_test_title": "Test de estado nutricional",
+    "slide.welcome_nutrition_test_text": "A continuación te haremos 11 preguntas para determinar tu estado nutricional, no olvides responder con sinceridad.",
+    "slide.nutrition_test.question1": "Tuve un cambio de peso últimamente (aumenté o disminuí)",
+    "slide.nutrition_test.question2": "Como dos comidas al día o menos",
+    "slide.nutrition_test.question3": "Como pocas frutas o vegetales",
+    "slide.nutrition_test.question4": "Tengo dificultad para masticar",
+    "slide.nutrition_test.question5": "Como carnes y productos lácteos menos de tres veces por semana",
+    "slide.nutrition_test.question6": "No siempre tengo dinero suficiente para comprar los alimentos que necesito",
+    "slide.nutrition_test.question7": "No siempre tengo capacidad física para comprar, cocinar o alimentar por mí mismo, y no tengo nadie que lo haga por mí",
+    "slide.nutrition_test.question8": "Tengo alguno de estos síntomas digestivos; diarreas, vómitos, nauseas, hinchazón, gases, etc.",
+    "slide.nutrition_test.question9": "Necesito oxigeno durante las comidas",
+    "slide.nutrition_test.question10": "Consumo tres o más veces por semana alimentos ricos en grasas (facturas, productos de copetín, fiambres, frituras, etc.)",
+    "slide.nutrition_test.question11": "Consumo tres o más veces por semana dulces (Azúcar, gaseosas, caramelos, galletitas dulces, etc.)"
   };
 });

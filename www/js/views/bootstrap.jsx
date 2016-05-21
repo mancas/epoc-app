@@ -140,7 +140,9 @@ define([
           "exacerbations": "exacerbations",
           "do-not-smoke": "smoker",
           "my-alarms": "alarms",
-          "inhalers(/:inhalerType)": "inhalers"
+          "inhalers(/:inhalerType)": "inhalers",
+          "my-nutrition(/:sectionId)": "nutrition",
+          "nutrition-test": "nutritionTest"
         },
         index : function() {
           this.current = "index";
@@ -177,13 +179,22 @@ define([
           this.current = "inhalers";
           this.appBarTitle = "Los inhaladores";
           this.inhalerType = inhalerType;
+        },
+        nutrition: function(sectionId) {
+          this.current = "nutrition";
+          this.appBarTitle = "Mi nutrición";
+          this.sectionId = sectionId;
+        },
+        nutritionTest: function() {
+          this.current = "nutrition-test";
+          this.appBarTitle = "Test de nutrición";
         }
       });
 
       var router = new Router();
       Backbone.history.start({pushState: true});
 
-      React.render(
+      ReactDOM.render(
         <InterfaceComponent
           dispatcher={dispatcher}
           router={router}

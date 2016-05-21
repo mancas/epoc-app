@@ -68,19 +68,19 @@ define([], function() {
           choices: [
             {
               label: "A",
-              extraCSSClass: "btn-dark"
+              extraCSSClass: "bordered"
             },
             {
               label: "B",
-              extraCSSClass: "btn-dark"
+              extraCSSClass: "bordered"
             },
             {
               label: "C",
-              extraCSSClass: "btn-dark"
+              extraCSSClass: "bordered"
             },
             {
               label: "D",
-              extraCSSClass: "btn-dark"
+              extraCSSClass: "bordered"
             }
           ],
           modelName: "gradeEPOC",
@@ -121,14 +121,14 @@ define([], function() {
             label: {
               id: "slide.decision_yes_label"
             },
-            className: "btn-dark",
+            className: "bordered",
             modelValue: 1
           },
           {
             label: {
               id: "slide.decision_no_label"
             },
-            className: "btn-dark",
+            className: "bordered",
             modelValue: 0
           }
         ],
@@ -155,8 +155,8 @@ define([], function() {
         question: {
           field: {
             label: "Tu peso",
-            minValue: 20,
-            maxValue: 400,
+            minValue: 40,
+            maxValue: 250,
             type: "number",
             required: true
           },
@@ -182,8 +182,8 @@ define([], function() {
         question: {
           field: {
             label: "Tu estatura (en cm)",
-            minValue: 50,
-            maxValue: 250,
+            minValue: 90,
+            maxValue: 220,
             type: "number",
             required: true
           },

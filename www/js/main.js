@@ -2,7 +2,7 @@ require.config({
   baseUrl: "js/",
   paths: {
     "react": "../vendor/react",
-    "reactRouter": "../vendor/ReactRouter.min",
+    "react-dom": "../vendor/react-dom",
     "classnames": "../vendor/classNames",
     "_": "../vendor/underscore.min",
     "jquery": "../vendor/jquery.min",
@@ -14,9 +14,9 @@ require.config({
     "react": {
       exports: "React"
     },
-    "reactRouter": {
+    "react-dom": {
       deps: ["react"],
-      exports: "ReactRouter"
+      exports: "ReactDOM"
     },
     "classnames": {
       deps: [],
@@ -39,7 +39,7 @@ require.config({
       exports: "Chart"
     },
     "appShim": {
-      deps: ["react", "jquery", "Backbone", "classnames", "_"],
+      deps: ["react", "react-dom", "jquery", "Backbone", "classnames", "_"],
       exports: "AppShim"
     }
   }

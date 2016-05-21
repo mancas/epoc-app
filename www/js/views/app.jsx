@@ -179,6 +179,19 @@ define([
               router={this.props.router} />
             </div>
           );
+        case "nutrition":
+          return (
+            <epocViews.MyNutritionView
+              dispatcher={this.props.dispatcher}
+              navigate={this.props.navigate}
+              router={this.props.router} />
+          );
+        case "nutrition-test":
+          return (
+            <epocViews.NutritionTestView
+              dispatcher={this.props.dispatcher}
+              router={this.props.router} />
+          );
         default:
           return null;
       }
@@ -287,31 +300,13 @@ define([
       return this.getStore().getStoreState();
     },
 
-    componentDidMount: function() {
-      if (!this.refs.currentNotification) {
-        return;
-      }
-
-      var notification = this.refs.currentNotification.getDOMNode();
-      notification.addEventListener("animationend", this.onAnimationEnd);
-    },
-
-    componentWillUnmount: function() {
-      if (!this.refs.currentNotification) {
-        return;
-      }
-
-      var notification = this.refs.currentNotification.getDOMNode();
-      notification.removeEventListener("animationend", this.onAnimationEnd);
-    },
-
     componentDidUpdate: function() {
-      var notification = this.refs.currentNotification;
-      if (!notification) {
+      var wrapper = this.refs.notificationsWrapper;
+      if (!wrapper) {
         return;
       }
 
-      notification.getDOMNode().classList.remove("fade-out");
+      wrapper.classList.remove("fade-out");
     },
 
     onAnimationEnd: function() {
@@ -322,8 +317,8 @@ define([
     },
 
     onClick: function() {
-      var notification = this.refs.currentNotification.getDOMNode();
-      notification.classList.add("fade-out");
+      var wrapper = this.refs.notificationsWrapper;
+      wrapper.classList.add("fade-out");
     },
 
     render: function(){
@@ -333,10 +328,14 @@ define([
 
       return (
         <div className="app-notifications">
-          <materialViews.CardView
-            data={this.state.notifications[0]}
-            onClick={this.onClick}
-            ref="currentNotification" />
+          <div
+            className="notificaiton-wrapper"
+            onAnimationEnd={this.onAnimationEnd}
+            ref="notificationsWrapper">
+            <materialViews.CardView
+              data={this.state.notifications[0]}
+              onClick={this.onClick} />
+          </div>
         </div>
       );
     }
@@ -359,21 +358,21 @@ define([
       return (
         <div className="intro-screen">
           <img className="logo-icon" src="img/logo.svg" />
-          <h1>Bienvenido a APPNAME</h1>
+          <h1>¡Bienvenido!</h1>
           <p>
-            ¿Padeces EPOC o crees que puedes tener la enfermedar? APPNAME
-            te ayudará en tu día a día para mejorar tu calidad de vida.
+            APPNAME te ayudará en tu día a día para mejorar tu calidad de
+            vida. ¿Padeces EPOC o crees que puedes tener la enfermedad?
           </p>
           <materialViews.RippleButton
             extraCSSClasses={{"btn-info": true}}
             fullWidth={true}
-            handleClick={this.navigateToEPOCTest}
-            label="Realizar test de riesgo" />
+            handleClick={this.navigateToSlideshow}
+            label="Sí, padezco EPOC" />
           <materialViews.RippleButton
             extraCSSClasses={{"btn-info": true}}
             fullWidth={true}
-            handleClick={this.navigateToSlideshow}
-            label="Padezco la EPOC" />
+            handleClick={this.navigateToEPOCTest}
+            label="No estoy seguro" />
         </div>
       );
     }

@@ -1,12 +1,10 @@
 define([
   "build/materialViews",
-  "build/epocViews",
   "utils/dateTime",
   "utils/stringsHelper",
   "utils/utilities",
   "_"
-], function(materialViews, epocViews,
-            DateTimeHelper, StringsHelper, utils, _) {
+], function(materialViews, DateTimeHelper, StringsHelper, utils, _) {
   "use strict";
 
   var SlideshowView = React.createClass({
@@ -112,11 +110,11 @@ define([
     shouldComponentUpdate: function(newProps, newState) {
       if (this.props.index === this.props.currentSlide &&
         newProps.currentSlide === this.props.index + 1) {
-        this.getDOMNode().classList.add("done");
-        this.getDOMNode().classList.remove("current");
+        ReactDOM.findDOMNode(this).classList.add("done");
+        ReactDOM.findDOMNode(this).classList.remove("current");
         return false;
       } else if (newProps.currentSlide === this.props.index) {
-        this.getDOMNode().classList.add("current");
+        ReactDOM.findDOMNode(this).classList.add("current");
       }
 
       // Render if isValid state has changed
@@ -191,7 +189,7 @@ define([
 
       switch (this.props.slide.type) {
         case "input":
-          var input = this.getDOMNode().querySelector("input[name=\"" + modelName + "\"");
+          var input = ReactDOM.findDOMNode(this).querySelector("input[name=\"" + modelName + "\"");
           if (!input) {
             throw new Error("Input not defined for model key: " + modelName);
           }
@@ -200,7 +198,7 @@ define([
           break;
         case "choice":
           var selectedChoice =
-            this.getDOMNode().querySelector("input[name=\"" + modelName + "\"][type=\"radio\"]:checked");
+            ReactDOM.findDOMNode(this).querySelector("input[name=\"" + modelName + "\"][type=\"radio\"]:checked");
           if (!selectedChoice) {
             throw new Error("Choice not defined for model key: " + modelName);
           }
@@ -240,7 +238,7 @@ define([
 
     renderChoiceSlide: function() {
       return (
-        <epocViews.ChoicesView
+        <materialViews.ChoicesView
           choiceName={this.props.slide.question.modelName}
           choices={this.props.slide.question.choices}
           hasValue={this.isValid}/>
@@ -272,7 +270,7 @@ define([
           break;
         case "loader":
           slideContent = (
-            <epocViews.LoaderView />
+            <materialViews.LoaderView />
           );
         default:
           break;
@@ -329,13 +327,13 @@ define([
         return true;
       }
 
-      var activeBullet = this.getDOMNode().querySelector(".active");
+      var activeBullet = ReactDOM.findDOMNode(this).querySelector(".active");
       activeBullet.classList.remove("active");
       var newActiveBullet = this.refs["page-" + newProps.currentPage];
       if (!newActiveBullet) {
         return true;
       }
-      newActiveBullet.getDOMNode().classList.add("active");
+      newActiveBullet.classList.add("active");
 
       // Avoid trigger render method unnecessarily
       return false;

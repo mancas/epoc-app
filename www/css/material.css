@@ -99,7 +99,7 @@ div.form-control {
   text-transform: uppercase;
   color: #fff;
   background-color: #00acb4;
-  margin: 35px 0 0;
+  margin: 25px 0 0;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   border-radius: 3px;
   box-sizing: border-box;
@@ -172,6 +172,23 @@ div.form-control {
 
 .material-button.dropdown-btn.opened:after {
   transform: translateY(-50%) rotate(180deg); }
+
+.material-button.bordered {
+  background-color: transparent;
+  border: solid 2px #00acb4;
+  color: #565656; }
+
+.material-button.bordered.selected {
+  background: #00acb4;
+  color: #fff; }
+
+.material-button:active,
+.material-button.btn-dark:active,
+.material-button.borderless:active,
+.material-button.bordered:active,
+.material-button.dropdown-btn:active {
+  background-color: #00acb4 !important;
+  color: #fff !important; }
 
 /* Material Design: Calendar */
 .material-calendar-wrapper {
@@ -578,7 +595,6 @@ div.form-control {
       font-family: 'Roboto Medium', sans-serif;
       margin: 0 0 14px !important; }
     .material-card .card-info-wrapper p {
-      font-size: 13px;
       font-family: "Roboto Regular", sans-serif;
       margin: 0 0 16px;
       color: #757575; }
@@ -591,7 +607,7 @@ div.form-control {
       min-width: initial;
       float: right; }
 
-.material-card.fade-out {
+.fade-out {
   animation: fade-out 0.65s cubic-bezier(0.23, 1, 0.32, 1); }
 
 @-webkit-keyframes fade-out {
