@@ -22,7 +22,6 @@ define([
     },
 
     _showResults: function(model) {
-      console.info(model);
       this.setState({
         model: model,
         showResults: true

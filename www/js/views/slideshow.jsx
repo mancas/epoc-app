@@ -41,8 +41,6 @@ define([
       }
 
       // Force jump into a specific slide
-      if (goTo)
-        console.info(goTo.condition.modelName, newState.model[goTo.condition.modelName], goTo.condition.modelValue);
       if (goTo && newState.model[goTo.condition.modelName] === goTo.condition.modelValue) {
         newState.currentSlide = goTo.slide;
       }
@@ -221,7 +219,7 @@ define([
           modelValue = this.state.selectedDate;
           break;
       }
-console.info(this.props.slide.goTo);
+
       this.props.nextSlide(modelName, modelValue, this.props.slide.goTo);
     },
 
@@ -321,7 +319,6 @@ console.info(this.props.slide.goTo);
             {slideContent}
             {
               this.props.slide.buttons.map(function(button, index) {
-                console.info(button.modelValue);
                 return (
                   <materialViews.RippleButton
                     disabled={!this.state.isValid}
