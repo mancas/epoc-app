@@ -40,6 +40,16 @@ define([], function() {
     "slide.nutrition_test.question8": "Tengo alguno de estos síntomas digestivos; diarreas, vómitos, nauseas, hinchazón, gases, etc.",
     "slide.nutrition_test.question9": "Necesito oxigeno durante las comidas",
     "slide.nutrition_test.question10": "Consumo tres o más veces por semana alimentos ricos en grasas (facturas, productos de copetín, fiambres, frituras, etc.)",
-    "slide.nutrition_test.question11": "Consumo tres o más veces por semana dulces (Azúcar, gaseosas, caramelos, galletitas dulces, etc.)"
+    "slide.nutrition_test.question11": "Consumo tres o más veces por semana dulces (Azúcar, gaseosas, caramelos, galletitas dulces, etc.)",
+    "slide.exacerbation_test_title": "¿Cómo me encuentro?",
+    "slide.exacerbation_test_text": "Vamos a evaluar si tienes una exacerbación o no. Responde con sinceridad y acude a tu médico si te encuentras mal. ¿Estás preparado?",
+    "slide.exacerbation_test.question1": "¿Tienes falta de aire o te sientes agitado?",
+    "slide.exacerbation_test.question2": "En los últimos 7 días, ¿te encuentras con más falta de aire o más agitado que habitualmente?",
+    "slide.exacerbation_test.question3": "¿Tienes tos?",
+    "slide.exacerbation_test.question4": "En los últimos 7 días, ¿estás con más tos que habitualmente?",
+    "slide.exacerbation_test.question5": "¿Tienes expectoración (flemas)?",
+    "slide.exacerbation_test.question6": "¿Expectoras más cantidad en los últimos días, que habitualmente?",
+    "slide.exacerbation_test.question7": "¿De que color es la flema que has expectorado los últimos 3 días?",
+    "slide.exacerbation_test.question8": "En los últimos 3 días, ¿has tenido fiebre mayor de 38ºC?"
   };
 });

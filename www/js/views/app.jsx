@@ -8,8 +8,9 @@ define([
   "mixins/storeMixin",
   "utils/databaseManager",
   "data/sections",
-  "_"
-], function(materialViews, epocViews, epocTest, Actions, Dispatcher, UserStore, StoreMixin, dbManager, AppSections, _) {
+  "build/exacerbationTest"
+], function(materialViews, epocViews, epocTest, Actions, Dispatcher,
+            UserStore, StoreMixin, dbManager, AppSections, exacerbationTestViews) {
   "use strict";
 
   var AppControllerView = React.createClass({
@@ -189,6 +190,12 @@ define([
         case "nutrition-test":
           return (
             <epocViews.NutritionTestView
+              dispatcher={this.props.dispatcher}
+              router={this.props.router} />
+          );
+        case "exacerbation-test":
+          return (
+            <exacerbationTestViews.ExacerbationTestController
               dispatcher={this.props.dispatcher}
               router={this.props.router} />
           );

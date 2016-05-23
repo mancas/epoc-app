@@ -21,7 +21,7 @@ define([
       };
     },
 
-    next: function(modelKey, value) {
+    next: function(modelKey, value, goTo) {
       var newState = {
         currentSlide: this.state.currentSlide + 1
       };
@@ -38,6 +38,13 @@ define([
         }
 
         newState.model = cloneModel;
+      }
+
+      // Force jump into a specific slide
+      if (goTo)
+        console.info(goTo.condition.modelName, newState.model[goTo.condition.modelName], goTo.condition.modelValue);
+      if (goTo && newState.model[goTo.condition.modelName] === goTo.condition.modelValue) {
+        newState.currentSlide = goTo.slide;
       }
       this.setState(newState);
     },
@@ -109,7 +116,7 @@ define([
 
     shouldComponentUpdate: function(newProps, newState) {
       if (this.props.index === this.props.currentSlide &&
-        newProps.currentSlide === this.props.index + 1) {
+        (newProps.currentSlide === this.props.index + 1 || newProps.currentSlide !== this.props.index + 1)) {
         ReactDOM.findDOMNode(this).classList.add("done");
         ReactDOM.findDOMNode(this).classList.remove("current");
         return false;
@@ -205,12 +212,17 @@ define([
 
           modelValue = selectedChoice.value;
           break;
+        case "select":
+          var selectElement =
+            ReactDOM.findDOMNode(this).querySelector("select[name=\"" + modelName + "\"]");
+          modelValue = selectElement.options[selectElement.selectedIndex].value;
+          break;
         case "date":
           modelValue = this.state.selectedDate;
           break;
       }
-
-      this.props.nextSlide(modelName, modelValue);
+console.info(this.props.slide.goTo);
+      this.props.nextSlide(modelName, modelValue, this.props.slide.goTo);
     },
 
     renderInputSlide: function() {
@@ -245,6 +257,15 @@ define([
       );
     },
 
+    renderSelectSlide: function() {
+      return (
+        <materialViews.SelectView
+          currentValue={this.props.slide.question.currentValue}
+          selectName={this.props.slide.question.modelName}
+          values={this.props.slide.question.options}/>
+      );
+    },
+
     renderCalendar: function() {
       return (
         <materialViews.CalendarView
@@ -267,6 +288,9 @@ define([
           break;
         case "choice":
           slideContent = this.renderChoiceSlide();
+          break;
+        case "select":
+          slideContent = this.renderSelectSlide();
           break;
         case "loader":
           slideContent = (
@@ -297,6 +321,7 @@ define([
             {slideContent}
             {
               this.props.slide.buttons.map(function(button, index) {
+                console.info(button.modelValue);
                 return (
                   <materialViews.RippleButton
                     disabled={!this.state.isValid}

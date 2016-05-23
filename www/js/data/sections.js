@@ -3,6 +3,11 @@ define([], function() {
 
   return [
     {
+      name: "¿Cómo me encuentro?",
+      icon: "exacerbation_test",
+      path: "#exacerbation-test"
+    },
+    {
       name: "¿Qué es la EPOC?",
       icon: "lungs",
       path: "#what-is-epoc"

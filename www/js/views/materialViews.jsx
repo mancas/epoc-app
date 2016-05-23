@@ -18,7 +18,8 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
       label: React.PropTypes.string,
       model: React.PropTypes.oneOfType([
         React.PropTypes.string,
-        React.PropTypes.number
+        React.PropTypes.number,
+        React.PropTypes.bool
       ]),
       style: React.PropTypes.object
     },

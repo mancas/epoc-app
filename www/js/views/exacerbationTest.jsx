@@ -2,13 +2,13 @@ define([
   "utils/dispatcher",
   "build/slideshow",
   "build/materialViews",
-  "nutritionTestData",
+  "exacerbationTestData",
   "utils/actions",
   "utils/utilities"
-], function(Dispatcher, slideshowViews, materialViews, nutritionTestData, Actions, utils) {
+], function(Dispatcher, slideshowViews, materialViews, exacerbationTestData, Actions, utils) {
   "use strict";
 
-  var NutritionTestController = React.createClass({
+  var ExacerbationTestController = React.createClass({
     propTypes: {
       dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
       router: React.PropTypes.object
@@ -16,18 +16,15 @@ define([
 
     getInitialState: function() {
       return {
-        showResults: false,
-        score: null
+        model: null,
+        showResults: false
       };
     },
 
     _showResults: function(model) {
-      var score = 0;
-      for (var key in model) {
-        score += parseInt(model[key]);
-      }
+      console.info(model);
       this.setState({
-        score: score,
+        model: model,
         showResults: true
       });
     },
@@ -35,45 +32,32 @@ define([
     render: function() {
       if (this.state.showResults) {
         return (
-          <div className="section-info nutrition-test">
-            <NutritionTestScoreView
+          <div className="section-info exacerbation-test">
+            <ExacerbationTestResultView
               dispatcher={this.props.dispatcher}
               router={this.props.router}
-              score={this.state.score} />
+              model={this.state.model} />
           </div>
         );
       } else {
         return (
-          <div className="section-info nutrition-test">
+          <div className="section-info exacerbation-test">
             <slideshowViews.SlideshowView
-              model={nutritionTestData.model}
+              model={exacerbationTestData.model}
               onFinish={this._showResults}
-              slides={nutritionTestData.slides} />
+              showPagination={false}
+              slides={exacerbationTestData.slides} />
           </div>
         );
       }
     }
   });
 
-  var NutritionTestScoreView = React.createClass({
+  var ExacerbationTestResultView = React.createClass({
     propTypes: {
       dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
       router: React.PropTypes.object.isRequired,
-      score: React.PropTypes.number.isRequired
-    },
-
-    componentDidMount: function() {
-      var today = new Date();
-      var oldDate = localStorage.getItem("nutritionTest");
-      localStorage.setItem("nutritionTest", today.getTime());
-      if (!oldDate) {
-        this.props.dispatcher.dispatch(new Actions.AddNotification({
-          title: "Test de estado nutricional",
-          text: "Hace tres meses que realizaste el test. Es recomendable que lo vuelvas a realizar para llevar un control de tu nutrición,",
-          type: utils.NOTIFICATION_TYPES.NUTRITION_TEST,
-          read: 1
-        }));
-      }
+      model: React.PropTypes.object.isRequired
     },
 
     shouldComponentUpdate: function() {
@@ -125,42 +109,59 @@ define([
       }
     },
 
-    saveScore: function() {
-      this.props.dispatcher.dispatch(new Actions.UpdateUserData({
-        nutritionScore: this.props.score,
-        persist: true
-      }));
-
-      if (this.props.router.current === "nutrition-test") {
-        window.history.back();
+    _isInfection: function() {
+      var model = this.props.model;
+      if ((model.q1 || model.q2) && (model.q3 || model.q4) &&
+        (model.q5 || model.q6) && parseInt(model.q7) === 2 && model.q8) {
+        return true;
       }
+
+      return false;
+    },
+
+    _isExacerbation: function() {
+      var model = this.props.model;
+
+      if (!(model.q1 && model.q2)) {
+        return false;
+      }
+
+      // More readable code
+      if (model.q8) {
+        if (model.q3 && model.q4 &&
+          (!model.q5 || (((model.q5 && !model.q6) || (model.q5 && model.q6)) &&
+          (parseInt(model.q7) === 0 || parseInt(model.q7) === 1)))) {
+          return true;
+        }
+      } else {
+        if (model.q3 && model.q4 && !model.q5 ||
+          !model.q3 && !model.q4 && model.q5 && model.q6 ||
+          model.q3 && !model.q4 && model.q5 && model.q6 ||
+          model.q3 && model.q4 && model.q5 && !model.q6 ||
+          model.q3 && model.q4 && model.q5 && model.q6) {
+          return true;
+        }
+      }
+
+      return false
     },
 
     render: function() {
       return (
         <div className="epoc-test-content epoc-test-score">
-          <h1>Tu puntuación</h1>
-          <h2 className="score">{this.props.score}</h2>
-          <h2>¿Qué significa esta puntuación?</h2>
           {
-            this.renderScore()
+            this._isInfection() ?
+              <p>Infeccion</p> :
+              this._isExacerbation() ?
+                <p>Exacerbacion</p> :
+                <p>No es nah</p>
           }
-          <p>
-            Las señales de riesgo no representan un diagnó stico de ninguna
-            condición o enfermedad. Si tienes alguna pregunta o preocupación
-            consulta a un nutricionista.
-          </p>
-          <materialViews.RippleButton
-            extraCSSClasses={{"btn-info": true}}
-            fullWidth={true}
-            handleClick={this.saveScore}
-            label="Guardar puntuación" />
         </div>
       );
     }
   });
 
   return {
-    NutritionTestController: NutritionTestController
+    ExacerbationTestController: ExacerbationTestController
   };
 });

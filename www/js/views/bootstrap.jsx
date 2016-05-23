@@ -163,7 +163,8 @@ define([
           "my-alarms": "alarms",
           "inhalers(/:inhalerType)": "inhalers",
           "my-nutrition(/:sectionId)": "nutrition",
-          "nutrition-test": "nutritionTest"
+          "nutrition-test": "nutritionTest",
+          "exacerbation-test": "exacerbationTest"
         },
         index : function() {
           this.current = "index";
@@ -209,6 +210,10 @@ define([
         nutritionTest: function() {
           this.current = "nutrition-test";
           this.appBarTitle = "Test de nutrición";
+        },
+        exacerbationTest: function() {
+          this.current = "exacerbation-test";
+          this.appBarTitle = "¿Cómo me encuentro?";
         }
       });
 
