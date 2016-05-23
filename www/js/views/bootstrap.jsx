@@ -11,15 +11,36 @@ define([
   "stores/bloodSaturationStore",
   "stores/notificationStore",
   "stores/snackbarStore",
-  "mixins/storeMixin"],
+  "mixins/storeMixin",
+  "utils/dateTime",
+  "utils/utilities"],
   function(materialViews, appViews, slideshowViews, epocTest, slideshowData, Actions, Dispatcher,
-           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, SnackbarStore, StoreMixin) {
+           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, SnackbarStore,
+           StoreMixin, DateTimeHelper, utils) {
     "use strict";
 
     var InterfaceComponent = React.createClass({
       propTypes: {
         dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
         userStore: React.PropTypes.instanceOf(UserStore).isRequired
+      },
+
+      componentWillMount: function() {
+        var lastTest = localStorage.getItem("nutritionTest");
+        if (!lastTest) {
+          return;
+        }
+
+        var lastTestDate = new Date(parseInt(lastTest));
+        var nextTestDate = DateTimeHelper.addMonths(lastTestDate, 3);
+
+        var today = new Date();
+        if (today.getTime() >= nextTestDate.getTime()) {
+          this.props.dispatcher.dispatch(new Actions.UpdateNotification({
+            type: utils.NOTIFICATION_TYPES.NUTRITION_TEST,
+            read: 0
+          }));
+        }
       },
 
       componentWillUnmount : function() {

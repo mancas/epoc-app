@@ -29,6 +29,10 @@ b {
   font-family: "Roboto Bold", sans-serif;
 }
 
+.no-margin {
+  margin: 0 !important;
+}
+
 .ep-right {
   float: right;
 }
@@ -75,8 +79,6 @@ b {
 
       .section-info {
         padding: 0 16px 16px;
-        width: 100%;
-        height: 100%;
 
         h1 {
           &:first-of-type {
@@ -735,6 +737,40 @@ b {
     .material-button {
       &:first-of-type {
         margin-right: 30px;
+      }
+    }
+  }
+
+  .material-button.nutrition-tips-btn {
+    width: 100%;
+    margin: 0 0 20px;
+    text-align: left;
+    color: $grey;
+
+    &:after {
+      content: url("../img/material/chevron_right.svg");
+      display: block;
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .tip-list {
+    padding-left: 24px;
+
+    li {
+      color: $primary;
+      margin-bottom: 20px;
+      line-height: 22px;
+      font-weight: bold;
+
+      span {
+        color: $grey;
+        font-weight: normal;
       }
     }
   }

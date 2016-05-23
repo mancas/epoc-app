@@ -5,7 +5,8 @@ define([], function() {
     WELCOME: 0,
     BMI: 1,
     SMOKER: 2,
-    REMINDER: 3
+    REMINDER: 3,
+    NUTRITION_TEST: 4
   };
 
   const ALARM_TYPES = {

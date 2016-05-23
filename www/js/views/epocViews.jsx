@@ -91,6 +91,41 @@ define([
             </p>
           </materialViews.DropdownView>
           <materialViews.DropdownView
+            label="Respiración ruidosa">
+            <p>
+              Al respirar normalmente suenan ruidos estraños. Estos ruidos pueden deberse a mocos o pús en las vías respiratorias
+              o quizá líquido en los pulmones.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Respiración irregular">
+            <p>
+              Sientes que debes usar los músculos del pecho para respirar en vez del diafragma, causando una respiración
+              irregular.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Cambios en la piel o las uñas">
+            <p>
+              El cambio de color de la piel a un tono grisáceo o amarillento así como un tinte azulado alrededor de los labios
+              y las uñas se tornan de un color azulado o púrpura.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Problemas comiendo o durmiendo">
+            <p>
+              Si no puedes dormir o tienes problemas para comer es posible que sean debido a tus ahogos. Deberías hablarlo con
+              especialista.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Dolores de cabeza">
+            <p>
+              Los dolores de cabeza al despertar suelen deberse a los bajos niveles de oxígeno en tu sangre, que produce una
+              acumulación de dióxido de carbono en la sangre.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
             label="Hinchazón">
             <p>
               También es importante vigilar la aparición de hinchazón (edemas) en las extremidades inferiores.
@@ -155,7 +190,11 @@ define([
           var editableField = this.refs[ref];
           var newValue = editableField.getNewValue();
           if (this.state[ref].toString() !== newValue.toString()) {
-            newState[ref] = parseInt(newValue) ? parseInt(newValue) : this.state[ref];
+            if (!newValue) {
+              return;
+            }
+
+            newState[ref] = parseInt(newValue);
           }
         }, this);
 
@@ -285,6 +324,15 @@ define([
       this.setState({
         newValue: value
       });
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      if (this.props.isEditModeActive && !nextProps.isEditModeActive && !this.state.isValid) {
+        this.setState({
+          newValue: (this.props.type === "input" ? this.props.label : this.props.currentValue),
+          isValid: true
+        });
+      }
     },
 
     getLabel: function() {
@@ -1374,9 +1422,27 @@ define([
       this.props.navigate("#nutrition-test");
     },
 
+    navigateTo: function (section) {
+      this.props.navigate("#my-nutrition/" + section);
+    },
+
+    renderNavigationButton: function (label, section) {
+      var self = this;
+      var navigateWrapperFunc = function() {
+        self.navigateTo(section);
+      };
+      return (
+        <materialViews.RippleButton
+          extraCSSClasses={{"borderless": true, "nutrition-tips-btn": true}}
+          fullWidth={true}
+          handleClick={navigateWrapperFunc}
+          label={label} />
+      );
+    },
+
     render: function() {
       if (this.props.router.sectionId) {
-        switch (this.props.router.sectionId) {
+        switch (parseInt(this.props.router.sectionId)) {
           case 0:
             return (
               <ReduceSodiumView />
@@ -1444,15 +1510,33 @@ define([
           </p>
           <h2>¿Sabías que...?</h2>
           <p>
-            El uso de ciertos medicamentos puede disminuir la utilización de calcio
-            por el organismo, por eso te recomendamos aumentar la ingesta de los
-            alimentos, ricos en calcio. ADD IMG
+            La ingesta de sal puede producir retención de líquidos dificultando la respiración. Por ello debes vigilar
+            tus niveles de sodio en la dieta. Aquí tienes unos consejos prácticos:
           </p>
-          <h2>Ingesta de sodio</h2>
+          {
+            this.renderNavigationButton("Reducir la sal en la dieta", 0)
+          }
+          <h2 className="no-margin">El calcio</h2>
           <p>
-            Debido a.... debes reducir la ingesta de sodio
-            Navigate to Tips para la reucción
+            El uso de ciertos medicamentos puede disminuir la utilización de calcio
+            por el organismo, por eso es recomendable aumentar la ingesta de los
+            alimentos, ricos en calcio.
           </p>
+          <p>
+            Procura beber mucha leche, consumir lácteos como el queso o los yogures, así como comer legumbres.
+          </p>
+          <div className="img-caption-group">
+            <img src="img/dairy_products.png" />
+            <span className="caption">Alimentos ricos en calcio</span>
+          </div>
+          <h2>Consejos para la dieta</h2>
+          {
+            this.renderNavigationButton("Consejos generales", 1)
+          }
+          {
+            this.state.bmi.value < 18.5 || this.state.bmi.value >= 25 ?
+            this.renderNavigationButton("Consejos adaptados a ti", 2) : null
+          }
         </div>
       );
     }
@@ -1471,6 +1555,43 @@ define([
             A continuación tienes unos consejos que te ayudarán a reducir y controlar los niveles de sodio
             en tu dieta diaria. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
           </p>
+          <ol className="tip-list">
+            <li>
+              <span>
+                Evitar llevar la sal a la mesa.
+              </span>
+            </li>
+            <li>
+              <span>
+                Realizar la cocción de los alimentos sin agregar sal.
+              </span>
+            </li>
+            <li>
+              <span>
+                Usar variedad de condimentos en reemplazo de la sal (orégano, pimienta, comino, etc.).
+              </span>
+            </li>
+            <li>
+              <span>
+                Utilizar limón para darle gusto a la comida.
+              </span>
+            </li>
+            <li>
+              <span>
+                Probar las comidas antes de salarlas y en el caso de querer condimentarlas, realizarlo con
+                una cucharada tipo café en cada comida principal.
+              </span>
+            </li>
+            <li>
+              <span>
+                Seleccionar correctamente los alimentos evitando los de alto contenido como: Sal fina, sal gruesa,
+                sales de especies, quesos frescos y duros, fiambres, embutidos, picadillos, paté, sopas envasadas,
+                galletitas con sal, galletitas dulces, pastas rellenas, pizzas y comidas compradas, masa de tarta
+                y empanadas, alimentos envasados en salmuera, aderezos
+                (mayonesa, ketchup, etc.), bebidas alcohólicas y gaseosas.
+              </span>
+            </li>
+          </ol>
         </div>
       );
     }
@@ -1489,6 +1610,63 @@ define([
             Mejorar tu nutrición hará que te sientas mejor y puedas tener una vida más plena
             dentro de tus limitaciones. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
           </p>
+          <ol className="tip-list">
+            <li>
+              <span>
+                Comer varias veces al día, por lo menos 6 comidas, en pequeñas cantidades, <b>¡nada de atracones!</b>
+              </span>
+            </li>
+            <li>
+              <span>
+                Si utilizas oxigeno, asegúrate de usarlo durante y después de la
+                comida. El acto de comer y la digestión requieren de energía,
+                lo que aumenta la necesidad de oxígeno.
+              </span>
+            </li>
+            <li>
+              <span>
+                Elegir alimentos que sean fáciles de preparar. Trata de
+                descansar antes de comer para evitar la falta de oxígeno.
+              </span>
+            </li>
+            <li>
+              <span>
+                Elegir preparaciones de consistencia blanda.
+              </span>
+            </li>
+            <li>
+              <span>
+                Comer despacio y masticar bien la comida. Tómate tu tiempo, no hay prisa por acabar de comer.
+              </span>
+            </li>
+            <li>
+              <span>
+                Si tienes gases y/o se siente hinchado, evitar alimentos
+                productores de gas como: legumbres (lentejas, garbanzos...), coles (Brócoli, coliflor, repollo), vegetales
+                feculentos (patata, batata...), vegetales de hoja
+                crudos (acelga, espinaca, lechuga...) y bebidas con gas.
+              </span>
+            </li>
+            <li>
+              <span>
+                Tomar abundante líquido, pero alejados de las comidas o al
+                finalizarlas
+              </span>
+            </li>
+            <li>
+              <span>
+                Limitar la ingesta de sal, el exceso de sodio puede hacer
+                retener líquidos lo que puede dificultar la respiración.
+              </span>
+            </li>
+            <li>
+              <span>
+                Limitar el consumo de bebidas con cafeína que pueden
+                interferir con alguno de tus medicamentos y pueden hacer que
+                se sienta nervioso
+              </span>
+            </li>
+          </ol>
         </div>
       );
     }
@@ -1503,13 +1681,126 @@ define([
       return false;
     },
 
+    renderLowerBoundInfo: function() {
+      return (
+        <div>
+          <ol className="tip-list">
+            <li>
+              <span>
+                Incorporar una cucharada sopera de leche en polvo a la leche fluida (ya sea sola o en infusiones).
+              </span>
+            </li>
+            <li>
+              <span>
+                Enriquecer los platos principales con queso (untable, fresco o de rallar descremados) en platos
+                como puré, ensaladas, carnes, pastas, budines, arroz, etc
+              </span>
+            </li>
+            <li>
+              <span>
+                Adicionar clara de huevo a todas las preparaciones posibles.
+              </span>
+            </li>
+            <li>
+              <span>
+                Consumir vegetales preferentemente cocidos (al horno, hervidos, asados, en forma de soufflés,
+                croquetas, buñuelos, purés, etc.) ya que dan menos saciedad que las verduras crudas aunque
+                éstas también pueden ingerirse.
+              </span>
+            </li>
+            <li>
+              <span>
+                Al igual que los vegetales; preferir frutas cocidas como por ejemplo manzana asada, compota,
+                tartas, tortas, etc.
+              </span>
+            </li>
+            <li>
+              <span>
+                Realizar ingestas con mas frecuencia y en pequeñas cantidades.
+              </span>
+            </li>
+          </ol>
+          <p>
+            <b>Evaluar con tu nutricionista la posibilidad de un suplemento dietario en el caso que sea necesario.</b>
+          </p>
+        </div>
+      );
+    },
+
+    renderUpperBoundInfo: function() {
+      return (
+        <div>
+          <ol className="tip-list">
+            <li>
+              <span>
+                Seleccionar leche, yogur y quesos descremados.
+              </span>
+            </li>
+            <li>
+              <span>
+                Reemplazar el azúcar por edulcorante.
+              </span>
+            </li>
+            <li>
+              <span>
+                Consumir 1 huevo 2 a 3 veces por semana.
+              </span>
+            </li>
+            <li>
+              <span>
+                Seleccionar cortes de carnes magros (peceto, lomo, nalga, bola de lomo, cuadrada, roast beef,
+                y carne picada de cortes magros) y retirar la grasa visible. Pollo sin piel, preferentemente pechuga.
+                Pescados: merluza, atún al natural, brótola, lenguado, caballa, abadejo, pollo de mar, pez palo, jurel.
+              </span>
+            </li>
+            <li>
+              <span>
+                Utilizar el aceite en crudo.
+              </span>
+            </li>
+            <li>
+              <span>
+                Aumentar el consumo de fibra (Cereales integrales, verduras, frutas especialmente con cáscara)
+                para regular el tránsito intestinal, y evitar la compresión del tórax por la constipación.
+              </span>
+            </li>
+            <li>
+              <span>
+                Incorporar los vegetales en las 2 comidas principales, preferentemente crudos para aumentar la saciedad y la fibra.
+              </span>
+            </li>
+            <li>
+              <span>
+                Elegir frutas frescas como postre preferiblemente crudas y con cáscara.
+              </span>
+            </li>
+            <li>
+              <span>
+                Consumir al menos 2 litros de agua por día; evitar las bebidas azucaradas.
+              </span>
+            </li>
+          </ol>
+          <p>
+            <b>Consulta a tu nutricionista para normalizar tu peso.</b>
+          </p>
+        </div>
+      );
+    },
+
     render: function() {
       return (
         <div className="section-info">
           <h1>Consejos para mejorar tu nutrición</h1>
           <p>
-            TODO. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
+            La EPOC y la nutrición estan fuertemente ligadas, por eso es recomendable cuidar el máximo posible la alimentación
+            que llevamos día a día. A continuación tienes una serie de consejos adaptados a tus
+            necesidades. <b>Recuerda respetar siempre las recomendaciones de tu médico.</b>
           </p>
+          {
+            this.props.bmi.value < 18.5 ?
+              this.renderLowerBoundInfo() :
+              this.renderUpperBoundInfo()
+          }
         </div>
       );
     }

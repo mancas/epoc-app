@@ -71,7 +71,7 @@ define([
         this.props.dispatcher.dispatch(new Actions.AddNotification({
           title: "Test de estado nutricional",
           text: "Hace tres meses que realizaste el test. Es recomendable que lo vuelvas a realizar para llevar un control de tu nutrición,",
-          type: utils.NOTIFICATION_TYPES.REMINDER,
+          type: utils.NOTIFICATION_TYPES.NUTRITION_TEST,
           read: 1
         }));
       }
@@ -147,8 +147,8 @@ define([
             this.renderScore()
           }
           <p>
-            Las señales de riesgo no representan un diagnostico de ninguna
-            condición o enfermedad. Si tiene alguna pregunta o preocupación
+            Las señales de riesgo no representan un diagnó stico de ninguna
+            condición o enfermedad. Si tienes alguna pregunta o preocupación
             consulta a un nutricionista.
           </p>
           <materialViews.RippleButton
