@@ -894,15 +894,15 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     componentWillUpdate: function(nextProps) {
-      var selectedHourNode = this.refs["hour-" + nextProps.selectedHour];
-      var selectedMinuteNode = this.refs["minute-" + nextProps.selectedMinute];
+      var selectedHourNode = ReactDOM.findDOMNode(this.refs["hour-" + nextProps.selectedHour]);
+      var selectedMinuteNode = ReactDOM.findDOMNode(this.refs["minute-" + nextProps.selectedMinute]);
 
       this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
     },
 
     componentDidMount: function() {
-      var selectedHourNode = this.refs["hour-" + this.props.selectedHour];
-      var selectedMinuteNode = this.refs["minute-" + this.props.selectedMinute];
+      var selectedHourNode = ReactDOM.findDOMNode(this.refs["hour-" + this.props.selectedHour]);
+      var selectedMinuteNode = ReactDOM.findDOMNode(this.refs["minute-" + this.props.selectedMinute]);
 
       this._scrollToSelectedTime(selectedHourNode, selectedMinuteNode);
     },
@@ -1390,6 +1390,7 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
     },
 
     toggleDropdow: function() {
+      this._calculateContentHeight();
       this.setState({
         opened: !this.state.opened
       });

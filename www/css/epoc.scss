@@ -430,6 +430,13 @@ b {
       margin: 0 auto 10px;
     }
   }
+
+  .material-button.section-btn {
+    &:active {
+      background-color: inherit !important;
+      color: $grey !important;
+    }
+  }
 }
 
 /* Profile */
@@ -536,11 +543,13 @@ b {
   }
 }
 
-.inhaler-steps {
+.inhaler-steps,
+.exercise-steps {
   margin-left: 16px;
   border-left: solid 2px $primary;
 
-  .inhaler-step {
+  .inhaler-step,
+  .exercise-step {
     position: relative;
     padding: 14px 0;
     .step {
@@ -741,24 +750,6 @@ b {
     }
   }
 
-  .material-button.nutrition-tips-btn {
-    width: 100%;
-    margin: 0 0 20px;
-    text-align: left;
-    color: $grey;
-
-    &:after {
-      content: url("../img/material/chevron_right.svg");
-      display: block;
-      width: 24px;
-      height: 24px;
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-
   .tip-list {
     padding-left: 24px;
 
@@ -773,6 +764,24 @@ b {
         font-weight: normal;
       }
     }
+  }
+}
+
+.material-button.tips-btn {
+  width: 100%;
+  margin: 0 0 20px;
+  text-align: left;
+  color: $grey;
+
+  &:after {
+    content: url("../img/material/chevron_right.svg");
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 

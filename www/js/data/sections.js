@@ -38,6 +38,11 @@ define([], function() {
       path: "#exacerbations"
     },
     {
+      name: "Vacunas",
+      icon: "vaccine",
+      path: "#vaccines"
+    },
+    {
       name: "El tabaco",
       icon: "cigarrette",
       path: "#do-not-smoke",

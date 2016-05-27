@@ -272,6 +272,9 @@ b {
     .app-sections .section-btn img {
       display: block;
       margin: 0 auto 10px; }
+  .app-sections .material-button.section-btn:active {
+    background-color: inherit !important;
+    color: #4a4a4a !important; }
 
 /* Profile */
 .user-profile {
@@ -337,13 +340,20 @@ b {
 .inhaler-section .material-button {
   margin: 0; }
 
-.inhaler-steps {
+.inhaler-steps,
+.exercise-steps {
   margin-left: 16px;
   border-left: solid 2px #00acb4; }
-  .inhaler-steps .inhaler-step {
+  .inhaler-steps .inhaler-step,
+  .inhaler-steps .exercise-step,
+  .exercise-steps .inhaler-step,
+  .exercise-steps .exercise-step {
     position: relative;
     padding: 14px 0; }
-    .inhaler-steps .inhaler-step .step {
+    .inhaler-steps .inhaler-step .step,
+    .inhaler-steps .exercise-step .step,
+    .exercise-steps .inhaler-step .step,
+    .exercise-steps .exercise-step .step {
       width: 26px;
       height: 26px;
       line-height: 22px;
@@ -354,7 +364,10 @@ b {
       transform: translateX(-50%);
       display: block;
       text-align: center; }
-    .inhaler-steps .inhaler-step p {
+    .inhaler-steps .inhaler-step p,
+    .inhaler-steps .exercise-step p,
+    .exercise-steps .inhaler-step p,
+    .exercise-steps .exercise-step p {
       display: inline-block;
       margin: 0 0 0 20px;
       line-height: 26px; }
@@ -481,20 +494,6 @@ b {
     display: block; }
   .section-info .nutrition-test-warning .material-button:first-of-type {
     margin-right: 30px; }
-.section-info .material-button.nutrition-tips-btn {
-  width: 100%;
-  margin: 0 0 20px;
-  text-align: left;
-  color: #4a4a4a; }
-  .section-info .material-button.nutrition-tips-btn:after {
-    content: url("../img/material/chevron_right.svg");
-    display: block;
-    width: 24px;
-    height: 24px;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%); }
 .section-info .tip-list {
   padding-left: 24px; }
   .section-info .tip-list li {
@@ -505,6 +504,21 @@ b {
     .section-info .tip-list li span {
       color: #4a4a4a;
       font-weight: normal; }
+
+.material-button.tips-btn {
+  width: 100%;
+  margin: 0 0 20px;
+  text-align: left;
+  color: #4a4a4a; }
+  .material-button.tips-btn:after {
+    content: url("../img/material/chevron_right.svg");
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%); }
 
 /* Exacerbation test */
 .section-info.exacerbation-test {

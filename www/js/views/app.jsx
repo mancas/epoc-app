@@ -50,8 +50,11 @@ define([
         case "test":
           url = "#epoc-test/information";
           break;
+        case "exacerbation-test":
+          url = "#exacerbation-test/information";
+          break;
         default:
-          url = "#index/information";
+          url = "#app-information";
           break;
       }
       this.props.navigate(url);
@@ -59,7 +62,10 @@ define([
 
     _shouldShowInfoButton: function() {
       // Just display the info button in index or test screen
-      return (this.props.router.current === "index" || this.props.router.current === "test");
+      return (
+        this.props.router.current === "index" ||
+        this.props.router.current === "test" ||
+        this.props.router.current === "exacerbation-test");
     },
 
     render: function() {
@@ -197,6 +203,20 @@ define([
           return (
             <exacerbationTestViews.ExacerbationTestController
               dispatcher={this.props.dispatcher}
+              router={this.props.router} />
+          );
+        case "app-information":
+          return (
+            <AppInfoView />
+          );
+        case "vaccines":
+          return (
+            <epocViews.VaccinesView />
+          );
+        case "exercises":
+          return (
+            <epocViews.ExercisesView
+              navigate={this.props.navigate}
               router={this.props.router} />
           );
         default:
@@ -380,6 +400,59 @@ define([
             fullWidth={true}
             handleClick={this.navigateToEPOCTest}
             label="No estoy seguro" />
+        </div>
+      );
+    }
+  });
+
+  var AppInfoView = React.createClass({
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      return (
+        <div className="section-info">
+          <h1>EPOCFY</h1>
+          <p>
+            Esta aplicación tiene como principal objetivo ayudar a los pacientes de EPOC en su día a día, mediante el
+            conocimiento de la enfermedad y los consejos para mejorar la calidad de vida.
+          </p>
+          <p>
+            Puedes encontrar diferentes test para medir tu nutrición, si tienes o no una exacerbación y para comprobar
+            si una persona pudiese tener algún grado de EPOC.
+          </p>
+          <p>
+            <b>
+              La información ofrecida en la aplicación, en ningún momento debe tomarse como remplazo de
+              la opinión de un profesional del sector.
+            </b>
+          </p>
+          <h1>Material didáctico</h1>
+          <p>
+            Toda la información presente en la aplicación ha sido tomada de manuales médicos y articulos
+            científicos publicados de forma digital.
+          </p>
+          <p>
+            Los diferentes tests son fruto del tabajo de esas investigaciones y puede encontrarse información más
+            detallada en cada una de las secciones de información de cada test.
+          </p>
+          <h1>Material visual</h1>
+          <p>
+            La mayor parte de los iconos de la aplicación pertenecen a <b>Freepik</b>, y son utilizados bajo la
+            licencia <b>Flaticon Basic License</b>. El resto son propios de la aplicación o iconos utilizados por <b>Google</b>
+            en su sistema operativo.
+          </p>
+          <h1>
+            Reporte de errores
+          </h1>
+          <p>
+            Si tienes algún problema con la app, puedes contactar con el equipo técnico a través de este correo electrónico:
+            <a href="mailto:mancas.91@gmail.com">mancas.91@gmail.com</a>
+          </p>
+          <p>
+            No olvides describir el problema detalladamente para que podamos ayudarte.
+          </p>
         </div>
       );
     }

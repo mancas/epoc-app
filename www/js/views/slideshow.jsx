@@ -113,11 +113,13 @@ define([
     },
 
     shouldComponentUpdate: function(newProps, newState) {
-      if (this.props.index === this.props.currentSlide &&
-        (newProps.currentSlide === this.props.index + 1 || newProps.currentSlide !== this.props.index + 1)) {
-        ReactDOM.findDOMNode(this).classList.add("done");
-        ReactDOM.findDOMNode(this).classList.remove("current");
-        return false;
+      // Current slide change
+      if (newProps.currentSlide !== this.props.currentSlide && this.props.index === this.props.currentSlide) {
+        if (newProps.currentSlide === this.props.index + 1 || newProps.currentSlide !== this.props.index + 1) {
+          ReactDOM.findDOMNode(this).classList.add("done");
+          ReactDOM.findDOMNode(this).classList.remove("current");
+          return false;
+        }
       } else if (newProps.currentSlide === this.props.index) {
         ReactDOM.findDOMNode(this).classList.add("current");
       }

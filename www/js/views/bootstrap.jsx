@@ -155,6 +155,7 @@ define([
         routes : {
           "introduction" : "introduction",
           "index": "index",
+          "app-information": "appInformation",
           "epoc-test(/:section)": "test",
           "slideshow" : "slideshow",
           "what-is-epoc": "whatIsEpoc",
@@ -164,7 +165,9 @@ define([
           "inhalers(/:inhalerType)": "inhalers",
           "my-nutrition(/:sectionId)": "nutrition",
           "nutrition-test": "nutritionTest",
-          "exacerbation-test": "exacerbationTest"
+          "exacerbation-test(/:section)": "exacerbationTest",
+          "vaccines": "vaccines",
+          "my-exercises(/:sectionId)": "exercises"
         },
         index : function() {
           this.current = "index";
@@ -211,9 +214,23 @@ define([
           this.current = "nutrition-test";
           this.appBarTitle = "Test de nutrición";
         },
-        exacerbationTest: function() {
+        exacerbationTest: function(section) {
           this.current = "exacerbation-test";
-          this.appBarTitle = "¿Cómo me encuentro?";
+          this.appBarTitle = !section ? "¿Cómo me encuentro?" : "Test: Información";
+          this.showInfo = !!section;
+        },
+        appInformation: function() {
+          this.current = "app-information";
+          this.appBarTitle = "Acerca de la app";
+        },
+        vaccines: function() {
+          this.current = "vaccines";
+          this.appBarTitle = "Vacunas y la EPOC";
+        },
+        exercises: function(sectionId) {
+          this.current = "exercises";
+          this.appBarTitle = "Ejercicio físico";
+          this.sectionId = sectionId;
         }
       });
 

@@ -208,6 +208,20 @@ define([
       }
     },
 
+    renderNutritionTestScore: function() {
+      if (!this.state.nutritionScore) {
+        return "No realizado";
+      }
+
+      if (this.state.nutritionScore < 3) {
+        return this.state.nutritionScore + " - Ningún problema";
+      } else if (this.state.nutritionScore >= 7) {
+        return this.state.nutritionScore + " - Riesgo alto de estado nutricional pobre";
+      } else {
+        return this.state.nutritionScore + " - Riesgo moderado de estado nutricional pobre";
+      }
+    },
+
     render: function () {
       if (!this.state.weight || !this.state.height) {
         return null;
@@ -282,6 +296,10 @@ define([
                 <p className="text-row">Grado de EPOC diagnosticado</p>
               </div>
               <p className="text-row">{"GOLD " + this.state.gradeEPOC}</p>
+              <div className="icon-group no-icon">
+                <p className="text-row">Resultado test nutricional</p>
+              </div>
+              <p className="text-row">{this.renderNutritionTestScore()}</p>
             </div>
           </div>
         </div>
@@ -1433,7 +1451,7 @@ define([
       };
       return (
         <materialViews.RippleButton
-          extraCSSClasses={{"borderless": true, "nutrition-tips-btn": true}}
+          extraCSSClasses={{"borderless": true, "tips-btn": true}}
           fullWidth={true}
           handleClick={navigateWrapperFunc}
           label={label} />
@@ -1821,15 +1839,401 @@ define([
     }
   });
 
+  var VaccinesView = React.createClass({
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    render: function() {
+      return (
+        <div className="section-info">
+          <h1>¿Tengo que vacunarme?</h1>
+          <p>
+            Todos los años, salvo contraindicación médica, debe administrarse
+            la <b>vacuna antigripal</b>. El virus de la gripe puede provocar un empeoramiento
+            de la enfermedad.
+          </p>
+          <p>
+            La vacuna evita, en la mayoría de los casos, que sufras la gripe o,
+            al menos, hace que sea menos grave. Acude a tu centro de salud a primeros de otoño, donde te informarán
+            de la fecha de comienzo de la vacunación.
+          </p>
+          <p>
+            Existe otra vacuna, la <b>vacuna neumocócica</b>, que está indicada en determinados pacientes
+            con EPOC. Pregunta a tu médico para verificar si necesitas o no administrarte esta vacuna.
+          </p>
+          <h2>¿Puede sentarme mal la vacuna de la gripe?</h2>
+          <p>
+            Es raro que pueda provocar alguna reacción. La mayoría de las
+            reacciones se producen en la zona de la inyección y son leves. A
+            veces, puede dar fiebre y malestar general que suelen ser leves y
+            durar menos de <b>48 horas</b>. Los beneficios que puedes obtener de la
+            vacuna son muy superiores a las molestias.
+          </p>
+          <h2>¿Puedo acatarrarme aunque me vacune?</h2>
+          <p>
+            La vacuna de la gripe protege de la infección por el virus de la
+            gripe en un alto porcentaje de casos, pero no previene de otros
+            muchos virus que pueden afectarle. <b>Es habitual que tengas otros
+            catarros durante el invierno</b>, te hayas vacunado o no de la gripe.
+          </p>
+        </div>
+      );
+    }
+  });
+
+  var ExercisesView = React.createClass({
+    propTypes: {
+      navigate: React.PropTypes.func.isRequired,
+      router: React.PropTypes.object.isRequired
+    },
+
+    navigateTo: function (section) {
+      this.props.navigate("#my-exercises/" + section);
+    },
+
+    renderNavigationButton: function(label, section) {
+      var self = this;
+      var navigateWrapperFunc = function() {
+        self.navigateTo(section);
+      };
+      return (
+        <materialViews.RippleButton
+          extraCSSClasses={{"borderless": true, "tips-btn": true}}
+          fullWidth={true}
+          handleClick={navigateWrapperFunc}
+          label={label} />
+      );
+    },
+
+    render: function() {
+      if (this.props.router.sectionId) {
+        return (
+          <BreathingExercisesView
+            exercise={parseInt(this.props.router.sectionId)} />
+        );
+      }
+
+      return (
+        <div className="section-info">
+          <h1>¿Es bueno realizar ejercicio con la EPOC?</h1>
+          <p>
+            ¡Por supuesto que sí! Hay que evitar la vida sedentaria y se recomienda a todos los pacientes la
+            realización de ejercicio físico cotidiano (simplemente pasear), pues se produce una mejoría subjetiva muy
+            importante.
+          </p>
+          <p>
+            Al realizar ejercicio se mejoran progresivamente la ventilación y la tolerancia a a la actividad
+            física, mejorando así la calidad de vida y reduciendo la sensación de ahogo.
+          </p>
+          <p>
+            De forma general, el entrenamiento tiene como finalidad mejorar la capacidad funcional mediante
+            cambios estructurales y funcionales en el músculo (los cuales proporcionan mayor fuerza
+            y resistencia), mayor movilidad articular y mejor respuesta cardiorrespiratoria que asegure un aporte
+            de oxígeno adecuado a las necesidades metabólicas aumentadas por la actividad física.
+          </p>
+          <p>
+            Es cierto que los pacientes que practican ejercicio regularmente acuden menos a los servicios de
+            urgencia, sus ingresos hospitalarios son de menor duración y experimentan una mejora en la sensación
+            de ahogo y en la tolerancia al esfuerzo.
+          </p>
+          <h2>Rehabilitación respiratoria</h2>
+          <p>
+            <b>Antes de empezar, debes tener en cuenta que todos los avances desaparecen entre el sexto mes y
+            el año, si no se instaura un plan de mantenimiento mediante ejercicio domiciliario o sesiones hospitalarias.</b>
+          </p>
+          <p>
+            La rehabilitación pulmonar debe combinar ejercicios de fuerza y resistencia de los miembros inferiores,
+            superiores y músculos respiratorios para obtener en los casos aplicados resultados satisfactorios. <b>No olvides
+            consultar a tu médico para conocer que tipo de ejercicio te conviene más y te dará más beneficios.</b>
+          </p>
+          <materialViews.DropdownView
+            label="Músculos inspiratorios">
+            <p>
+              Estos entrenamientos de fuerza son imprescindibles. Se emplea con la finalidad de mejorar
+              la fuerza y la resistencia de los músculos entrenados, lo que trae como consecuencia reducción en la
+              sensación de ahogo para un requerimiento ventilatorio adecuado y un incremento de la tolerancia al ejercicio.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Músculos espiratorios">
+            <p>
+              Ha cobrado importancia recientemente, aunque todavía se dispone de muy poca información al
+              respecto. La fuerza de los músculos espiratorios se ha evaluado convencionalmente a través de
+              la medición de la presión espiratoria máxima de la boca.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Músculos respiratorios">
+            <p>
+              Se realiza mediante maniobras de hiperventilación o procedimientos de respiración
+              contra-resistencia. La modalidad más sencilla de desencadenar hiperventilación de
+              forma espontánea sería mediante la realización de ejercicio corporal global.
+            </p>
+          </materialViews.DropdownView>
+          <materialViews.DropdownView
+            label="Extremidades superiores e inferiores">
+            <p>
+              Está claramente demostrado su beneficio, incrementando la capacidad máxima de ejercicio, con
+              una mayor tolerancia a ejercicios, mejorando la calidad de vida y reduciendo la sensación de disnea.
+            </p>
+            <p>
+              <b>Para las extremidades inferiores</b> se puede utilizar la bicicleta estacionaria, banda sin fin o
+              caminata, solos o en combinación, logrando un acondicionamiento muscular y una mejor
+              adaptación cardiovascular y respiratoria para un mismo nivel de trabajo siempre.
+            </p>
+            <p>
+              <b>Para las extremidades superiores</b> es muy aconsejable incluir en los programas de ejercicios
+              físicos el entrenamiento con pesas y ejercicios contra-resistencia como el remo para
+              mejorar la resistencia y fuerza de los brazos para realizar actividades de la vida diaria.
+            </p>
+          </materialViews.DropdownView>
+          <h2>Ejercicios respiratorios</h2>
+          <p>
+            Estos ejercicios son muy comunes en los pacientes con EPOC y te serán de gran ayuda para mejorar
+            tu sensación de ahogo, además, ¡puedes realizarlos en casa!
+          </p>
+          {
+            this.renderNavigationButton("Respiración con labios apretados", 0)
+          }
+          {
+            this.renderNavigationButton("Respiración coordinada", 1)
+          }
+          {
+            this.renderNavigationButton("Respiración profunda", 2)
+          }
+          {
+            this.renderNavigationButton("Huff cough", 3)
+          }
+          {
+            this.renderNavigationButton("Respiración con el diafragma", 4)
+          }
+        </div>
+      );
+    }
+  });
+
+  var BreathingExercisesView = React.createClass({
+    propTypes: {
+      exercise: React.PropTypes.number
+    },
+
+    shouldComponentUpdate: function() {
+      return false;
+    },
+
+    renderPursedLipBreathing: function() {
+      return (
+        <div className="section-info">
+          <h1>Respiración con labios apretados</h1>
+          <p>
+            De acuerdo a un estudio de <b>Cleveland Clinic</b>, respirar apretando los labios, reduce el trabajo que una persona
+            necesita hacer para respirar, ayuda a vaciar más los pulmones, relaja y reduce la falta de aliento.
+          </p>
+          <p>
+            Para practicar este ejercicio tan solo tienes que seguir estos pasos:
+          </p>
+          <div className="exercise-steps">
+            <div className="exercise-step">
+              <span className="step">1</span>
+              <p>Manten tu boca cerrada.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">2</span>
+              <p>Toma aire por la nariz contando hasta dos.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">3</span>
+              <p>Junta tus labios como si fueses a silbar o soplar las velas de una tarta.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">4</span>
+              <p>Espirar lentamente contando hasta cuatro.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">5</span>
+              <p>Comenzar a inspirar lentamente.</p>
+            </div>
+          </div>
+        </div>
+      );
+    },
+
+    renderCoordinatedBreathing: function() {
+      return (
+        <div className="section-info">
+          <h1>Respiración coordinada</h1>
+          <p>
+            Sentir falta de aliento puede producir ansiedad que provoca que mantengas la respiración. Para evitar
+            esto, practica la respiración coordinada siguiendo estos dos pasos:
+          </p>
+          <p>
+            <b>Puedes practicar este ejercicio cuando estes realizando actividad física o cuando sientas ansiedad.</b>
+          </p>
+          <div className="exercise-steps">
+            <div className="exercise-step">
+              <span className="step">1</span>
+              <p>Manten tu boca cerrada.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">2</span>
+              <p>Toma aire por la nariz antes de empezar el ejercicio.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">3</span>
+              <p>Espira en la parte más agotador del ejercicio. Como por ejemplo haciendo ejercicios con pequeñas pesas.</p>
+            </div>
+          </div>
+        </div>
+      );
+    },
+
+    renderDeepBreathing: function() {
+      return (
+        <div className="section-info">
+          <h1>Respiración profunda</h1>
+          <p>
+            Respirar profundamente previene que el aire quede atrapado en los pulmones. Esto puede causar que sientas falta
+            de aliento. Este ejercicio hará que respires mucho mejor y a la vez te relajará.
+          </p>
+          <p>
+            <b>
+              Es muy bueno realizar diariamente este ejercicio de respiración junto con otros, realizandolo durante aproximadamente
+              10 minutos, durante tres o cuatro veces al día.
+            </b>
+          </p>
+          <div className="exercise-steps">
+            <div className="exercise-step">
+              <span className="step">1</span>
+              <p>
+                Sientate o ponte de pie, pero siempre con los codos ligeramente hacia atrás, para permitir que el pecho
+                se expanda libremente.
+              </p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">2</span>
+              <p>Manten la respiración mientras cuentas hasta cinco.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">3</span>
+              <p>Espira lentamente todo el aire de tus pulmones, hasta que sientas que no puedes más.</p>
+            </div>
+          </div>
+        </div>
+      );
+    },
+
+    renderHuffCough: function() {
+      return (
+        <div className="section-info">
+          <h1>Respiración jadeosa</h1>
+          <p>
+            Al padecer EPOC, eres más propenso a generar mucosidad en los pulmones. Este ejercicio ayuda a expectorar esa mucosidad
+            sin que te sientas muy cansado.
+          </p>
+          <div className="exercise-steps">
+            <div className="exercise-step">
+              <span className="step">1</span>
+              <p>
+                Posicionate sentado de forma cómoda.
+              </p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">2</span>
+              <p>Inhala un poco más de aire que si estuvieses respirando normal.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">3</span>
+              <p>
+                Usando tus músculos del estómago para espirar en tres respiraciones mientras haces los sonidos:
+                "ha ha ha". Imagina que estas empañando un cristal.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    },
+
+    renderDiaphragmaticBreathing: function() {
+      return (
+        <div className="section-info">
+          <h1>Respiración con el diafragma</h1>
+          <p>
+            El diafragma es un músculo muy importante en el proceso de respiración, pero en numerosas ocasiones no se utiliza
+            para inhalar con la respiración. Por eso mismo debes practicar el uso del diafragma y de los músculos abdominales
+            a la hora de respirar.
+          </p>
+          <p>
+            <b>
+              Esta técnica puede ser un poco más complicada, pero no te desanimes. Con un poco de práctica lo conseguirás. También
+              puedes acudir a tu médico para que te de algún consejo.
+            </b>
+          </p>
+          <div className="exercise-steps">
+            <div className="exercise-step">
+              <span className="step">1</span>
+              <p>
+                Túmbate con los hombros relajados.
+              </p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">2</span>
+              <p>Pon una mano en el estómago y la otra en tu pecho.</p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">3</span>
+              <p>
+                Toma aire por la nariz y nota como tu estómago se mueve.
+                <b>
+                  Si tu pecho se mueve más, estás haciendo
+                  mal el ejercicio.
+                </b>
+              </p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">4</span>
+              <p>
+                Junta tus labios y exhala el aire, apretando poco a poco tu estómago.
+              </p>
+            </div>
+            <div className="exercise-step">
+              <span className="step">5</span>
+              <p>
+                Repetir el ejercicio.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    },
+
+    render: function() {
+      switch (this.props.exercise) {
+        case 0:
+          return this.renderPursedLipBreathing();
+        case 1:
+          return this.renderCoordinatedBreathing();
+        case 2:
+          return this.renderDeepBreathing();
+        case 3:
+          return this.renderHuffCough();
+        case 4:
+          return this.renderDiaphragmaticBreathing();
+      }
+    }
+  });
+
   return {
     ChartView: ChartView,
     EPOCAndSmokersView: EPOCAndSmokersView,
     ExacerbationsView: ExacerbationsView,
+    ExercisesView: ExercisesView,
     InhalersView: InhalersView,
     MyAlarmsView: MyAlarmsView,
     MyNutritionView: MyNutritionView,
     NutritionTestView: NutritionTestView,
     UserProfileView: UserProfileView,
+    VaccinesView: VaccinesView,
     WhatIsEpocView: WhatIsEpocView
   };
 });
