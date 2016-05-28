@@ -88,6 +88,28 @@ define([], function() {
             type: "integer"
           }
         ]
+      },
+      {
+        name: "exercisesDiary",
+        fields: [
+          {
+            name: "id",
+            type: "integer",
+            primaryKey: true
+          },
+          {
+            name: "date",
+            type: "text"
+          },
+          {
+            name: "time",
+            type: "integer"
+          },
+          {
+            name: "borgValue",
+            type: "integer"
+          }
+        ]
       }
     ]
   };

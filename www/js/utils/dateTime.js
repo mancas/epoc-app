@@ -134,6 +134,8 @@ define([], function() {
         var seconds = d.getSeconds() < 10 ? "0" + d.getSeconds() : d.getSeconds();
         return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear().toString().substring(2) +
           " - " + hour + ":" + minutes + ":" + seconds;
+      } else if (options && options.noTime) {
+        return d.getDate() + ", " + monthLongList[d.getMonth()] + " " + d.getFullYear().toString().substring(2);
       }
       return dayList[d.getDay()] + ', ' + monthList[d.getMonth()] + " " + d.getFullYear().toString().substring(2);
     },

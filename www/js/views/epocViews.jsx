@@ -1602,8 +1602,8 @@ define([
             </li>
             <li>
               <span>
-                Seleccionar correctamente los alimentos evitando los de alto contenido como: Sal fina, sal gruesa,
-                sales de especies, quesos frescos y duros, fiambres, embutidos, picadillos, paté, sopas envasadas,
+                Seleccionar correctamente los alimentos evitando los de alto contenido como: sales de especies,
+                quesos frescos y duros, fiambres, embutidos, picadillos, paté, sopas envasadas,
                 galletitas con sal, galletitas dulces, pastas rellenas, pizzas y comidas compradas, masa de tarta
                 y empanadas, alimentos envasados en salmuera, aderezos
                 (mayonesa, ketchup, etc.), bebidas alcohólicas y gaseosas.
@@ -1659,7 +1659,7 @@ define([
             </li>
             <li>
               <span>
-                Si tienes gases y/o se siente hinchado, evitar alimentos
+                Si tienes gases y/o te sientes hinchado, evitar alimentos
                 productores de gas como: legumbres (lentejas, garbanzos...), coles (Brócoli, coliflor, repollo), vegetales
                 feculentos (patata, batata...), vegetales de hoja
                 crudos (acelga, espinaca, lechuga...) y bebidas con gas.
@@ -1761,14 +1761,13 @@ define([
             </li>
             <li>
               <span>
-                Consumir 1 huevo 2 a 3 veces por semana.
+                Consumir 1 huevo de 2 a 3 veces por semana.
               </span>
             </li>
             <li>
               <span>
-                Seleccionar cortes de carnes magros (peceto, lomo, nalga, bola de lomo, cuadrada, roast beef,
-                y carne picada de cortes magros) y retirar la grasa visible. Pollo sin piel, preferentemente pechuga.
-                Pescados: merluza, atún al natural, brótola, lenguado, caballa, abadejo, pollo de mar, pez palo, jurel.
+                Seleccionar cortes de carnes magros (lomo, carne picada de cortes magros, etc.) y retirar la grasa visible. Pollo sin piel, preferentemente pechuga.
+                Pescados: merluza, atún al natural, lenguado, caballa, abadejo, etc.
               </span>
             </li>
             <li>
@@ -1906,6 +1905,10 @@ define([
       );
     },
 
+    goToExerciseDiary: function() {
+      this.props.navigate("#my-exercises-diary");
+    },
+
     render: function() {
       if (this.props.router.sectionId) {
         return (
@@ -1974,13 +1977,9 @@ define([
           <materialViews.DropdownView
             label="Extremidades superiores e inferiores">
             <p>
-              Está claramente demostrado su beneficio, incrementando la capacidad máxima de ejercicio, con
-              una mayor tolerancia a ejercicios, mejorando la calidad de vida y reduciendo la sensación de disnea.
-            </p>
-            <p>
               <b>Para las extremidades inferiores</b> se puede utilizar la bicicleta estacionaria, banda sin fin o
               caminata, solos o en combinación, logrando un acondicionamiento muscular y una mejor
-              adaptación cardiovascular y respiratoria para un mismo nivel de trabajo siempre.
+              adaptación cardiovascular y respiratoria.
             </p>
             <p>
               <b>Para las extremidades superiores</b> es muy aconsejable incluir en los programas de ejercicios
@@ -2008,6 +2007,31 @@ define([
           {
             this.renderNavigationButton("Respiración con el diafragma", 4)
           }
+          <h2>Ejercicios físicos</h2>
+          <p>
+            Comenta con el personal sanitario que te atiende tu disposición
+            a iniciar un programa de ejercicios. Antes de comenzar, define unos
+            <b>objetivos razonables</b> que te gustaría conseguir y anótalos por escrito.
+            Se consciente de tus limitaciones iniciales y no te desanimes.
+            A medida que avanzes en la práctica, verá tus progresos.
+          </p>
+          <p>
+            Según tu capacidad actual de tolerancia al ejercicio, podrás comenzar
+            en un nivel más o menos alto. <b>Comienza por caminar
+            varios minutos y házlo varias veces al día</b>. Ve incrementando
+            el tiempo y la distancia recorrida progresivamente. Recuerda que
+            <b>tienes que esforzarte hasta tener una sensación moderada de
+            ahogo</b>. Cada vez tendrás mayor tolerancia al ejercicio y el objetivo
+            final es que camines, al menos, treinta minutos dos veces al día.
+          </p>
+          <p>
+            Utiliza tu <b>Diario de caminatas</b> para tener un seguimiento de tu progreso.
+          </p>
+          <materialViews.RippleButton
+            extraCSSClasses={{"borderless": true, "tips-btn": true}}
+            fullWidth={true}
+            handleClick={this.goToExerciseDiary}
+            label={"Ir al diario de caminatas"} />
         </div>
       );
     }
@@ -2223,11 +2247,300 @@ define([
     }
   });
 
+  var ExercisesDiaryView = React.createClass({
+    mixins: [
+      StoreMixin("exercisesDiaryStore")
+    ],
+
+    propTypes: {
+      dispatcher: React.PropTypes.instanceOf(Dispatcher).isRequired,
+      navigate: React.PropTypes.func.isRequired,
+      router: React.PropTypes.object.isRequired
+    },
+
+    getInitialState: function() {
+      return _.extend(this.getStore().getStoreState(), {
+        addModeEnabled: false,
+        isValid: false
+      });
+    },
+
+    toggleAddMode: function() {
+      this.setState({
+        addModeEnabled: !this.state.addModeEnabled
+      });
+    },
+
+    onClose: function(recordData) {
+      if (!this.state.isValid) {
+        return;
+      }
+
+      this.props.dispatcher.dispatch(new Actions.AddExerciseRecord({
+        time: recordData.time,
+        date: recordData.date,
+        borgValue: recordData.borgValue
+      }));
+    },
+
+    isValid: function(valid) {
+      this.setState({
+        isValid: valid
+      });
+    },
+
+    render: function() {
+      if (this.props.router.recordId) {
+        var record = this.state.records.filter(function(element) {
+          return element.id === parseInt(this.props.router.recordId);
+        }, this);
+        return (
+          <ExerciseRecordInfoView
+            record={record[0]} />
+        );
+      }
+      var icon = "add.svg";
+      var iconCSSClasses = {
+        "add-button": true
+      };
+
+      if (this.state.addModeEnabled) {
+        icon = "check.svg";
+        if (!this.state.isValid) {
+          icon = "clear.svg";
+        }
+      }
+
+      return (
+        <div className="section-info exercise-diary">
+          <h1>Mi diario de caminatas</h1>
+          {
+            this.state.records.length ?
+              <p>
+                Los colores representan el grado de disnea durante la sesión. <b className="green-record">VERDE</b> para
+                aquellas en las que la sensación de ahogo fue mínima, <b className="yellow-record">AMARILLO</b> para
+                sensación de ahogo moderada y <b className="red-record">ROJO</b> para una sensación severa.
+              </p> : null
+          }
+          <div className="diary-list">
+            {
+              !this.state.records.length ?
+                <p>No has empezado tu diario, ¿a qué estas esperando para sentirte mejor?</p> :
+              this.state.records.map(function(record, index) {
+                return (
+                  <ExerciseRecordView
+                    key={index}
+                    navigate={this.props.navigate}
+                    record={record} />
+                );
+              }, this)
+            }
+          </div>
+          <materialViews.FloatActionButton
+            extraCSSClasses={iconCSSClasses}
+            handleClick={this.toggleAddMode}>
+            <img src={"img/material/" + icon} />
+          </materialViews.FloatActionButton>
+          <AddExerciseRecordView
+            isValid={this.isValid}
+            onClose={this.onClose}
+            show={this.state.addModeEnabled}/>
+        </div>
+      );
+    }
+  });
+
+  var ExerciseRecordView = React.createClass({
+    propTypes: {
+      navigate: React.PropTypes.func.isRequired,
+      record: React.PropTypes.object.isRequired
+    },
+
+    goToRecord: function() {
+      var diaryAlreadyShown = localStorage.getItem("diaryShown");
+      if (diaryAlreadyShown === null) {
+        localStorage.setItem("diaryShown", true)
+      }
+      this.props.navigate("#my-exercises-diary/" + this.props.record.id);
+    },
+
+    render: function() {
+      var label = DateTimeHelper.format(new Date(this.props.record.date), { noTime: true }) +
+        " - " + this.props.record.time + " minutos";
+      var recordClasses = {
+        "borderless": true,
+        "tips-btn": true,
+        "red-record": this.props.record.borgValue >= 5,
+        "yellow-record": this.props.record.borgValue < 5 && this.props.record.borgValue > 2,
+        "green-record": this.props.record.borgValue <= 2
+      };
+
+      return (
+        <materialViews.RippleButton
+          extraCSSClasses={recordClasses}
+          fullWidth={true}
+          handleClick={this.goToRecord}
+          label={label} />
+      );
+    }
+  });
+
+  var ExerciseRecordInfoView = React.createClass({
+    propTypes: {
+      record: React.PropTypes.object.isRequired
+    },
+
+    render: function() {
+      var borgValueInfo = utils.getBorgInfoFromValue(this.props.record.borgValue);
+      return (
+        <div className="section-info">
+          <h1>Caminata del {DateTimeHelper.format(new Date(this.props.record.date), { long: true })}</h1>
+          <h2>Duración del ejercicio</h2>
+          <p>{this.props.record.time} minutos</p>
+          <h2>Escala de disnea de Borg</h2>
+          <p>{borgValueInfo.label + " - " + borgValueInfo.value}</p>
+        </div>
+      );
+    }
+  });
+
+  var AddExerciseRecordView = React.createClass({
+    propTypes: {
+      isValid: React.PropTypes.func.isRequired,
+      onClose: React.PropTypes.func,
+      show: React.PropTypes.bool.isRequired
+    },
+
+    getInitialState: function() {
+      return {
+        data: {
+          date: null,
+          time: null,
+          borgValue: 0
+        },
+        showCalendar: false,
+        valid: {
+          date: false,
+          time: false
+        }
+      };
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+      // there's no need to upload state again
+      if (this.props.show === nextProps.show) {
+        return;
+      }
+
+      if (this.props.show && !nextProps.show) {
+        this.props.onClose && this.props.onClose(this.state.data);
+        return;
+      }
+    },
+
+    handleOnFocus: function() {
+      this.setState({
+        showCalendar: true
+      });
+    },
+
+    handleCalendarAccept: function(date) {
+      var validState = this.state.valid;
+      validState.date = true;
+      var dataState = this.state.data;
+      dataState.date = date;
+
+      this.setState({
+        showCalendar: false,
+        valid: validState,
+        data: dataState
+      });
+
+      this.isValid();
+    },
+
+    handleCalendarCancel: function() {
+      this.setState({
+        showCalendar: false
+      });
+    },
+
+    handleTimeChange: function(value) {
+      var validState = this.state.valid;
+      validState.time = !!value;
+      var dataState = this.state.data;
+      dataState.time = value;
+      this.setState({
+        data: dataState,
+        valid: validState
+      });
+
+      this.isValid();
+    },
+
+    handleBorgValueChange: function(value) {
+      var dataState = this.state.data;
+      dataState.borgValue = parseInt(value);
+      this.setState({
+        data: dataState
+      });
+    },
+
+    isValid: function() {
+      var validState = this.state.valid;
+      var isValid = validState.time && validState.date;
+
+      this.props.isValid(isValid);
+    },
+
+    render: function() {
+      var date = null;
+      if (this.state.data.date) {
+        date = DateTimeHelper.format(this.state.data.date, { long: true });
+      }
+
+      return (
+        <SlideScreenView
+          show={this.props.show}>
+          <h1>Añadir nueva caminata</h1>
+          <p>
+            Crea una caminata para llevar un control sobre tu evolución física.
+          </p>
+          <h2>¿Cuándo has salido a caminar?</h2>
+          <materialViews.Input
+            inputName={"record-date"}
+            label={"Fecha de la caminata"}
+            onFocus={this.handleOnFocus}
+            type={"date"}
+            value={date} />
+          <h2>¿Durante cuantos minutos has caminado?</h2>
+          <materialViews.Input
+            hasValue={this.props.hasValue}
+            inputName={"record-time"}
+            label={"Tiempo de la caminata (en minutos)"}
+            onChange={this.handleTimeChange}
+            type={"number"} />
+          <h2>¿Qué grado de disnea (ahogo) has sufrido?</h2>
+          <materialViews.SelectView
+            currentValue={this.state.data.borgValue}
+            onChange={this.handleBorgValueChange}
+            selectName={"record-borg"}
+            values={utils.BORG_VALUES} />
+          <materialViews.CalendarView
+            handleAcceptAction={this.handleCalendarAccept}
+            handleCancelAction={this.handleCalendarCancel}
+            showCalendar={this.state.showCalendar} />
+        </SlideScreenView>
+      );
+    }
+  });
+
   return {
     ChartView: ChartView,
     EPOCAndSmokersView: EPOCAndSmokersView,
     ExacerbationsView: ExacerbationsView,
     ExercisesView: ExercisesView,
+    ExercisesDiaryView: ExercisesDiaryView,
     InhalersView: InhalersView,
     MyAlarmsView: MyAlarmsView,
     MyNutritionView: MyNutritionView,

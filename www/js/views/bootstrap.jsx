@@ -10,12 +10,13 @@ define([
   "stores/alarmStore",
   "stores/bloodSaturationStore",
   "stores/notificationStore",
+  "stores/exercisesDiaryStore",
   "stores/snackbarStore",
   "mixins/storeMixin",
   "utils/dateTime",
   "utils/utilities"],
   function(materialViews, appViews, slideshowViews, epocTest, slideshowData, Actions, Dispatcher,
-           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, SnackbarStore,
+           UserStore, AlarmStore, BloodSaturationStore, NotificationStore, ExercisesDiaryStore, SnackbarStore,
            StoreMixin, DateTimeHelper, utils) {
     "use strict";
 
@@ -27,7 +28,7 @@ define([
 
       componentWillMount: function() {
         var lastTest = localStorage.getItem("nutritionTest");
-        if (!lastTest) {
+        if (lastTest === null) {
           return;
         }
 
@@ -140,12 +141,14 @@ define([
       var notificationStore = new NotificationStore(dispatcher);
       var bloodSaturationStore = new BloodSaturationStore(dispatcher);
       var snackbarStore = new SnackbarStore(dispatcher);
+      var exercisesDiaryStore = new ExercisesDiaryStore(dispatcher);
       // For testing purpose
       //localStorage.removeItem("introSeen");
 
       StoreMixin.register({
         alarmStore: alarmStore,
         bloodSaturationStore: bloodSaturationStore,
+        exercisesDiaryStore: exercisesDiaryStore,
         notificationStore: notificationStore,
         userStore: userStore,
         snackbarStore: snackbarStore
@@ -167,7 +170,8 @@ define([
           "nutrition-test": "nutritionTest",
           "exacerbation-test(/:section)": "exacerbationTest",
           "vaccines": "vaccines",
-          "my-exercises(/:sectionId)": "exercises"
+          "my-exercises(/:sectionId)": "exercises",
+          "my-exercises-diary(/:recordId)": "exercisesDiary"
         },
         index : function() {
           this.current = "index";
@@ -231,6 +235,11 @@ define([
           this.current = "exercises";
           this.appBarTitle = "Ejercicio físico";
           this.sectionId = sectionId;
+        },
+        exercisesDiary: function(recordId) {
+          this.current = "exercises-diary";
+          this.appBarTitle = "Diario de caminatas";
+          this.recordId = recordId;
         }
       });
 

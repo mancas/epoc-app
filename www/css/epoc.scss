@@ -7,6 +7,9 @@ $profile_background: #f6f6f6;
 $grey_secondary: #757575;
 $disabled: rgba(79, 79, 79, .26);
 $disabled_text: rgba(0, 0, 0, .38);
+$red: #c62828;
+$yellow: #ffc107;
+$green: #8bc34a;
 
 html, body {
   height: 100%;
@@ -807,5 +810,39 @@ b {
         }
       }
     }
+  }
+}
+
+/* Exercise diary */
+.exercise-diary {
+  .add-form {
+    left: 0;
+    padding: 70px 16px 0;
+  }
+
+  .material-calendar {
+    z-index: 99;
+  }
+
+  .material-calendar-wrapper {
+    .material-calendar {
+      .calendar-content {
+        .calendar-days {
+          padding: 5px;
+        }
+      }
+    }
+  }
+
+  .red-record {
+    color: $red;
+  }
+
+  .yellow-record {
+    color: $yellow;
+  }
+
+  .green-record {
+    color: $green;
   }
 }

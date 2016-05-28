@@ -2,7 +2,7 @@ define([], function() {
   "use strict";
 
   return {
-    "appName": "MY APP",
+    "appName": "EPOCFY",
     "slide.welcome_message_title": "Bienvenido a {{APPNAME}}",
     "slide.welcome_message_text": "Para poder ayudarte en tu día a día y mejorar tu calidad vida, vamos a realizarte algunas preguntas. ¿Estás preparado?",
     "slide.user_name_title": "¿Cómo te llamas?",

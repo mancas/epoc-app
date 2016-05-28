@@ -14,6 +14,49 @@ define([], function() {
     MEDICINE: 1
   };
 
+  const BORG_VALUES = [
+    {
+      label: "Sin disnea (ahogo)",
+      value: 0
+    },
+    {
+      label: "Muy ligera, apenas se nota",
+      value: 0
+    },
+    {
+      label: "Muy ligera",
+      value: 1
+    },
+    {
+      label: "Ligera",
+      value: 2
+    },
+    {
+      label: "Moderada",
+      value: 3
+    },
+    {
+      label: "En ocasiones severa",
+      value: 4
+    },
+    {
+      label: "Severa",
+      value: 5
+    },
+    {
+      label: "Muy severa",
+      value: 7
+    },
+    {
+      label: "Muy severa, en ocasiones máxima",
+      value: 9
+    },
+    {
+      label: "Máxima",
+      value: 10
+    }
+  ];
+
   function getClosest(el, tag) {
     // this is necessary since nodeName is always in upper case
     tag = tag.toUpperCase();
@@ -76,10 +119,30 @@ define([], function() {
     };
   }
 
+  function getBorgInfoFromValue(value) {
+    value = parseInt(value);
+    var borgInfo = BORG_VALUES.filter(function(element) {
+      return element.value === value;
+    });
+
+    if (borgInfo.length) {
+      var info = borgInfo[0];
+      if (info.label === "Muy ligera, apenas se nota") {
+        info.value = 0.5;
+      }
+
+      return info;
+    } else {
+      return null;
+    }
+  }
+
   return {
     ALARM_TYPES: ALARM_TYPES,
+    BORG_VALUES: BORG_VALUES,
     calculateBMI: calculateBMI,
     closest: getClosest,
+    getBorgInfoFromValue: getBorgInfoFromValue,
     NOTIFICATION_TYPES: NOTIFICATION_TYPES,
     prepareModel: prepareModel
   };

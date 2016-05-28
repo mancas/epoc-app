@@ -159,6 +159,12 @@ define([], function() {
 
     ShowSnackbar: Action.define("showSnackbar", {
       label: String
-    })
+    }),
+
+    AddExerciseRecord: Action.define("addExerciseRecord", {
+      time: Number,
+      date: Object,
+      borgValue: Number
+    }),
   };
 });

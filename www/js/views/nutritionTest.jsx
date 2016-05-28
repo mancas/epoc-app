@@ -146,9 +146,13 @@ define([
             this.renderScore()
           }
           <p>
-            Las señales de riesgo no representan un diagnó stico de ninguna
+            Las señales de riesgo no representan un diagnóstico de ninguna
             condición o enfermedad. Si tienes alguna pregunta o preocupación
             consulta a un nutricionista.
+          </p>
+          <p>
+            Puedes ver la puntuación en tu perfil y realizar el test todas las veces que quieras desde
+            la pantalla principal.
           </p>
           <materialViews.RippleButton
             extraCSSClasses={{"btn-info": true}}

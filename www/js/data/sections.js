@@ -18,6 +18,11 @@ define([], function() {
       path: "#my-exercises"
     },
     {
+      name: "Diario de caminatas",
+      icon: "exercise_diary",
+      path: "#my-exercises-diary"
+    },
+    {
       name: "Inhaladores",
       icon: "inhaler",
       path: "#inhalers"

@@ -219,6 +219,13 @@ define([
               navigate={this.props.navigate}
               router={this.props.router} />
           );
+        case "exercises-diary":
+          return (
+            <epocViews.ExercisesDiaryView
+              dispatcher={this.props.dispatcher}
+              navigate={this.props.navigate}
+              router={this.props.router} />
+          );
         default:
           return null;
       }
@@ -387,7 +394,7 @@ define([
           <img className="logo-icon" src="img/logo.svg" />
           <h1>¡Bienvenido!</h1>
           <p>
-            APPNAME te ayudará en tu día a día para mejorar tu calidad de
+            EPOCFY te ayudará en tu día a día para mejorar tu calidad de
             vida. ¿Padeces EPOC o crees que puedes tener la enfermedad?
           </p>
           <materialViews.RippleButton

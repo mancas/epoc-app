@@ -535,4 +535,19 @@ b {
     .section-info.exacerbation-test .slideshow > .slide > .slide-content > .slide-icon:after {
       display: none; }
 
+/* Exercise diary */
+.exercise-diary .add-form {
+  left: 0;
+  padding: 70px 16px 0; }
+.exercise-diary .material-calendar {
+  z-index: 99; }
+.exercise-diary .material-calendar-wrapper .material-calendar .calendar-content .calendar-days {
+  padding: 5px; }
+.exercise-diary .red-record {
+  color: #c62828; }
+.exercise-diary .yellow-record {
+  color: #ffc107; }
+.exercise-diary .green-record {
+  color: #8bc34a; }
+
 /*# sourceMappingURL=epoc.css.map */

@@ -137,6 +137,12 @@ define(["utils/dateTime", "utils/utilities", "mixins/storeMixin", "_"], function
       }
     },
 
+    componentWillReceiveProps: function(nextProps) {
+      if (!this.props.value && nextProps.value) {
+        this.setInputValue(nextProps.value);
+      }
+    },
+
     componentDidMount: function() {
       // Render char counter if needed at the initialize
       this.renderCharCount();

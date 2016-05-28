@@ -33,7 +33,8 @@ define([
         height: "",
         birth: "",
         appReady: false,
-        bmi: null
+        bmi: null,
+        nutritionScore: null
       };
     },
 
