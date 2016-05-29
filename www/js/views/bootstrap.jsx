@@ -42,10 +42,22 @@ define([
             read: 0
           }));
         }
+
+        document.addEventListener("backbutton", this.handleBackButton);
       },
 
       componentWillUnmount : function() {
         this.props.router.off("route", this.routerCallback);
+        document.removeEventListener("backbutton", this.handleBackButton);
+      },
+
+      handleBackButton: function(event) {
+        event.preventDefault();
+        if (this.props.router.current !== "index") {
+          window.history.back();
+        } else {
+          navigator.app.exitApp();
+        }
       },
 
       componentDidMount : function() {
