@@ -23,7 +23,7 @@ define([], function() {
     "slide.welcome_test_text": "A continuación te preguntaremos sobre ti, tu respiración y lo que eres capaz de hacer, con el objetivo de conocer si tienes riesgo de padecer EPOC o no.",
     "slide.test.question1": "Durante las pasadas 4 semanas, ¿cuántas veces sentiste que te faltaba el aire?",
     "slide.test.question2": "¿En alguna ocasión al toser ha expulsado moco o flemas?",
-    "slide.test.question3": "Selecciona la respuesta con la que estés más de acuerdo. Realizo menos actividades de las que solía hacer debido a mis porblemas respiratorios.",
+    "slide.test.question3": "Selecciona la respuesta con la que estés más de acuerdo. Realizo menos actividades de las que solía hacer debido a mis problemas respiratorios.",
     "slide.test.question4": "¿Has fumado al menos 100 cigarrillos en toda tu vida?",
     "slide.test.question5": "¿En qué rango de edad te encuentras?",
     "slide.test.question.title": "Pregunta {{QUESTIONNUMBER}}",

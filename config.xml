@@ -2,10 +2,10 @@
 <widget id="com.mancas.epoc" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Epoc</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        An application that helps users with COPD
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="epocfy@gmail.com" href="">
+        EPOCFY Team
     </author>
     <content src="index.html" />
     <preference name="orientation" value="portrait" />
@@ -42,7 +42,7 @@
         <splash src="res/screen/android/splash-port-xxxhdpi.png" density="port-xxxhdpi"/>
     </platform>
 
-    <preference name="SplashScreenDelay" value="4000" />
+    <preference name="SplashScreenDelay" value="3600" />
     <preference name="FadeSplashScreen" value="false"/>
     <preference name="ShowSplashScreenSpinner" value="false"/>
 </widget>

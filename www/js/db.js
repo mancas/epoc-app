@@ -107,7 +107,7 @@ define([], function() {
           },
           {
             name: "borgValue",
-            type: "integer"
+            type: "real"
           }
         ]
       }

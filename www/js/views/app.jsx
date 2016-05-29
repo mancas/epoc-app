@@ -454,8 +454,8 @@ define([
             Reporte de errores
           </h1>
           <p>
-            Si tienes algún problema con la app, puedes contactar con el equipo técnico a través de este correo electrónico:
-            <a href="mailto:mancas.91@gmail.com">mancas.91@gmail.com</a>
+            Si tienes algún problema con la app, puedes contactar con el equipo técnico a través de este correo
+            electrónico: <a href="mailto:epocfy@gmail.com">epocfy@gmail.com</a>
           </p>
           <p>
             No olvides describir el problema detalladamente para que podamos ayudarte.

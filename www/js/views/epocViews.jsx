@@ -2002,7 +2002,7 @@ define([
             this.renderNavigationButton("Respiración profunda", 2)
           }
           {
-            this.renderNavigationButton("Huff cough", 3)
+            this.renderNavigationButton("Expulsar mucosidad", 3)
           }
           {
             this.renderNavigationButton("Respiración con el diafragma", 4)
@@ -2010,8 +2010,8 @@ define([
           <h2>Ejercicios físicos</h2>
           <p>
             Comenta con el personal sanitario que te atiende tu disposición
-            a iniciar un programa de ejercicios. Antes de comenzar, define unos
-            <b>objetivos razonables</b> que te gustaría conseguir y anótalos por escrito.
+            a iniciar un programa de ejercicios. Antes de comenzar, define
+            unos <b>objetivos razonables</b> que te gustaría conseguir y anótalos por escrito.
             Se consciente de tus limitaciones iniciales y no te desanimes.
             A medida que avanzes en la práctica, verá tus progresos.
           </p>
@@ -2019,8 +2019,8 @@ define([
             Según tu capacidad actual de tolerancia al ejercicio, podrás comenzar
             en un nivel más o menos alto. <b>Comienza por caminar
             varios minutos y házlo varias veces al día</b>. Ve incrementando
-            el tiempo y la distancia recorrida progresivamente. Recuerda que
-            <b>tienes que esforzarte hasta tener una sensación moderada de
+            el tiempo y la distancia recorrida progresivamente. Recuerda
+            que <b>tienes que esforzarte hasta tener una sensación moderada de
             ahogo</b>. Cada vez tendrás mayor tolerancia al ejercicio y el objetivo
             final es que camines, al menos, treinta minutos dos veces al día.
           </p>
@@ -2150,7 +2150,7 @@ define([
     renderHuffCough: function() {
       return (
         <div className="section-info">
-          <h1>Respiración jadeosa</h1>
+          <h1>Expulsar mucosidad</h1>
           <p>
             Al padecer EPOC, eres más propenso a generar mucosidad en los pulmones. Este ejercicio ayuda a expectorar esa mucosidad
             sin que te sientas muy cansado.
@@ -2434,6 +2434,20 @@ define([
 
       if (this.props.show && !nextProps.show) {
         this.props.onClose && this.props.onClose(this.state.data);
+
+        this.setState({
+          data: {
+            date: null,
+            time: null,
+            borgValue: 0
+          },
+          showCalendar: false,
+          valid: {
+            date: false,
+            time: false
+          }
+        });
+
         return;
       }
     },
@@ -2480,7 +2494,7 @@ define([
 
     handleBorgValueChange: function(value) {
       var dataState = this.state.data;
-      dataState.borgValue = parseInt(value);
+      dataState.borgValue = parseFloat(value);
       this.setState({
         data: dataState
       });

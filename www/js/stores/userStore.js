@@ -121,7 +121,7 @@ define([
     },
 
     setupApp: function(actionData) {
-      var revisionEvery = actionData.gradeEPOC === "A" || actionData.gradeEPOC === "B" ? 12 : 6;
+      var revisionEvery = actionData.gradeEPOC === "A" || actionData.gradeEPOC === "B" ? 6 : 12;
       var revisionAlarm = DateTimeHelper.addMonths(actionData.lastRevision, revisionEvery);
       var diffInMs = Math.abs(revisionAlarm - actionData.lastRevision);
       // To minutes
@@ -134,7 +134,6 @@ define([
         every: diffInMins
       }));
 
-      // TODO add notifications: reminders
       var notifications = [
         welcomeNotification
       ];

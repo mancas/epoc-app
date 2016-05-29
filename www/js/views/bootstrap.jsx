@@ -175,7 +175,7 @@ define([
         },
         index : function() {
           this.current = "index";
-          this.appBarTitle = "My app";
+          this.appBarTitle = "EPOCFY";
         },
         introduction: function() {
           this.current = "introduction";

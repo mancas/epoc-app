@@ -21,7 +21,7 @@ define([], function() {
     },
     {
       label: "Muy ligera, apenas se nota",
-      value: 0
+      value: 0.5
     },
     {
       label: "Muy ligera",
@@ -120,18 +120,13 @@ define([], function() {
   }
 
   function getBorgInfoFromValue(value) {
-    value = parseInt(value);
+    value = parseFloat(value);
     var borgInfo = BORG_VALUES.filter(function(element) {
       return element.value === value;
     });
 
     if (borgInfo.length) {
-      var info = borgInfo[0];
-      if (info.label === "Muy ligera, apenas se nota") {
-        info.value = 0.5;
-      }
-
-      return info;
+      return borgInfo[0];
     } else {
       return null;
     }

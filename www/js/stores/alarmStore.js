@@ -23,13 +23,6 @@ define([
       this._plugin = cordova.plugins.notification;
       this._schedulerListener = this.addAlarmToStore.bind(this);
       this._plugin.local.on("schedule", this._schedulerListener);
-      this._plugin.local.on("trigger", function(alarm) {
-        console.info(alarm);
-        alert("trigger: " + alarm.id);
-      });
-      this._plugin.local.on("click", function(alarm) {
-        alert("clicked: " + alarm.id);
-      });
 
       this._plugin.local.on("cancel", function() {
         this.dispatcher.dispatch(new Actions.ShowSnackbar({
